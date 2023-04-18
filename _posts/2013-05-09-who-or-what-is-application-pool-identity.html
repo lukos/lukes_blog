@@ -1,0 +1,16 @@
+---
+layout: post
+title: Who or what is Application Pool Identity?
+date: '2013-05-09T05:53:00.001-07:00'
+author: Luke Briner
+tags:
+- App Pool Identity
+- App Pool
+- IIS7
+- Application Pool Identity
+- User
+- iis
+modified_time: '2013-05-09T05:53:26.387-07:00'
+---
+
+In IIS, there is often some confusion as the to identities that the application pools can take and which determine the permissions that you need to set for folder access if, for instance, your web site writes to a log file or stores files on the file system.<br /><br />Historically, there were a fixed set of options you could choose including a specific user but since most people are lazy, they tended to opt for Network Service which would always be available and which would have pretty good access to everything. You could also choose to use Windows Integrated authentication in your site which could impersonate the user who is accessing your web app.<br /><br />In IIS7, however, the folks at Microsoft decided to add another (default) identity for an application pool and that is "Application Pool Identity", which very simply is a user created with the same name as the Application Pool itself and which allows you to have very fine grained control over who has access to what, especially on a server that hosts multiple sites.<br /><br />So, if your application pool is called "My App Pool", the user will also be called "My App Pool". This means to add permissions to folders, simply find the user with the same name as the App Pool and give them the appropriate permission.

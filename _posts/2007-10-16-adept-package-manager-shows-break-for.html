@@ -1,0 +1,10 @@
+---
+layout: post
+title: Adept Package Manager shows BREAK for libasound2-dev
+date: '2007-10-16T11:10:00.000-07:00'
+author: Luke Briner
+tags:
+modified_time: '2007-10-16T11:22:13.579-07:00'
+---
+
+Funny thing a package manager, you would think it would be pretty easy but when you actually look at it in detail, you realise there are lots of grey areas. For instance, suppose you add a special repository for maybe a future release of Kubuntu and that repository includes an updated library such as libasound2 v1.0.14. Now suppose you update from your current 1.0.13 version - all fine. You now remove the repository link from sources.list, what should happen? Should it tell you your library is too new and offer to downgrade it? Well, perhaps not surprisingly it doesn't, it keeps your newer version unless you manually remove it.<br />What happens if you then try and install some non-futuristic software that requires libasound2 version 1.0.13? It's not going to find it and it won't install, it will tell you BREAK for the top level package (in this case libasound2-dev). Quite a subtle error but a bit of digging should help you work it out. You could simply remove the libasound version 1.0.14 surely and then do another install and you will get the 1.0.13 version that you should have but there in lies another problem. If you choose to remove libasound, it very cleverly also attempts to remove all of the packages that depend on it since they can't run without the library installed - in this case it was about 70 other packages - bummer.<br />The solution? Well although i prefer to use the GUI wherever possible, a command called apt-get (the get part of adept package manager) allows you to install a named version of a package, even if a newer one is installed. What it effectively does is replace the new one with the named one without uninstalling all the dependent packages in the process - sweet!! In my case, the command was:<br /><br />sudo apt-get install libasound='1.0.13-1ubuntu5'

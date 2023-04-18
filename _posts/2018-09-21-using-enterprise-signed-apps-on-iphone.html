@@ -1,0 +1,16 @@
+---
+layout: post
+title: Using Enterprise-signed apps on iPhone with iTunes 12.7
+date: '2018-09-21T07:35:00.002-07:00'
+author: Luke Briner
+tags:
+- ipa
+- ios
+- installation
+- drag n drop
+- enterprise
+- itunes
+modified_time: '2018-09-21T07:35:31.026-07:00'
+---
+
+So Apple made a decision to remove app management from iTunes and make it just for music. That might have been great except it almost completely broke the installation of Enterprise-signed apps. Something which has just taken me 4 hours to work out!<br /><br />In iTunes, you used to simply go to apps, install from the local hard disk and then sync but this option has gone. What you <i>theoretically</i> need to do is simply to drag an ipa file into the left-hand device area of iTunes, you get a dark blue box appear and you then sync to the device.<br /><br />What happens in some cases, including mine, was that it didn't work. The box wasn't appearing so I couldn't drag the ipa. Could I find documentation? No. Apple have changed things so many times, the articles are confusing even leading to some suggesting the use of a third-party web site to transfer your apps for you! (no thanks!). Their helpful article about, "Install custom enterprise apps on iOS" tells you precisely NOTHING about the installation process so I was stumped.<br /><br />Eventually after much searching round the houses, I discovered an option that you have to enable for the device in iTunes (Device-&gt;Summary-&gt;Options), labelled, rather confusingly, "Manually manage music and videos". Once that is ticked, you can now drag things to the device.<br /><br />You then need to follow the unhelpful instructions <a href="https://support.apple.com/en-us/HT204460" target="_blank">here </a>to trust the publisher if this is the first time you have installed an app from this publisher!

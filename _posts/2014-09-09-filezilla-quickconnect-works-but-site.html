@@ -1,0 +1,17 @@
+---
+layout: post
+title: FileZilla - Quickconnect works but Site Manager doesn't!
+date: '2014-09-09T07:16:00.002-07:00'
+author: Luke Briner
+tags:
+- FileZilla
+- Error
+- bug
+- ftp
+- '500'
+- ftp/tls
+- tls
+modified_time: '2014-09-09T07:16:40.773-07:00'
+---
+
+I don't use FTP much but was trying something simple - connecting to a new site.<br /><br />I started with Quickconnect and it worked fine but then realised I was supposed to be using FTP over TLS, which is only an option in the Site Manager so, created a new site, setup the options etc. and every time I tried to connect with the Site Manager, I got a 500 error response from the server.<br /><br />Quickconnect mostly worked but only if I cleared the console first (although that might be a red-herring). I tried switching off TLS in the options but Site Manager would always fail and Quickconnect would mostly work.<br /><br />I found a similar problem reported a few years ago on the FileZilla forum and they suggested another route. Connect using Quickconnect and then choose File-&gt;Copy current connection to Site Manager.<br /><br />When I did this, it worked fine. I then added the TLS option back in and it still continued working. There was NOTHING different between the connection I created and the one that FZ created when it copied the Quickconnect connection so it must be a bug!<br /><br />Time to head to FileZilla to report it.

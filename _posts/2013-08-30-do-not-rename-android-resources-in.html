@@ -1,0 +1,17 @@
+---
+layout: post
+title: Do not rename Android resources in the Eclipse IDE
+date: '2013-08-30T02:50:00.001-07:00'
+author: Luke Briner
+tags:
+- stability
+- bugs
+- not stable
+- xml
+- visual studio
+- Eclipse
+- renaming
+modified_time: '2013-08-30T02:50:37.296-07:00'
+---
+
+Eclipse IDE should be really good. It has loads of functionality and has been around long enough but it is still SOOO flaky. For instance, I ended up with two text fields in two different layouts that were called the same thing. This should be fine since the "view" is found in each activity and will only find the one in the current layout. However, you try changing the name of ONE of them in the Eclipse properties window and all hell breaks loose. Whether you select to "update references" or not, it will change all instances of the name in both layout files and both activity classes - not what you want.<br /><br />I also noticed that if you type something into the properties box and press enter, when the update references dialog comes up, if you then change what you typed in to something else, it still uses the original text.<br /><br />The best way to change them is to edit the layout XML directly and change the relevant ID. The resources will pick up the change and there will be no updating of references.<br /><br />Other problems in Eclipse:<br /><br /><ol><li>Sometimes you cannot start debugging. I think if you kill the debugger too soon after starting it, it gets stuck and you have to restart the IDE.</li><li>Updating things directly in the properties menu is basically a bad idea and causes all kinds of weird stuff to happen with focus.</li><li>If you edit the strings resource XML (and possibly other files) and then change to the graphical layout and paste into the edit box, it actually pastes the code into the XML you were just editing which then might or might not create an error depending on what you pasted where!</li><li>Callstacks during debugging are basically almost impossible to work out. Also, if exceptions occur when debugging, the debugger rarely takes you to the point where the exception occurs, but to some other weird place (that might be Android specific though)</li><li>Attaching source code is a nightmare - I've basically given up. </li></ol>The thing I dislike about projects like Eclipse is that in the rush to get more and more features, the quality suffers and you end up with something that you use because you kind of have to (for Android in my case) rather than because you really like it. Compare to Visual Studio which has got better and better and VERY rarely has any kind of stability problem. The actions are all obvious and the debugger fantastic.

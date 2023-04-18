@@ -1,0 +1,14 @@
+---
+layout: post
+title: Rubbish IE expression bug
+date: '2009-05-01T08:34:00.000-07:00'
+author: Luke Briner
+tags:
+- Expression
+- Internet Explorer 8
+- CSS
+- Internet Explorer 7
+modified_time: '2009-05-01T08:40:56.773-07:00'
+---
+
+Internet Explorer has some none-standard css extensions that you can use to do things that you can't do in css (at least not in their rubbish implementation of it), for instance, you can use <pre>height : expression((mydiv.height > 54)? '54px' : 'auto');</pre> which all sounds fun and useful but beware if your element does not have a height set on it because what can happen is that when the page loads, the browser will ask mydiv what it's height is and the element will say, "I don't know, it isn't set, ask my parent". The parent is then asked what it's height is and it says, "I don't know, it isn't set, ask the children" and continue ad-infinitum. This sort of circular reference should be checked but it isn't and it hangs IE7 and IE8. Theoretically, you can set the height to 0 on the element in question (if it isn't already set) and the problem goes away but I haven't tested it.<br />This took me HOURS to track down - grrrrrrr<br />It was reported years ago and still not fixed. For some reason it only happened in some instances and not others, it also randomly affected some users and not others, some times and not others!!!

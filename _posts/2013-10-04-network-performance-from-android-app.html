@@ -1,0 +1,18 @@
+---
+layout: post
+title: Network performance from Android app using the Apache Library
+date: '2013-10-04T07:04:00.000-07:00'
+author: Luke Briner
+tags:
+- mobile networks
+- speed
+- latency
+- optimisation
+- performance
+- apache
+- Android
+- network
+modified_time: '2013-10-04T07:04:18.085-07:00'
+---
+
+Recently, the issue of performance came up with our mobile app and it reminded me of the first rule of optimisation: don't.<br /><br />The thing is, we often make assumptions about what we think will be slow or fast and will perhaps attempt to optimise these areas rather than worrying about things that are slow and ignoring things that we assume will be slow.<br /><br />For instance, our app calls a PHP web service which in one case, also has to call onto another SOAP web service written in .Net. Many naysayers would claim this must be very slow and .Net is slow right? Wrong. This is the fastest call into the web service.<br /><br />Secondly, sending small amounts of data across the 3G network (in the UK) would not be noticeably slower than sending it over wifi/cable. Wrong. Despite most of these calls contains less than 1K of data, the speed difference is noticeable and in some places, very poor. The main issue is that performance is very erratic.<br /><br />Thirdly, SSL adds a noticeable overhead? Again, wrong. Perhaps at large volumes it might all add up but there was no noticeable difference in speed between the two, the variations were much more related to other parts of the network.<br /><br />What about DNS lookups? We know these can be slow so I compared a call to http://mydns... to http://10.1..... any difference? Nope.<br /><br />In fact the two biggest factors that affected the performance (perhaps unsurprisingly) were the mobile network being pretty poor (roughly half the speed - more on that later) and the CPU or IO intensive operations actually carried out by the various web service methods. In my case, the two slowest operations (apart from uploading an image) were 1) sending emails inside the web service call and 2) Generating a pseudo-random code in PHP. These findings will lead me to optimise both of these, I will probably generate random codes in a background thread and dump them into a database table for later retrieval and for the email, I can either put it into another thread or otherwise use something like a database table and some kind of queue.<br /><br />Talking about speed, it might seem obvious to say that our wired network is twice as fast as the mobile network but if we take one method in particular, it sends about 200 characters of data to the web service and the wired internet can carry this out in less than 0.5 seconds end-to-end. So, let us assume the wired internet is perfect and has zero latency, this means the method itself takes 0.5 seconds to execute on the web service. The mobile network took between 2 and 6.5 seconds to perform the same method meaning it is adding at least 1.5 seconds of latency to the app - this is when sending a mere 200 characters (and retrieving about 20 characters in response) over a H network with full reception - which is a maximum of 10Mb/second but even if it was only about 1Mb/second, the network is very poor with data transfer. Taking the DNS out of the equation means it must be good old-fashioned latency and poor quality equipment.<br /><br />The moral? Well, I need to make my app work as fast as possible but if even the smallest network transaction are taking 2 seconds on the mobile network, I have to either come up with something cleverer or try and cheat the user by doing these things in parallel with the normal use of the app, something that is quite difficult the way it is currently designed.

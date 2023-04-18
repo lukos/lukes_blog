@@ -1,0 +1,12 @@
+---
+layout: post
+title: Finding code faults
+date: '2011-08-23T01:10:00.000-07:00'
+author: Luke Briner
+tags:
+- good practice
+- quality
+modified_time: '2011-08-23T01:10:40.337-07:00'
+---
+
+I read a great computer science book once (whose name I can't remember!) which talked about having certain 'rules' when we write software and one of them was, "when a defect occurs, it should be obvious where the fault is and it should only need fixing in one place". This rule implies encapsulation and more importantly, well defined and thought out fault handling.<br />Ignoring the debate of exceptions vs other error handling scenarios, it is obvious that most software still does not have a very well thought out system of fault handling. I have to support a live system and many defects that occur are related to specific scenarios and are extremely difficult to track down. Some of them we assume are environmental because we cannot see any path that would make sense yet all of these should be obvious. If something encounters an unexpected scenario, it should log that or display an error (or both). I think the underlying problem is that we might review code for neatness and main logic being correct but we rarely review code to look for what <i>might</i>&nbsp;go wrong. How often have you asked what errors a service call might throw (does the developer even know?) how are you going to handle that.<br />We can save so many hours or even days with a simple error like "X failed because the Y object was not populated" but we need a process to ensure this happens. Leave it to people and they will forget or not bother because of the pressures of implementing functionality.<br />The other big saver is trying to make a method <i>either</i>&nbsp;a list of calls to other methods <i>or</i>&nbsp;some sort of functional work and not both. This allows sequences to be easily reviewed visually and for functional methods to be small and concise and easier to re-factor.

@@ -1,0 +1,17 @@
+---
+layout: post
+title: Weird errors deploying new MVC site to IIS with Web Deploy
+date: '2017-05-24T03:52:00.002-07:00'
+author: Luke Briner
+tags:
+- compiler error
+- asp.net
+- Error
+- roslyn
+- visual studio
+- web deploy
+- iis
+modified_time: '2017-05-24T03:52:43.053-07:00'
+---
+
+This is a brand new MVC .Net site, which has old functionality ported into it and it works fine on my local machine. Deploy it to an internal web server using Web Deploy and I get some strange errors:<br /><br />The first is obvious, .Net 4.5.2 is not recognised. Using the Web Platform installer, I download and install that.<br /><br />Then I get a weird compiler error:&nbsp;"The compiler failed with error code -2146232576". This was simply because the site was trying to compile but the App Pool Identity did not have modify access to the web site folder so I added that permission.<br /><br />Then I get another weird error: "%1 is not a valid Win32 application". This basically means that something is 32 bit but is attempting to be accessed by a 64-bit only app pool. I tried enabling 32 bit in the app pool but that didn't fix it. Then I found that there is an issue running the roslyn compiler (I don't know why) and the workaround is to edit the "Allow precompiled site to be updatable" in the publish settings and disable it. This means everything will be compiled during deployment and it won't need to happen in-place.<br /><br />Not sure why these things are alive in the wild but at least the site works now.<br /><br />If you do need to be able to update the site, you might be stuck for now....

@@ -1,0 +1,17 @@
+---
+layout: post
+title: OutOfRangeInput One of the request inputs is out of range on Azure CDN
+date: '2017-06-14T07:42:00.000-07:00'
+author: Luke Briner
+tags:
+- Azure
+- blob
+- Error
+- Azure Edge
+- storage
+- OutOfRangeInput
+- CDN
+modified_time: '2017-06-14T07:42:19.310-07:00'
+---
+
+Setting up a new environment that was (theoretically) the same as an existing system. Created a new CDN on Azure, pointed it at blob storage and tried to access it and Azure gives you a rather esoteric (and apparently catch-all) error.<br /><br />Most answers that I found related to using invalid naming i.e. requesting a table with upper-case letters, when tables are not allowed to have upper-case letters (which matches the error message).<br /><br />The issue here is that the CDN is hiding an error that is actually a storage error and, surprise, surprise, is nothing to do with the request but is related to a permission error.<br /><br />I had setup the storage blob with "Private" permission but it actually needs "Blob" permission, which allows anonymous to read but not write blobs.<br /><br />I updated it to use the correct permission but it still didn't work because.....it's a CDN and everything takes ages to propagate. I waited a while and it worked.

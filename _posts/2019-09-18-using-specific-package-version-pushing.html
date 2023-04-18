@@ -1,0 +1,12 @@
+---
+layout: post
+title: Using a specific package version pushing from TeamCity to Octopus Deploy
+date: '2019-09-18T09:07:00.003-07:00'
+author: Luke Briner
+tags:
+- octopus
+- TeamCity
+modified_time: '2019-09-18T09:07:29.294-07:00'
+---
+
+We found an issue that is already mentioned on the forum, although sadly, the responses sounded like a combination of "I don't understand" and "Here's a nasty workaround".<br /><br />The problem is this: Octopus will take the latest version of the package you specify for deployment and has NO mechanism to lock this down to the Octopus release number in the GUI config. This might make sense when you are deploying multiple packages as part of a deployment, but often we want to have a single package in a single deployment with the versions all matching up.<br /><br />Because it has this behaviour, we had a build problem, where the packages are not pushed to the feed but Octopus doesn't care, it just keeps deploying the same, latest version package again and again. It takes human input to spot the old code and work out what was happening.<br /><br />The workaround isn't terrible but in TeamCity, in the "create octopus release" step, you can pass something like this in the "Additional command line arguments" field:<br /><br />--package=MyPackageName:1.0.34.2<br /><br />The details of which you can inject with Octopus parameters, perhaps:<br /><br />--package=%system.teamcity.buildConfName%:$build.number%<br /><br />Note however that Octopus will take a long time to fail if the package is not present in the feed (it tries 5 times and waits 20 seconds in-between) = 100 seconds before your failure. Fortunately, the error message is self-explanatory when it finally gets written.

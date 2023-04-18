@@ -1,0 +1,21 @@
+---
+layout: post
+title: GMail email relay from PHP in Azure worker role
+date: '2013-11-05T06:37:00.001-08:00'
+author: Luke Briner
+tags:
+- email
+- swift
+- Azure
+- ssl
+- Worker Role
+- protocol
+- gmail
+- open ssl
+- swiftMailer
+- php
+- tls
+modified_time: '2013-11-05T06:37:38.446-08:00'
+---
+
+I have a worker role that needs to connect to a web application regularly to force it to keep it's database connection established (poor I know!) but in this case, the connection can take 10 seconds to connect and if you are the unlucky person who hits it at that point, you have to wait.<br /><br />Anyway, I wanted to test how the Azure PHP worker role worked and check that it did what I thought it would do so I decided I would get it to send me an email in the worker loop to ensure it was all happy and running properly.<br /><br />When you add an Azure worker role, it creates a whole load of weird files that run certain commands, set up paths etc but the only one you need to care about is index.php which is invoked by default when the worker role starts. The way it works, therefore, like .net worker roles is that you should have some PHP that sits inside a <b>while(true)</b> loop (assuming you want it to loop) and which then calls whatever PHP code you need it to.<br /><br />In my case, I was using swiftMailer to relay email via our Google accounts and swiftMailer uses PHP's open ssl extension (which was already enabled by default). <br /><br />Anyway, this was all fine but the emails weren't coming through, although the role was running. This was because I put the bit I expected to fail inside a try/catch to ensure that any errors would not make the deployment break!<br /><br />I ended up enabling remote desktop for the role (see previous post!) and went straight into d:\windows\temp\php53_errors.log and saw the following error:<br /><br /><span style="-webkit-text-stroke-width: 0px; background-color: #ebeadd; color: #333333; display: inline !important; float: none; font-family: 'Lucida Grande', 'Trebuchet MS', Verdana, Helvetica, Arial, sans-serif; font-size: 12px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 18.1875px; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px;">PHP Warning:&nbsp; fsockopen(): SSL operation failed with code 1. OpenSSL Error messages:<br />error:140770FC:SSL routines:SSL23_GET_SERVER_HELLO:unknown protocol in E:\approot\swiftMailer\classes\Swift\Transport\StreamBuffer.php on line 233<br />PHP Warning:&nbsp; fsockopen(): Failed to enable crypto in E:\approot\swiftMailer\classes\Swift\Transport\StreamBuffer.php on line 233<br />PHP Warning:&nbsp; fsockopen(): unable to connect to ssl://smtp.gmail.com:587 (Unknown error) in E:\approot\swiftMailer\classes\Swift\Transport\StreamBuffer.php on line 233</span><br /><br />Fortunately, I found a useful blog post with a similar issue on another framework and it is related to how Google works and a few shortcomings in the swiftMailer's SSL functionality. Long story short, you need to use the following config: <b>$transport = Swift_SmtpTransport::newInstance('smtp.gmail.com', 465, 'ssl');</b> Note the use of port 465 (not 587) and protocol ssl.<br /><br />So a complete example for a simple PHP mailer using swiftmailer is as below:<br /><br /><pre style="background-color: #eeeeee; border: 1px dashed #999999; color: black; font-family: Andale Mono, Lucida Console, Monaco, fixed, monospace; font-size: 12px; line-height: 14px; overflow: auto; padding: 5px; width: 100%;"><code>require_once('.\swiftMailer\swift_required.php');<br />        <br />$transport = Swift_SmtpTransport::newInstance('smtp.gmail.com', 465, 'ssl');<br />$transport-&gt;setUsername('accountUsername@gmail.com');<br />$transport-&gt;setPassword('yourPassword');<br />    <br />$mailer = Swift_Mailer::newInstance($transport);<br />    <br />// Create the message<br />$message = Swift_Message::newInstance();<br />$message-&gt;setSubject('This is the subject');<br />$message-&gt;setFrom(array('no-reply@server.com' =&gt; 'No reply'));<br />$message-&gt;setTo(array('someone@somewhere.com' =&gt; 'john'));<br />$message-&gt;setBody("This is the actual content");<br />$mailer-&gt;send($message);<br /></code></pre><br />

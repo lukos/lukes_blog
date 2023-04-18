@@ -1,0 +1,17 @@
+---
+layout: post
+title: Filebeat from App Services to Logstash, Elastic and Kibana - Update
+date: '2018-06-29T02:23:00.001-07:00'
+author: Luke Briner
+tags:
+- webjobs
+- Azure
+- elk
+- filebeat
+- '403'
+- always on
+- '404'
+modified_time: '2018-06-29T02:23:23.175-07:00'
+---
+
+<h2>Filebeat is working on Azure</h2>So I am trying to fiddle around with Kibana and understand what I can visualise and what I can't now that I have Filebeat running on my 8 production instances of App Services, initially just sending IIS logs back to base.<br /><br />I am happy that the ELK part works, although I do find Kibana hard to understand. It has a lot of pages and it is not obvious how to setup something as simple as two graphs, one showing all requests and one showing non-200 ones without adding a filter button which sometimes stays and sometimes disappears when revisiting the page.<br /><br />Anyway there is a bigger annoyance and it relates to the high number of non-200 requests the sites are receiving. The two main guilty parties are AlwaysOn and/or the Traffic Manager on Azure.<br /><h2>Always On</h2><div>Always On is an app service option that is designed to stop IIS going to sleep, which stops some poor users from waiting 20 seconds for a site to start up again! The way it works, however, is woefully basic and is causing a problem.</div><div><br /></div><div>All it does, is ping / on port 80 every 30 seconds, I think, which in a simple case is fine but in my case it is not! Firstly, my sites are https only so it doesn't work. Secondly, some of my sites are behind Traffic Manager, so the ping will hit the TM and then get routed wherever, which would return 200 except it might not hit any of the instances that are actually asleep and thirdly, it will not work with apps, like my WCF service, that don't have any resource at path /.</div><div><br /></div><div>So what? Can't I just disable Always On and write my own? Nope. If I disable it, then the Filebeat Web Job will stop since MS in their wisdom have decided that you cannot run "continuous" web jobs if the site is not always on. If you want to run a job on all instances, you have to use "continuous", so I can't even try the Triggered version.</div><h2>Workarounds</h2><div>One option is to simply filter out the log noise. I could do this at the source or the destination end but, of course, it would be nice to see errors that might actually happen and not accidentally hide them in a poorly written filter. This might be my best bet for now!</div><div><br /></div><div>I could modify the Apps to have a port 80 response at / even if that doesn't work for the App's main purpose just to make the Always On work and it could simply return an empty document or something. I might be able to do some clever stuff so that the http-&gt;https mechanism would still work for most clients and only respond for certain clients and only for the root port. I could probably Middleware before the HSTS module to do this. Fortunately, we are about to retire one of these apps and replace the other so I can just make sure this is built into the released system.</div><div><br /></div><div>Thirdly, I have reported the bug to Azure, so who knows? they might be able to resolve it soon.</div>

@@ -1,0 +1,13 @@
+---
+layout: post
+title: ".Net build works in docker but not docker-compose"
+date: '2021-05-18T03:34:00.006-07:00'
+author: Luke Briner
+tags:
+- docker
+- TeamCity
+- docker-compose
+modified_time: '2021-05-18T03:34:57.268-07:00'
+---
+
+<p>&nbsp;This is a problem I didn't solve but I did manage to work around.</p><p>We have some shared libraries that we haven't previously built in docker since they get packaged to nuget but now that we want to run integration tests against a containerised database, I introduced a docker compose file.</p><p>It all worked locally but on the build server it didn't! So much for Build Everwhere, the "promise" of Docker.</p><p>What I had done is created the docker compose file to download an image for the database and then use a <i>build</i> section for the integration tests project. No need to run docker build, just run up the compose file, it will build and run the integrations test project and then exit.</p><p>Running it on Team City and there was a problem. The Docker Build step allows you to specify the target as Windows or Linux, which is very useful since the presence of Docker doesn't tell Team City whether your Windows docker agent is running Linux or Windows containers. However, the docker compose step does not contain that setting.</p><p>I decided to work around this by adding a build step for the same project I was using in the docker compose file, at least to be able to tell it to use a Linux agent for the docker compose step.</p><p>However, although the build step worked fine, when running up docker compose against the <i>same</i> dockerfile as the build step, it failed to build with an error that suggested that all of the files were not copied up to Docker (Namespace X not found). Of course, I couldn't really debug this because creating the container with docker build was fine!</p><p>I tried completely rebuilding everything locally after deleting all of my local files and checking them out again from git, pruning the build cache and everything but it all worked fine locally but not on the build agent. Again, it was only the compose step which failed so it was really confusing (and might well be a bug).</p><p>So my workaround was OK since I was already running a build step, I changed the docker compose file to point to the image built by the previous step instead of using the docker compose build section. It now works fine on Team City!<br /></p>

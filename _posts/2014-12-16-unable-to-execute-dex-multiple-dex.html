@@ -1,0 +1,22 @@
+---
+layout: post
+title: 'Unable to execute dex: Multiple dex files define Lorg/spongycastle/LICENSE'
+date: '2014-12-16T04:47:00.000-08:00'
+author: Luke Briner
+tags:
+- multiple references
+- dex
+- build
+- Android
+- packaging
+- SpongyCastle
+- gradle
+- build errors
+- exclude
+- dependencies
+- Android Studio
+- maven
+modified_time: '2014-12-16T04:47:41.228-08:00'
+---
+
+You know those really annoying problems that you kind of understand but you don't know how to fix? This is one of them!<br /><br />Android Studio project, one app and one library module, the app is dependent on the library module and they BOTH require the spongycastle encryption library. This issue is certainly not specific to spongycastle though. You add the jar file to both libs folders and each module builds (as expected) but when you build the project to debug, you get an exception and "unable to execute dex: Multiple dex files define....."<br /><br />What is happening is that dex is trying to merge all the symbols from both projects into one executable but, obviously, there are multiple items with the same namespace and names coming from each of the jar files (which are the same version and everything).<br /><br />Seems like a normal requirement so how can you avoid the error? Theoretically, you can exclude certain dependencies in the dependencies section of the build.gradle but the syntax requires a tag name, which is not obvious from the jar file (i.e. it isn't just the jar file name) so I couldn't get that to work.<br /><br />Fortunately, maven dependencies de-duplicate automatically so if you have a maven repository for the project you are using (and spongycastle does, fortunately), then you can compile from repository instead of from a jar file. This is what I did and it sorted out the problem.<br /><br />If you do not have a maven repository for it, you can either setup a company or local maven repo and move your dependent library to that so that you app can consume it and avoid the problem or you can run a command line utility to give you more information about the dependencies and work out what to exclude (although I didn't test this so it might not work exactly as I expect).<br /><br />Use the terminal window in Android Studio and the command <b>.\gradlew -q :modulename:dependencies</b> where module name is the name of your module (like "app"). This will display using ascii art, the dependencies path of your module and most importantly, it will show you the names of the dependencies, not just their namespace. For instance, you might find that the Android support library, referenced as com.android.support is actually called "appcompat-v7", which is the name you need to use when excluding it from your main build.gradle like this:<br /><br /><b>compile (project ("uaf")) { exclude module "appcompat-v7" }</b><br /><br />I think there are other exclude options (other than "module") so have a play around.

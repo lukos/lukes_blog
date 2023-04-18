@@ -1,0 +1,17 @@
+---
+layout: post
+title: A parameter cannot be found that matches parameter name 'Subscription'
+date: '2013-05-29T08:12:00.001-07:00'
+author: Luke Briner
+tags:
+- Azure
+- Publish-AzureServiceProject
+- PHP Azure
+- errors
+- cmdlet
+- parameter
+- php
+modified_time: '2013-05-29T08:12:54.214-07:00'
+---
+
+Never mind the winter of discontent or the night of the long knives, today has been the Powershell pain-in-the-a**e day. I think I have spent most of the day trying to fix one thing while breaking another. It all started with the suspicion that although the publish of my PHP Azure project went without error, it wasn't actually updating the live site, certainly with the newly changed files.<br /><br />Anyway, one of the errors I ended up with was the above when attempting to run my (previously working) Powershell deployment script. It turns out that the updated version of the Azure Powershell scripts has removed this parameter, something to do with a new way of deployment! Anyway, what you need to do now is the following:<br /><br /><pre>Select-AzureSubscription SubscriptionName<br />Publish-AzureServiceProject etc....<br /></pre><br />

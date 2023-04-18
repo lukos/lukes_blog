@@ -1,0 +1,15 @@
+---
+layout: post
+title: Accessing Azure Role Configuration from PHP
+date: '2013-04-26T06:48:00.000-07:00'
+author: Luke Briner
+tags:
+- Azure
+- role environment
+- configuration
+- php5
+- php
+modified_time: '2013-04-26T06:48:22.163-07:00'
+---
+
+This should be a simple thing, Azure recommends using Azure shared configuration for your instances which allows not only the values of these items to be hidden from PHP/.Net code but also allows them to be changed on the fly. How do you read them from PHP?<br /><br />Firstly, the configuration items are declared in the .csdef and .cscfg in exactly the same way as they are in .Net. They can be given values in the cscfg files or left blank and set after deployment if that floats your boat.<br /><br />You would think that you can just go and get <a href="https://github.com/windowsazure/azure-sdk-for-php" target="_blank">https://github.com/windowsazure/azure-sdk-for-php</a> which is the latest MS library for PHP Azure but for reasons which I can only assume are related to drink and drugs, it does not support access to the Role Environment of Azure where the configuration settings live.<br /><br />Do not cry, just download the older (deprecated!) version that the MS one is based on from <a href="http://phpazure.codeplex.com/" target="_blank">http://phpazure.codeplex.com/</a> and then once you have added this to your project in whichever way you fancy, use the following simple expression to get the value of a configuration variable from the Role Environment:<br /><br /><span style="font-family: &quot;Courier New&quot;,Courier,monospace;"><b>$myVariable = Microsoft_WindowsAzure_RoleEnvironment::getConfigurationSettingValue('ConfigItemName');</b></span><br /><br />Easy as pie.

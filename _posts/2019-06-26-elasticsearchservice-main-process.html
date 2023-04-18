@@ -1,0 +1,14 @@
+---
+layout: post
+title: 'elasticsearch.service: Main process exited, code=exited, status=78'
+date: '2019-06-26T01:57:00.000-07:00'
+author: Luke Briner
+tags:
+- yaml
+- Error
+- Elasticsearch
+- '78'
+modified_time: '2019-06-26T01:57:49.477-07:00'
+---
+
+I was following my own instructions for installing elasticsearch but attempting to run the service and it ended up exiting with this rather unhelpful message in syslog.<br /><br />There are probably other logs but like many applications, they are not designed to be user friendly, perhaps because the developers never have an trouble setting it up!<br /><br />Anyway, after some searching, I found out that ES carries out certain bootstrap checks on start and if they fail, it exits with a status code (and presumably some message somewhere!)<br /><br />In my case, by setting an explicit IP address in elasticsearch.yml for network.host, it switched ES into production mode which runs the checks.<br /><br />All I had to do was set <span style="font-family: &quot;Courier New&quot;, Courier, monospace;">discovery.type: single-node</span> in the same file, which sets it back into dev mode.

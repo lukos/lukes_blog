@@ -1,0 +1,24 @@
+---
+layout: post
+title: 'The remote server returned an error: (403) Forbidden'
+date: '2015-04-09T06:10:00.000-07:00'
+author: Luke Briner
+tags:
+- client cert
+- '403'
+- forbidden
+- mmc
+- visual studio
+- IIS7.5
+- ".net"
+- url
+- error 403
+- Certificates
+- iis express
+- web service
+- iis
+- visual studio 2013
+modified_time: '2015-04-09T06:10:12.088-07:00'
+---
+
+You know those pain problems that are slightly odd and shouldn't really still happen? This is one.<br /><br />Scenario:<br /><br />When I run up a .Net web app solution directly from Visual Studio 2013 using Debug (running IIS Express), my call to a web service works fine. This has worked for ages and is client-certificate secured, the certificate being specified in web.config and installed locally. The web service is hosted remotely.<br /><br />I wanted to test a more realistic example of the same solution using a real URL directing to 127.0.0.1 in my hosts file and using full IIS but now when I call the same web service method, I get the error above - 403. The <i>only</i>&nbsp;difference (or is it?) is running via the proper URL.<br /><br />The clue is in the error details which show the authentication method "anonymous", when it should be using a client certificate. Fortunately, I quickly compared this config with another to make sure nothing was changed accidentally by me.<br /><br />I quickly realise that the real URL is running as another user in IIS whereas IIS Express is running as me (an Administrator), which means that I have access to the private key of the certificate whereas the app pool identity does not. Very good for security so what do we do to give it access?<br /><br />You would imagine a simple option in MMC.exe which would allow you to set permissions but nope. You have to import the certificate into the Computer Personal Store (not your user one, which happens if you install by double-clicking in Explorer) and you <i>also</i>&nbsp;have to make it exportable when you import. Once you do this and right-click the certificate in mmc under the <i>computer</i>&nbsp;account snap-in, you get an option under All Tasks saying Manage Private Key, under which you can set permissions for your app pool user. You have to search for the user using <b>IIS AppPool\<i><app name="" pool=""></app></i></b>, because if you miss the first bit, windows can't seem to find the app pool name by itself (which is rubbish and should definitely work by now).<br /><br />And now it all works!

@@ -1,0 +1,13 @@
+---
+layout: post
+title: Project DLL not copied into bin directory of web site
+date: '2011-04-11T12:43:00.000-07:00'
+author: Luke Briner
+tags:
+- asp.net
+- GAC
+- project reference
+modified_time: '2011-04-11T12:46:29.990-07:00'
+---
+
+Simple situation. I reference a dll in the web.config of a site. I clicked "Add reference" and browsed to the directory where the dll was and added it with no problems. When it came to checking into source control and building, I got "Could not find type ..." which was muchos confusing.<br />It turns out that because the library I was referencing was the same version as one that I had installed in the GAC, it told the project to look in the GAC for the library rather than the location I had referenced. All very clever and very confusing. <br />In my case I could remove the library from the GAC and reference it again. This time I got a refresh file (which tells the project where to start looking for the library) which I checked in for safe keeping and all was good in the world. Nice!

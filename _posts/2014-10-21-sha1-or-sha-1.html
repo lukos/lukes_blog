@@ -1,0 +1,17 @@
+---
+layout: post
+title: SHA1 or SHA-1?
+date: '2014-10-21T06:49:00.000-07:00'
+author: Luke Briner
+tags:
+- Cipher
+- Java
+- Error
+- NoSuchPaddingException
+- BouncyCastle
+- Android
+- SpongyCastle
+modified_time: '2014-10-21T06:49:25.460-07:00'
+---
+
+I moved an Android project from Eclipse to Android Studio and the only other thing I think I did was to update the build target from Android 18 to Android 21 (v5). After doing this, though, the code crashed because it couldn't create an RSA cipher class using the following:<br /><br />&nbsp;final Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-1AndMGF1Padding");<br /><br />It produced the familiar, "javax.crypto.NoSuchPaddingException: OAEPWithSHA-1AndMGF1Padding unavailable with RSA."<br /><br />What was weird was that this code has been in place for months and working fine in our app, published and everything. I had a look at a few examples on the web and they were all missing the dash in the "SHA-1" part of the string: "SHA1".<br /><br />I changed it to remove the dash and it all worked again.<br /><br />I don't know why, I think it is because the old project was somehow using the spongy castle dependency whereas the new project in Android studio is somehow using the standard bouncy castle but I'm not sure where this is setup.<br /><br />What is also interesting is that according to PKCS#1, the correct string IS "SHA-1" and NOT "SHA1" but somehow this works in one and not the other!<br /><br />

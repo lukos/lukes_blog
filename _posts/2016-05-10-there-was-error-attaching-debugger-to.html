@@ -1,0 +1,14 @@
+---
+layout: post
+title: There was an error attaching the debugger to the role instance
+date: '2016-05-10T04:12:00.000-07:00'
+author: Luke Briner
+tags:
+- Azure
+- Error
+- debugger
+- iis
+modified_time: '2016-05-10T04:12:24.480-07:00'
+---
+
+Another great Azure error when debugging on my local machine. I tried clean, rebuild, restart windows etc. and I <i>knew</i>&nbsp;that I had not changed anything in the project that was previously debugging OK to make it break - what gives?<br /><br />When trying to debug, the azure emulator would start up and then you see the weird error above (plus extra stuff) and it shuts down again.<br /><br />Thanks to <a href="http://stackoverflow.com/questions/9409083/debugging-azure-error-attaching-the-debugger-to-the-iis-worker-proccess" target="_blank">this </a>article, I saw a hint that you can look into the iis configurator log and look for errors:<br /><br />Just type&nbsp;<strong style="background-color: white; border: 0px; color: #242729; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 15px; line-height: 19.5px; margin: 0px; padding: 0px;">%UserProfile%\AppData\Local\dftmp\IISConfiguratorLogs\IISConfigurator.log&nbsp;</strong>into your explorer bar and press enter.<br /><br />Inside mine, I saw the line: <b>Adding access to users IUSR and NT AUTHORITY\NETWORK SERVICE to path C:\Users\luke\Documents\Visual Studio 2013\Projects\etc</b> immediately followed by&nbsp;<b>Exception:System.InvalidOperationException: This access control list is not in canonical form and therefore cannot be modified.</b><br /><br />Weird error, basically some kind of permission thing obviously. I think it means that the permissions on the project directory are not the same across all of the sub-folders, which must have happened due to some crash or other.<br /><br />I went to the folder in question, edited the security settings in the properties and applied them to the folder. At this point, I had an error with an aspnet_client folder that was denied permission to update settings, despite being a local admin (thanks Microsoft)! I found the folder, manually deleted it, giving my "consent" to the process and after that, it all ran up OK. Obviously, if the folder is important, you might have to do something more long-winded to reset its permissions but you get the idea.

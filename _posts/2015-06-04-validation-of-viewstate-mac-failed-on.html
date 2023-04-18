@@ -1,0 +1,16 @@
+---
+layout: post
+title: Validation of viewstate MAC failed on mobile only!
+date: '2015-06-04T06:47:00.002-07:00'
+author: Luke Briner
+tags:
+- ".net"
+- asp.net
+- viewstate mac
+- viewstate
+- errors
+- validation
+modified_time: '2015-06-04T06:47:44.415-07:00'
+---
+
+This error has probably been seen by most .Net developers at some point and the solutions seem to be easy but yet they weren't working on my latest site, which was showing this error only on mobiles!<br /><br />ViewState is a way of storing control data in the page so that the server doesn't need to store everything for every single session. You can also store your own values in it, such as CSRF tokens and whatever else you want.<br /><br />These are all in a hidden form field and are signed by the server using (usually) HMACSHA1 or in .Net 4 HMACSHA2(56) and get posted back to the server. The server then uses its machine key to verify the value that has been posted still matches the signature. If not, it assumes someone has tinkered with the value of ViewState and shows the above error in all its glory!<br /><br />So when does it fail validation without it being an error?When the machine has recycled/rebooted and has re-generated its machine key, the signature process will obviously produce different values and will look wrong.<br /><br />It can also happen in a web server farm since each web server will produce its own machine key and a request being posted back to a different server will fail validation. This is usually fairly consistent unless you are expecting sticky sessions where the same session gets linked to a single server but for some reason that hasn't happened.<br /><br />The problem in my case was that I have a single server and even when I recycled the app pool for the server, it never seemed to fail from the desktop so I assumed that the machine key was safe. In fact from IIS 7.5, the machine key is supposed to be written to a special area that is accessible by all users to avoid a previous permission problem when an app pool tried to write keys to the registry.<br /><br />Well, whatever was happening, the problem is that Chrome mobile is caching so heavily that even when it looks like it's refereshing, it isn't refreshing (even entering the address bar and pressing Enter or loading it on another tab). It resubmits the same stale page with the old viewstate and it fails validation. The only way I managed to force the reload was to redirect all http to https on the server (something I was going to do anyway) and then it seemed to reload OK.<br /><br />Fortunately, the solution is pretty easy in all cases - hard-code a key into the web config and so the site always uses the same signing key.This uses the machineKey element under system.web and you can generate a key <a href="http://www.developerfusion.com/tools/generatemachinekey/" target="_blank">here</a>.<br /><br />Once that has done, it should hopefully stop all instances of this occuring across deployments, but I am going to add a fairly short cache duration on the main page just to try and give it some extra help!

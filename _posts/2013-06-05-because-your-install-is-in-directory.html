@@ -1,0 +1,17 @@
+---
+layout: post
+title: Because your install is in a directory, the sites in your WordPress network
+  must use sub-directories.
+date: '2013-06-05T04:08:00.002-07:00'
+author: Luke Briner
+tags:
+- wordpress
+- subdomains
+- errors
+- multisite
+- sub-domains
+- options
+modified_time: '2013-06-05T04:08:38.050-07:00'
+---
+
+This was doing my nut in! I was installing (what I thought) was a vanilla installation of WP for multi-site but in the network setup, I got this error. This error is meaningful in the case where your site is not in the root of your web server but in a sub-directory (folder) like example.com/mysite, subdomains requires the use of the document root.<br /><br />The problem with the error is that it is also displayed if you are accessing your site via "localhost" or an ip address - which in my case I was doing while I was waiting for a new DNS entry to be setup. What this meant was that the wordpress installation had used my ip address in its configuration rather than the domain name I intended to use.<br /><br />What I had to do was access the WP database (I used phpmyadmin) and edit two entries in wp_options table, the entries for siteurl and home, changing them to my domain name.

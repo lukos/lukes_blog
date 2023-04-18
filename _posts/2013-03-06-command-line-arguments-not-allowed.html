@@ -1,0 +1,14 @@
+---
+layout: post
+title: Command line arguments not allowed during New User Setup
+date: '2013-03-06T04:31:00.003-08:00'
+author: Luke Briner
+tags:
+- backup
+- errors
+- Command line arguments not allowed
+- SpiderOak
+modified_time: '2014-08-29T02:09:44.743-07:00'
+---
+
+I am using SpiderOak for backup and I like the idea. It is dead easy to setup and use and you get 2Gb for free so you can essentially try before you buy. The only problem you sometimes encounter is this dreaded error which sounds obvious to fix but isn't always.<br /><br />Anyway, I have a headless Linux box running SpiderOak and when I log in and run it, it works fine but when it runs from cron.daily, I get the above error emailed to me.<br /><br />The actual issue is easy once explained. Cron (in my case and by default) runs as root. When I log into the box, I log in as me. The error occurs because root looks for a .SpiderOak directory in its home folder but there isn't one because I set it up and it lives in my folder. EDIT apparently in later versions the directory is called .config<br /><br />All I've done is sudo cp the folder into /root and let root find it.<br /><br />Beware that if I log in again and change my folder selection, I need to re-copy this into root. You can setup anacron to run as another user but that was a bit of a ball-ache so I'd rather do it this way.

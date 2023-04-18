@@ -1,0 +1,13 @@
+---
+layout: post
+title: Not another "security breach"
+date: '2010-04-14T01:35:00.001-07:00'
+author: Luke Briner
+tags:
+- security
+- web security
+- web applications
+modified_time: '2010-04-14T01:45:59.324-07:00'
+---
+
+I was reading today about hackers who compromised Apache.orgs servers and obtained the passwords of various users. An interesting part of the article is this: "The breach, the second to hit Apache.org in eight months, also exposed a much larger list of passwords belonging to people who accessed the site's bug-tracking section. While the databases used a one-way hash to disguise the passwords, two of the lists are vulnerable to dictionary attacks because Atlassian, the maker of issue-tracking software used by Apache, failed to add "random salt" to them."<br /><br />Now in short, a hash is supposed to change some text, say a password, into something that doesn't bear any obvious relationship to the original password. When someone logs in, the password they type is hashed in the same way and compared to the stored hash without ever having to actually know the password. This is all well and good except that hashing algorithms are publically available which means it is possible for a hacker to run loads of dictionary words through the hash and store the results in a database table. Then if you know the hash, you can do a lookup in your database table and assuming it is a normal enough word, you will probably find the original password. Couple this with people who use the same passwords for lots of systems and disaster is afoot (assuming you can gain access to the hashed passwords). So hashing is not in itself a silver bullet security system. HOWEVER, it is possible to make it more secure with something called salting which I have covered in an earlier post.<br /><br />Again, the main point is not that there was a failure but all these vulnerabilities are already known about yet they still occur, even in high-profile organisations like Apache. At what point is something like OWASP going to become a mandatory badge for web software so that it includes tickboxes like "I have added at least 8 bytes of salt to passwords before hashing". Whether the badge is voluntarily added or carried out by an auditer, at least when failures occur, companies can be prosecuted for not adhering to the checks. It seems so obvious but sadly I can't see it happening for a while.

@@ -1,0 +1,13 @@
+---
+layout: post
+title: The request signature we calculated does not match the signature you provided
+date: '2019-10-23T01:19:00.003-07:00'
+author: Luke Briner
+tags:
+- ses
+- simple email service
+- aws
+modified_time: '2019-10-23T01:19:55.456-07:00'
+---
+
+This is a very common error people receive when trying to use the Amazon SES SDK to send email. You follow all the instructions to build the most simple test application and when it comes to sending, you receive the following error:<br /><br /><i>The request signature we calculated does not match the signature you  provided. Check your AWS Secret Access Key and signing method. Consult  the service documentation for details.</i><br /><br />This is confusing. You didn't provide a signature, you used the SDK and presumably it provided a signature. It sounds like there are a number of ways to cause this error including having whitespace at the beginning or end of certain fields like email addresses (the server will trim these before calculating the signature) but a much more worrying broken use-case, even after 10 years is simply:<br /><br /><b>Your secret key has non alpha-numeric characters in it!</b><br /><br />Yes, that's right. Although it is a base-64 type generated string, and although it was provided to you by Amazon in the IAM portal, if you have any + or / symbols, something happens somewhere with URL encoding and the signature process fails.<br /><br />The only workaround is to keep re-generating the access key/secret pair until you get one with just alphanumerics then it works.<br /><br />This is shocking for a company who famously employs the "best" engineers to produce their code. The truth is that they either don't care or don't have an agile enough development process which might be because they have too much legacy code and don't know the effect of any changes. I can't see why they can't just use alpha-numerics for all secret keys. They are long and random enough not to be guessable without + and /.<br /><br />

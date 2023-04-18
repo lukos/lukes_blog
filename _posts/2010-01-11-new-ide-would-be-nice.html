@@ -1,0 +1,10 @@
+---
+layout: post
+title: A New IDE Would be Nice
+date: '2010-01-11T13:56:00.000-08:00'
+author: Luke Briner
+tags:
+modified_time: '2010-01-11T14:03:03.362-08:00'
+---
+
+Most things are like church. You carry on doing things the same way you always have until someone asks why and no-one really knows. You just have.<br />Take the trusty Integrated Development Environment (IDE) I use Visual Studio mostly and to be honest it isn't bad from a usability point of view. However, I have been reminded recently how easy it is to introduce bugs into code because at the end of the day these IDEs are generally little more than glorified text editors. OK, we all know in theory that our design tools generate code for us so we can't make mistakes but in reality we do, we change the name of something and the best we get is an auto-prompt asking what word we want. If we change a name then maybe the compiler will find any dependencies and show us errors. At best this is time consuming but at worst if you are using late-bound technologies/reflection etc then your program can fail at run-time.<br />Rather than a text editor, it would be nice to see a tool that I guess is more like a design tool but treats fields and functions as symbolic objects that can be linked symbolically rather than by name. This way they can be renamed willy-nilly and can have properties attached (meta-data) such as pictures, descriptions etc that can form something much more rich and useful than plain text and hopefully, eventually, something more robust that is harder to break when we modify and refactor, something that even, maybe, can prevent us making errors in code since it will not permit broken symbolic links, will not permit us to leave pointers un-initialised etc and will lead to high quality software that doesn't have the usual umpteen thousand bugs when it goes into system test for the first time.<br />Maybe...

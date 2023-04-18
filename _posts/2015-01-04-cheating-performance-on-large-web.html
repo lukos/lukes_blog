@@ -1,0 +1,16 @@
+---
+layout: post
+title: Cheating performance on large web applications
+date: '2015-01-04T05:40:00.001-08:00'
+author: Luke Briner
+tags:
+- database
+- databases
+- scalability
+- replication
+- performance
+- perception
+modified_time: '2015-01-04T05:40:25.087-08:00'
+---
+
+One of the biggest problems that a developer or DBA should never face is replicating across multiple databases. If you only ever write to one database and copy to a set of read-only databases, that is not so bad but if you ever have to replicate in two directions, you have a whole world of pain.<br /><br />But what do you do when you simply cannot get decent enough performance from your one master database? Do you have to accept the replication burden? Not necessarily. You can sometimes cheat.<br /><br />One of the skills of a good developer is thinking about things from a usability point of view, rather than a purely technical point of view. For example, imagine you are writing a post on Facebook. Most engineers would think that a successful performance would be when the data has been written to the master database and propagated across all other copies of the data right? If that took longer than, say, 3 seconds, you would start to get into problem land. But let us consider this from a user point of view. What do I actually want here? I want to add a post and know that it has been sent to Facebook - I simply want feedback that my job has been done - I don't actually care, or expect, my friends to read it straight-away or 30-60 seconds later if it takes that long to move around the world.<br /><br />This is a good Facebook example of cheating performance and it is not actually massively complicated. The user types in their text, perhaps attaches an image and what happens next? Before the data has actually been written to the master database, the web page is simply modified in Javascript and the text and image, that both live on the client anyway, are displayed to the user as if they already live on their timeline. That suits the user since it is feedback that the data is accepted. What then happens <i>asynchronously</i>&nbsp;is that the data is queued to write to the master database that could take 30 seconds or more if it is busy so no-one else will see the post until that has happened but it doesn't matter. The user perceives speed and responsiveness, the master database can take its time consuming the data and replicating it across the other databases and Facebook can avoid two-way replication.<br /><br />It can be hard taking a step back from coding problems and this is where it can be useful to get other people's ideas. Thinking about what you actually <i>need</i>&nbsp;from the user's perspective helps ask the question of which parts need to actually be quick and which parts can we queue asynchronously to happen at some suitable point?

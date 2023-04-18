@@ -1,0 +1,17 @@
+---
+layout: post
+title: 'SQL Azure CREATE USER fails with error '
+date: '2012-12-18T08:42:00.001-08:00'
+author: Luke Briner
+tags:
+- CREATE USER
+- sql server
+- Azure
+- CREATE LOGIN
+- visual studio errors
+- errors
+- SQL Azure
+modified_time: '2012-12-18T08:42:50.432-08:00'
+---
+
+This was driving me nuts and I had to trawl around for ages before working it out. I had created a SQL Azure server instance and a new database and was trying to use the VS2012 comparison tool to update this database with my latest changes.<br />One of the updates was to add a user called pp which related to a login called pl. The deployment failed with the error, "<b>'pl' </b><strong style="-webkit-text-size-adjust: auto; -webkit-text-stroke-width: 0px; background-color: white; border: 0px; color: #333333; font-family: 'Segoe UI', 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif; font-size: 13px; font-style: normal; font-variant: normal; font-weight: bold; letter-spacing: normal; line-height: 16px; margin: 0px; orphans: 2; outline: 0px; padding: 0px; text-align: left; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px;">is not a valid login or you do not have permission</strong>". I was logging in using the pseudo-sa account and I check in the master database and the login did exist which made the error even more infuriating.<br />As an aside, if you need to create logins, you have to create them against the master database which is a kind of Azure manager database over your logical servers.<br />Eventually putting 2 and 2 together with some forum posts, it seems that the admin user you create when you first create your database server gets its own SQL server login and the role dbo. This was a few weeks back and I hadn't really remember doing this. What it means is that you cannot add a user for the login since it already has a system user but since my deployment couldn't handle that scenario (and I'm kind of glad it warned me) it all fell over.<br />Looks like you can't modify this user or rename it and it so happens that I had used the same name as the web application user from my project hence the conflict.<br />What I ended up doing to keep the consistency across all my deployments, was to delete the database from the old SQL Azure server and create a new server with a different 'sa' type account name. After doing this, it was all fine, I created the new login against the master database and then created the user via the comparison project in Visual Studio.<br />I find it quite tricky balancing the security of having things different in different places with the ease of deployment of having things the same across all test and deployment servers.

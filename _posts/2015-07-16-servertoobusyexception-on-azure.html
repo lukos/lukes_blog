@@ -1,0 +1,20 @@
+---
+layout: post
+title: ServerTooBusyException on Azure
+date: '2015-07-16T06:09:00.000-07:00'
+author: Luke Briner
+tags:
+- error 503
+- Swap
+- Azure
+- Error
+- ServerTooBusyException
+- errors
+- iis
+- Live
+- Stage
+- unavailable
+modified_time: '2015-07-16T06:09:08.665-07:00'
+---
+
+A weird one with an obvious cause (once I worked it out). I had a staged and a live instance of a web service with two urls - one pointing to each. I wanted to make the staged web service live and did a swap in Azure, after doing this, the live web application stopped working and I got the exception above as well as:<br /><br />The HTTP service located at https://live.mycompany.co.uk/WebService2.svc/standard is unavailable.&nbsp; This could be because the service is too busy or because no endpoint was found listening at the specified address. Please ensure that the address is correct and try accessing the service again later.<br /><br />The weird thing was that when I swapped them back, the test web application talking to this same web service worked fine! The server was definitely too busy. I tried again just in case it was temporary but same error.<br /><br />I panic'd but realised I could run the live web app on my local machine in debug mode and see what was going on. I pointed the live web app to the test web service using stage.mycompany.co.uk.... and it worked fine. I then had an idea. What if I pointed it to live.mycompany.co.uk BUT use a hosts entry to point that URL to the test web service. That should be the most accurate reproduction of the live problem.<br /><br />Hey presto: I got the same error but this time I could drill down into the inner exception, which actually was a 503 error from IIS - Service Unavailable. The additional detail showed that the problem was the web app was looking for a web service with a specific host header (live.mycompany...) but since this was the test web service, it only had a host header for stage.mycompany...) so there was no web site to serve the content. Like many errors in IIS and .Net, there is some ambiguity which is not helpful but at least I found out the problem:<br /><br />Solution<br /><br />Edit the csdef file to set the correct hostHeader for the live site binding element and I also edited a publish profile, which I didn't know was relevant or not but which also had the test values in it.<br /><br />Re-publish and voila. Relief!

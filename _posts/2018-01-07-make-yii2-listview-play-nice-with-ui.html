@@ -1,0 +1,17 @@
+---
+layout: post
+title: Make Yii2 ListView play nice with UI frameworks
+date: '2018-01-07T09:15:00.002-08:00'
+author: Luke Briner
+tags:
+- CSS
+- widget
+- grid
+- yii2
+- div
+- ListView
+- php
+modified_time: '2018-01-07T09:15:37.392-08:00'
+---
+
+This is probably quite a common scenario: you are using a framework control, in my case a Yii 2 ListView, and trying to render a list of items that will form a coherent grid on the page.<br /><br />The easiest way to get a grid is to use your UI grid - I am using Ink:&nbsp;<a href="http://ink.sapo.pt/">http://ink.sapo.pt/</a> and I like the fact that it is slightly more square than Bootstrap and looks imho more modern as a result.<br /><br />Anyway, if you render a ListView by default (and I guess the same in other web frameworks) it tries to help by wrapping items in divs with a class and id, which obviously allows CSS flexibility but in my case, breaks the grid selectors from Ink, which are looking for direct descendants of the Ink grid (rightly or wrongly) and so it breaks.<br /><br />In the case of the ListView, however, you can disable these divs by using options (for the whole list) and itemOptions (for each item). Of course, as well as removing them, you could customise them if that is what you want. What I ended up with is simply:<br /><br /><pre>&lt;?php echo ListView::widget([<br />    'dataProvider' =&gt; $dataProvider,<br />    'itemView' =&gt; '_lessongroup',<br />    'summary' =&gt; false,<br />    // The following are the two important lines for this example<br />    'itemOptions' =&gt; ['tag'=&gt;false],<br />    'options' =&gt; ['tag'=&gt;false]<br />]);?&gt;<br /></pre><br />It's always worth having a dig through the code of these framework controls, it is usually fairly easy to find out whether code is always rendered or whether there is some way to remove or override it.<br /><br />Google might also be your friend!

@@ -1,0 +1,14 @@
+---
+layout: post
+title: "`Cannot autolaunch D-Bus without X11 $DISPLAY`"
+date: '2021-01-20T08:14:00.004-08:00'
+author: Luke Briner
+tags:
+- docker
+- login
+- TeamCity
+- docker-compose
+modified_time: '2021-01-20T08:14:44.645-08:00'
+---
+
+<p>&nbsp;Another entry into the hall of fame for worst error (unless you understand what is happening under the covers!).</p><p>This is when attempting to login to a container registry to push a docker image. The same code worked earlier, the only difference is that I have since installed docker-compose. Sure enough, found this thread: https://github.com/docker/compose/issues/6023</p><p>The basic gist is that the ubuntu package for docker-compose is junk. It has a dependency on some golang provider or other which terribly has a dependency on X11 which is not present on a headless server. Yuck.</p><p>Although I had already uninstalled docker-compose with apt and manually installed the latest version earlier, I ALSO had to make sure that I ran apt autoremove to remove some of the packages that were installed by docker-compose but not automatically removed. Once I did that, it worked fine without the horrible GPG type workaround!<br /></p>

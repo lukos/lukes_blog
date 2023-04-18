@@ -1,0 +1,14 @@
+---
+layout: post
+title: Working on a live database
+date: '2010-12-07T03:11:00.000-08:00'
+author: Luke Briner
+tags:
+- databases
+- sql server
+- sql server 2005
+- sql
+modified_time: '2010-12-07T03:23:16.725-08:00'
+---
+
+Even if you have a test system to try out some new functionality, at some point it needs to be deployed to live. If you are lucky, this is done by copying the up-to-date test system over the top of live but in reality, most of us have to modify the live database directly, perhaps during a small time-slot and then it is expected to work.<br />There are a number of problems that are associated with live databases, specifically SQL server in my case, that are worth knowing before you go and break something.<br /><ol><li>If you can, avoid altering or removing any tables/columns in the first place. If you can avoid this and perhaps leave a few dead things in place, you are less likely to break something.</li><li>If you can use some tools like Red Gate to search for references to your objects, it can help you track down what might break. Red Gate also make a tool for moving objects from a test to a live database in a GUI rather than manually.<br /></li><li>For any objects that are accessed by something external to the database, mark these with schemas so you know that there might be knock on effects to other systems. e.g. webapp.procUserFetch<br /></li><li>Avoid selecting * from anything since this hides whether a specific column is referenced or not.</li><li>If you are adding a new column, make sure it is nullable, even if it ultimately won't be. This avoids any existing inserts failing due to the lack of a value for the new column.</li><li>Try not to rename columns if you really don't need to. You can always alias them in a select statement.</li><li>Adding new tables, procs and views is safe</li><li>If you change a table structure, you must use sp_refreshview on the views that reference it otherwise their cached query plan can be out-of-date and you won't know until some funny data is returned in the select.</li><li>If you are deleting objects, rename them first or move them to a dead schema so that they can quickly be restored if there are any problems. You can put the rename date in their new name and after a week or so, delete them permanently.</li><li>If you can, script the new or changed objects and store them in a repository so you can track and blame changes that are made.</li><li>Use the format procNameVerb when creating stored procedures so that like procs are listed together e.g. procUserInsert rather than procInsertUser.</li><li>Have a backup of the database if you are making major changes so that you have a last-resort way of falling back to a known-working copy.<br /></li></ol>

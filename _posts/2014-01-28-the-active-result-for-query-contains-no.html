@@ -1,0 +1,15 @@
+---
+layout: post
+title: The active result for the query contains no fields
+date: '2014-01-28T09:05:00.000-08:00'
+author: Luke Briner
+tags:
+- pdo
+- sql server
+- errors
+- php
+- query
+modified_time: '2014-01-28T09:05:08.352-08:00'
+---
+
+Ever had this when calling into SQL Server from PDO in PHP? Well I have. It occurs because of the way in which SQL Server returns multiple results if you are calling a stored procedure with multiple statements in it. For instance, INSERT will return the number of rows affected, as will UPDATE. These are returned to PDO (but stripped out automatically when using SQL Server classes in .Net) which means you code, which looks like this:<br /><br />$results = $command-&gt;queryRow();<br />$mobileEnabled = $results['mobileenabled'];<br /><br />Even if your stored procedure appears to returning something like SELECT SCOPE_IDENTITY.<br /><br />You need to do two things.<br /><br />1) SET NOCOUNT ON at the top of your stored procedure<br />2) Ensure you use an alias for the returned value: SELECT SCOPE_IDENTITY() as mobileenabled<br /><br />This should ensure you get no intermediate results and you can use array syntax to retrieve the value returned.

@@ -1,0 +1,13 @@
+---
+layout: post
+title: Ajax, javascript and postbacks
+date: '2010-05-12T03:45:00.000-07:00'
+author: Luke Briner
+tags:
+- asp.net
+- javascript
+- Ajax
+modified_time: '2010-05-12T03:54:14.136-07:00'
+---
+
+The number of times I have this problem! You create a page that uses updatepanels and MS Ajax which, to be fair, is pretty good and works with little understanding of what's going on. Then, however, we also use javascript libraries for added coolness and to carry out work on the client and need to manually call a postback on the server after carrying out work in javascript. You manually call __doPostBack and you might get a postback but it doesn't call the event handler, you might get a premature postback or maybe no postback at all. To make things worse, the name and id of the control have been mangled by the placeholders so the btnExit id might now be ctl00_MyContentPlaceHolder_btnExit. It all gets confusing. Well here's what you do:<br /><br />Create your button as usual and allow its names to be mangled (not sure if you have any choice!). Then add a click handler either using onclientclick or we use <span style="font-weight:bold;">jQuery.click(function(e) { })</span> functionality. If using jQuery, call <span style="font-weight:bold;">e.preventDefault()</span> on the passed in event which will ensure you don't get the auto-postback which you get with submit buttons and then carry out your javascript functionality, possibly with the result deciding whether to postback. When you're done, call __doPostBack() with the NAME of the button control (the one with dollar signs usually) and a blank string for the arguments. You should have no problems. e.g.<br /><br /><span style="font-weight:bold;">__doPostBack('ctl00$BodyContentPH$ButtonAddLocation', '');</span>

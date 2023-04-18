@@ -1,0 +1,14 @@
+---
+layout: post
+title: Your approach to query optimising
+date: '2010-12-30T04:52:00.001-08:00'
+author: Luke Briner
+tags:
+- sql server
+- performance
+- sql server 2005
+- join
+modified_time: '2010-12-30T05:04:45.431-08:00'
+---
+
+Optimising a query in SQL Server is a bit like trying to pimp your car. You might think <span style="font-style: italic;">logically </span>that<span style="font-style: italic;"><span style="font-style: italic;"> </span></span>putting in an engine with more horsepower will increase the performance of your car when in reality there are other factors that might limit this or at least that might break! In the same way, using the execution plan, you can concentrate on changing a table scan to an index seek and feel victorious only to discover it has made little difference on the bottom line. This can be for a number of reasons:<br /><ol><li>If you have many joins in the execution plan, then one of these might only be 0.5% and decreasing this to 0.25% although a lot for the one object adds up to little in the overall scheme of it. Consider simplifying the query or creating a smaller query to use in a specific place.</li><li>If the number of rows or columns that you are querying is small, then there might not be a great deal of difference in performance between various indexes or the table itself.</li><li>If you join on text/varchar/etc columns, you can incur a large overhead which includes not just the memory/IO itself required for more bytes of comparison but also the fact that you cannot include large text columns in 'index columns' if it would push the total size of key to more than 900 bytes. If you simply add it to the 'included columns' which is permitted, the index will not be used when joining on the text column. Try and use integer ids wherever possible.</li><li>You might see "Index Seek" and think this is the best you can get but actually if this Index Seek is carried out on a large index, it might be much slower than it needs to be. You can try this by creating the bear minimum index for what you need and running the query again.</li><li>Use the cost % information to decide where your bottlenecks are. If you have hundreds of joins all of less than 1%, then you are probably only able to achieve small improvements, whereas if one or more costs is significant (>10%), especially if it is under a table or clustered index scan, you can probably achieve large time savings by optimising these.</li><li>As a last resort (or a first resort if you can!), there are two things you can do. Design things differently so you can simplify the query (reduce the number of joins, rows or columns) or otherwise run the query from a job and dump the results into a cache table which can be used in certain areas that can avoid running the query and can live with data that is a number of minutes or hours out of date.</li></ol>

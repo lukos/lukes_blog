@@ -1,0 +1,15 @@
+---
+layout: post
+title: Yii 2 not translating messages
+date: '2015-01-05T06:33:00.000-08:00'
+author: Luke Briner
+tags:
+- translation
+- Yii
+- dbmessagesource
+- i18n
+- yii 2.0
+modified_time: '2015-01-05T06:33:01.665-08:00'
+---
+
+The short version is: "developer error" but I thought a subtle piece of logic might also catch some of you guys out like it did to me.<br /><br />I was just testing a simple translation using DbMessageSource. The DB tables were setup and they had one entry - my site name. This was because I don't yet know what my product is going to be called but don't want to find and replace it everywhere. It seemed like a good idea to call it "sitename" everywhere and use the translation system to give it a real name.<br /><br />It didn't work, Even the missing translation event handler didn't fire and I was really confused. There isn't that much logging built into the Yii framework classes to work out what is going on but after a few hours of digging and around and trying things out, I realised:<br /><br /><b>The translation system won't do anything if your source and target languages are the same!</b><br /><br />I hadn't got as far as actually setting the languages up, I just wanted the translation system ready to go. That means that my source and target language are both set at the default (en-US) so the translation system thinks it has nothing to do. It turns out you can enable forceTranslation but the experience made me realise I was using it for the wrong thing. Instead of using the translation system for basically a global variable, I put it instead into my params array and created a single function in the application to return the parameter translated if needed and which could be used throughout the app by calling \Yii::$app-&gt;getSiteName()<br /><br />Easy when you know how.

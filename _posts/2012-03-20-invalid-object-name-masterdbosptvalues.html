@@ -1,0 +1,12 @@
+---
+layout: post
+title: Invalid object name 'master.dbo.spt_values'
+date: '2012-03-20T06:37:00.000-07:00'
+author: Luke Briner
+tags:
+- sql server
+- errors
+modified_time: '2012-03-27T03:19:27.386-07:00'
+---
+
+You might have found this unusual error when trying to right-click a database in SQL Server Management Studio (to get properties etc). It is caused by tables that have been deleted from the master database, which can be caused by various inerrant processes!<br />Anyway, to fix it, run u_tables.sql from the install directory of your SQL server instance and this will recreate most of the tables you need and get you back up and running.

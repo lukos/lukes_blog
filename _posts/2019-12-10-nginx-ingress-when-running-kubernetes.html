@@ -1,0 +1,15 @@
+---
+layout: post
+title: nginx ingress when running Kubernetes off-cloud/bare-metal
+date: '2019-12-10T07:19:00.002-08:00'
+author: Luke Briner
+tags:
+- nginx
+- bare-metal
+- kubernetes
+- load-balancing
+- ingress
+modified_time: '2019-12-10T07:19:50.614-08:00'
+---
+
+So I came across one of those issues that seem surprising consider how popular that Kubernetes is and that is the issue where bare-metal installations are inferior relatives that aren't supported very well compared to cloud providers.<br /><br />We use Azure Kubernetes Service for production but this is too expensive to use for a very small shared dev instance. Fortunately, MicroK8s provides a simple solution that can be installed directly on an Ubuntu VM but I was struggling to copy what we have in production.<br /><br />In production, we run an Azure load balancer with an nginx ingress. We get the high performance load balancer but also use routing to send the requests to individual microservices based on path. This avoids having lots of very expensive load balancers, which we don't need at our current loading. This works great and we get nginx to terminate TLS and pass http only to the microservices.<br /><br />This doesn't work when installed locally.<br /><br />For a start, you cannot use Load Balancers when off-cloud. There is a MetalLB project, which calls itself Beta and might be OK for dev although with my limited k8s knowledge, I would rather not have weird errors due to MetalLB that I can't debug.<br /><br />The instructions for using ingress are very convoluted and confusing on microk8s and it is hard to know exactly what is happening since it seems you have to combine it with other <strike>hacks</strike> workarounds to make it work. How do you get an external IP for an internal ingress? I think the theory is that you can simply use a nodeport to point the outside world directly into a node where nginx can then route back to other nodes. Not ideal but it would work as long as that node was up. The other big problem is that you introduce non-standard ports since the normal 80/443 ports are often used by system services so that didn't really seem like a great solution.<br /><br />I then found another article listing some alternatives and for some reason, the one at the bottom, should have been the one at the top, talked about using nginx simply as a reverse proxy completely outside of the cluster but on the same host. This allows us to call directly into port 443 on the host, terminate ssl in nginx and then proxy_pass to specific nodeports depending on the url/hostname.<br /><br />We are only using a single node for dev so we don't actually need any load-balancing, just the ssl and routing and after a fairly standard nginx install and setting up SSL, it all just worked!<br /><br />Currently, it seems like the best solution for us. You could probably do the same with a separate proxy host forwarding to separate nodes with a load-balanced set but I will leave that to you!

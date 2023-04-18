@@ -1,0 +1,16 @@
+---
+layout: post
+title: Azure App Services (Websites) - Cannot find the X.509 certificate using the
+  following search criteria
+date: '2016-10-14T02:18:00.000-07:00'
+author: Luke Briner
+tags:
+- Azure
+- ssl
+- storename
+- app services
+- X.509
+modified_time: '2016-10-14T02:18:16.423-07:00'
+---
+
+Deployed a brand new WCF .Net web service to Azure App Services and when trying to load up the svc file in the browser, got the message above.<br /><br />Here's what you need to know:<br /><br /><br /><ol><li>You need to upload the required certificates to the Azure portal</li><li>You need to make sure that you are referencing the certs from the CurrentUser store, NOT the LocalMachine store. App Services uses shared hardware so you can only access the CurrentUser location.</li><li>You need to add an App Setting to tell the service which certs to make available to the web service. You only need to do this for certs referenced in the app, not for certs you are only using for an SSL endpoint. The key is&nbsp;WEBSITE_LOAD_CERTIFICATES and the value is 1 or more comma-delimited thumbprints for the certs you want to load.</li><li>You CANNOT add this only in the web config file, despite Azure merging portal and web config values, it MUST be added in the portal to the Application Settings tab.</li></ol>

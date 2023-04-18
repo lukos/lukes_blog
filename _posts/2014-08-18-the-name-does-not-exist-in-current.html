@@ -1,0 +1,19 @@
+---
+layout: post
+title: The name does not exist in the current context - Master Pages
+date: '2014-08-18T07:53:00.000-07:00'
+author: Luke Briner
+tags:
+- compiler error
+- visual studio 2012
+- Error
+- visual studio errors
+- errors
+- web application
+- visual studio
+- Master Pages
+- the name does not exist
+modified_time: '2014-08-18T07:53:23.149-07:00'
+---
+
+I was having a really annoying problem trying to compile my Visual Studio solution with random errors about two controls that were definitely on the master page. They were referenced in the .cs file but every now and then, I would get, "The name .... does not exist in the current context". I would comment out the affected lines and it would build fine and then at a later date, uncomment them and they were still fine.<br /><br />It turns out, I had made a very sloppy copy-and-paste error when creating a second master page and instead of referencing the correct CodeBehind file, I was referencing the code behind for the original master page in both .Master files.<br /><br />The effect was that the second file had no Designer.cs file created for it and therefore the compilation was failing. Apparently, in some scenarios, it did find what it was looking for, I'm guessing in the original designer file and then it would build OK. Every change to the master page made it all fail again.<br /><br />Anyway, I had to change the CodeBehind attribute to be correct, right-click the second master page and choose "Convert to web application" so that it would generate a designer.cs file and then all the problems went away!

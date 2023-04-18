@@ -1,0 +1,14 @@
+---
+layout: post
+title: Forget Eclipse, it's all about Android Studio
+date: '2014-10-21T06:55:00.000-07:00'
+author: Luke Briner
+tags:
+- Android Studio
+- development
+- Eclipse
+- Android
+modified_time: '2014-10-21T06:55:40.110-07:00'
+---
+
+I finally got so annoyed with using Eclipse for Android development that I decided to take the plunge and use Android Studio instead. It is based on Intelli-J Idea and feels so solid. Using Eclipse is like driving a very old car, you feel nervous because do something slightly wrong and it breaks. Despite numerous updates and goodness knows how much effort by lots of developers, it is virtually unusable in a development team since errors are so numerous and the IDE so flaky.<br /><br />Copy and paste starts acting weird if you switch windows in the wrong way (the original window stays as the target). There are all kinds of issues with memory usage, I started getting out of memory errors when trying to debug even though I hadn't changed anything! Even navigating the IDE was basically terrible. The idea of separate "perspectives" is weird, especially since menu items change, meaning you can only do certain things from a certain "perspective". Debugging is flaky at best, sometimes hovering over a variable shows its value, other times it doesn't. The debugger doesn't seem to stop at the place where an exception is triggered, it breaks in some other thread and you have to use the call stack dumped out to try and navigate, sometimes clicking on the lines doesn't take you to a file.<br /><br />Anyway, Android Studio docs told me to "export from Eclipse" to generate the correct Gradle build files required by Android Studio whereas the Eclipse export dialog told me to "import into Android Studio". Great! The decision was made when Eclipse crashed again while attempting to generate the Gradle build files.<br /><br />The first thing I did was find and delete all the myriad of Android SDK locations that had been created by various managers/IDEs and then installed Android Studio. This installs the sdk under its own directory which is nice and neat! I then ran the Android SDK manager, downloaded everything again (which took ages) and ran up the studio.<br /><br />"Import project", chose the Eclipse project and it did a wonderful thing. It copied the project into a new location, leaving the old rubbish where it was. It moved the files into a slightly different structure (for Gradle reasons) and more importantly, it no longer required dependent projects to all live in the same workspace, they were automatically converted to Gradle dependencies.<br /><br />It pretty much all worked as expected, I just had to learn some slightly different terminology and, of course, change SHA-1 to SHA1*<br /><br />* See previous blog post

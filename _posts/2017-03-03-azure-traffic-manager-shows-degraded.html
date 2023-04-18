@@ -1,0 +1,18 @@
+---
+layout: post
+title: Azure Traffic Manager shows degraded status for App Services https
+date: '2017-03-03T02:51:00.001-08:00'
+author: Luke Briner
+tags:
+- degraded
+- Traffic Manager
+- Azure
+- HTTPS
+- HTTP
+- Web sites
+- app services
+modified_time: '2017-03-03T02:51:52.842-08:00'
+thumbnail: https://2.bp.blogspot.com/-nJ2uweUs4rk/WLlKe7Fs0HI/AAAAAAAAA4s/EDb_7gjHTHUkFQ94um_l5oeH1uNPg67lQCLcB/s72-c/Capture.PNG
+---
+
+I was surprised to see that the endpoints that Azure Traffic Manager was monitoring were showing degraded.<br /><br />I looked into it and Google said that the Traffic Manager would check for a 200 response (and it won't follow 3xx responses) from the site but from where was it calling?<br /><br />I thought that the problem might be the http-&gt;https redirect I had on the site so I needed the Traffic Manager to call the https endpoint and not the http one but when you click on the endpoint and press Edit, it doesn't show the endpoint.<br /><br />What you need to do INSTEAD is to click Configure on the Traffic Manager itself and set the endpoint location in there:<br /><br /><div class="separator" style="clear: both; text-align: center;"><a href="https://2.bp.blogspot.com/-nJ2uweUs4rk/WLlKe7Fs0HI/AAAAAAAAA4s/EDb_7gjHTHUkFQ94um_l5oeH1uNPg67lQCLcB/s1600/Capture.PNG" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="263" src="https://2.bp.blogspot.com/-nJ2uweUs4rk/WLlKe7Fs0HI/AAAAAAAAA4s/EDb_7gjHTHUkFQ94um_l5oeH1uNPg67lQCLcB/s320/Capture.PNG" width="320" /></a></div><br />Note that I am using the favicon in the path. The reason for this is that if I hit the default endpoint (/) it might cause a redirect to another page. Favicon is a nice static known resource that should always return 200. You could, of course, point it to anything else.

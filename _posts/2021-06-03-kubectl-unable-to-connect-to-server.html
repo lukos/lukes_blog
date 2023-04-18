@@ -1,0 +1,14 @@
+---
+layout: post
+title: 'Kubectl: Unable to connect to the server: x509: certificate signed by unknown
+  authority'
+date: '2021-06-03T05:16:00.005-07:00'
+author: Luke Briner
+tags:
+- kubernetes
+- kubectl
+- k8s
+modified_time: '2021-06-03T05:16:45.528-07:00'
+---
+
+<p>&nbsp;I have used kubectl before as the cli to access kubernetes clusters and I also sort of understood the way that cluster/context and users work in kubectl config but these are quite low-level tools and trying to connect to a new cluster was failing with this error.</p><p>The underlying cause was that the cluster was behind a L4 load balancer which was offloading SSL. I did know this and I suspected that when I went into my rancher control panel to get the kube config for remote access, it might not work. However, trying to find out how to resolve it was confusing.</p><p>I tried pasting in the top-level cert into the certificate-authority-data property in kube config as well as the CA cert but neither worked. I suspected I needed the chain like you normally do but didn't know how to do this correctly.</p><p>Fortunately, I found this: https://stackoverflow.com/a/63518617/14401893 which was the answer I needed.</p><p>All you have to do is:</p><p>1) Use open ssl (or whatever else you want) to view the contents of the certificates on the load balancer, for example: <b>openssl s_client -showcerts -servername rancher.example.io -connect rancher.example.io:443</b> and then copy and paste all of the certs (including the being and end certificate markers) into a single text file with the specific one first and the CA last.</p><p>2) Instead of specifying <b>certificate-authority-data</b> in your kube config, use <b>certificate-authority</b> instead and set its value to the name of the text file you created.</p><p>Bing bang baboosh!<br /></p>

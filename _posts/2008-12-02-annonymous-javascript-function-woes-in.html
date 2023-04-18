@@ -1,0 +1,10 @@
+---
+layout: post
+title: Annonymous javascript function woes in IE
+date: '2008-12-02T04:13:00.000-08:00'
+author: Luke Briner
+tags:
+modified_time: '2008-12-02T04:21:20.277-08:00'
+---
+
+I have a control which senses any changes made in an ASP.net page controls and then if the user clicks away from the page without saving, an error is displayed. It works by iterating all controls on a page and attaching event handlers to onchange type attributes in various controls.<br><br />I've noticed a strange behaviour when running in IE7 which is fine in Firefox 3.0 this might be because Firefox totally ignores the offending code and there works by default or because it correctly places the annoymous function in memory.<br><br /><pre><br />if ( o.tagName == 'SELECT' )<br />{<br />    if ( o.onchange == null )<br />    {<br />        o.onchange = SetDirty ;<br />    }<br />    else<br />    {<br />        var oldevent = o.onchange ;<br />        o.onchange = function()<br />        {<br />            SetDirty();<br />            oldevent();<br />        }<br />    }<br />}<br /></pre><br />I know there is a way to add an event handler instead of using the function but it also does other things (not shown) which means the annoymous function was chosen. What happens is that after this code is called on 3 drop-down lists, ALL 3 end up pointing to the oldevent of the 3rd list rather than their own events. It is as if the annoymous function is placed statically in memory and the last call to it points the oldevent() at the 3rd event handler. This is very annoying since my 3rd drop list invokes a postback which my 2nd list doesn't so whichever way round I put the code, I either get post backs where I don't want to (and not the javascript I am supposed to call) or I don't get postbacks when I need them. Strangely Firefox doesn't do this. I would appreciate it if anyone knows whether the whole approach is wrong (ie wrong syntax) or whether IE just has a bug in this regard. My work around is to hard code the change tracking javascript and customise it for each control but that is not very neat or maintainable.

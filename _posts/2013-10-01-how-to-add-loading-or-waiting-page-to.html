@@ -1,0 +1,15 @@
+---
+layout: post
+title: How to add a loading or waiting page to an android activity
+date: '2013-10-01T04:11:00.000-07:00'
+author: Luke Briner
+tags:
+- ViewSwitcher
+- loading
+- splash screen
+- please wait
+- Android
+modified_time: '2013-10-01T04:11:23.313-07:00'
+---
+
+When you start using mobile apps that make network calls, you have to start using threads. In fact, the Apache network library requires it and throws an exception if you call the network on a UI thread. It makes sense, the network is an unknown quantity and you don't want the app locking up but threading can be a real pain, especially if you add it in afterwards instead of working out some design patterns.<br /><br />One common type of pattern, however, is how to display a loading screen while waiting for something to happen. In my case, I have a "retry" button which calls a web service which sends another email. I need something to stop the user pressing anything else or assuming the system is locked up and I don't really want to invoke a whole other activity to handle this. There is an easy way:<br /><br /><a href="http://inphamousdevelopment.wordpress.com/2010/10/11/using-a-viewswitcher-in-your-android-xml-layouts/" target="_blank">http://inphamousdevelopment.wordpress.com/2010/10/11/using-a-viewswitcher-in-your-android-xml-layouts/</a><br /><br />This describes using something called a ViewSwitcher which allows you to define the please wait screen in the same layout file as your main view and then just use showPrevious() and showNext() to flip between the two. In my case, pressing the "retry" button calls showNext() which displays the please wait screen and once the email task calls back to say it's complete, I call showPrevious() to restore the main layout.<br /><br />You can call setContentView but be warned, if you do this, the event handlers are not wired back up in onCreate so your buttons will stop working if you simply do that.

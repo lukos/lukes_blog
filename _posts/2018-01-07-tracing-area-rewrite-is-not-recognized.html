@@ -1,0 +1,19 @@
+---
+layout: post
+title: Tracing area "Rewrite" is not recognized
+date: '2018-01-07T04:02:00.000-08:00'
+author: Luke Briner
+tags:
+- iis 8
+- Microsoft
+- rewrite
+- Error
+- url rewrite
+- feature update
+- '500'
+- iis
+- windows 10
+modified_time: '2018-01-07T04:02:20.372-08:00'
+---
+
+What a pain! Windows 10 has done one of its "feature updates" and now my local IIS sites are not working. You get the rather abstract error above for a site that worked a few days back.<br /><br />It basically means that a module that would normally handle an IIS feature is not working in some way. Obviously, it might not be installed, but it is more likely that it has been broken by an upgrade. IIRC, if the module is not installed at all, you get a different error.<br /><br />The event log has the same error plus another equally unhelpful one: "Trace provider or tracing area name 'WWW Server' is not recognized. Check the <traceproviderdefinitions> section for currently supported list or providers and areas." and "FailedRequestTracing module encountered problem while reading configuration. No logs will be generated until this condition is corrected.&nbsp;"</traceproviderdefinitions><br /><br />Anyway, a quick Google search and I decided to uninstall URL Rewrite (which I assumed was the module that was likely to be the problem) and then reinstall it via the Web Platform installer.<br /><br />After doing only that module and without a restart, the site now loads!

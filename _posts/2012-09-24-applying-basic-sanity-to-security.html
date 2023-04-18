@@ -1,0 +1,13 @@
+---
+layout: post
+title: Applying basic sanity to security policies
+date: '2012-09-24T05:00:00.001-07:00'
+author: Luke Briner
+tags:
+- security
+- passwords
+- web security
+modified_time: '2012-09-24T05:00:18.631-07:00'
+---
+
+There are a few pieces of information that I find staggering. I found out today that 1 in 9 people use 1234 as their card PIN and that something crazy like 40% of people use one of 100 passwords. Now, the best way of making things secure is to have some kind of password policy but this is not always desirable because if your site is low risk, you might prefer weaker passwords as opposed to scaring potential users away with high-security. Well at the very least, you should blacklist the top 50 or 100 passwords and simply not let people choose, "password", "password123" etc.<br />Just because you might hash the passwords does not in itself add a massive level of security as we found from the Linked-In hack. You should salt passwords but only with variable salt so that the hash of two different people's identical password will not be the same in the database. This prevents frequency analysis of the data if it is stolen from your database.

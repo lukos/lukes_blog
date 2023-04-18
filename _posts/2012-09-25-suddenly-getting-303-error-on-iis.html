@@ -1,0 +1,15 @@
+---
+layout: post
+title: Suddenly Getting a 303 error on IIS
+date: '2012-09-25T04:39:00.001-07:00'
+author: Luke Briner
+tags:
+- HTTPS
+- IIS7
+- HTTP
+- Error 303
+- iis
+modified_time: '2012-09-25T04:39:18.325-07:00'
+---
+
+I have a site which is configured to use SSL and has a rule in the applicationhost.config to ensure any requests to http are redirected to https.<br />I then added another site to the box which was basically a copy of the first site and which I was using to test a different database engine. I realised that I couldn't put it under the main site because of all kinds of weird errors so a friend suggested that I add another level of subdomain so I could have test1.subdomain.example.co.uk and which I could then add as a header to iis to direct to my new site.<br />The only issue was that the server was configured only to allow ssl and I didn't want to buy another ssl cert for it so I tried to set it up to use the same certificate as the other site. This was the mistake I made since by doing this, it disconnected the certificate from the previous site without telling me.<br />Examination of the logs (after about 20 minutes when the penny dropped) gave me the clue that a request to port 80 was returning a redirect but then there was no request to port 443 which there should have been for the ssl connection.<br />All I did was assigned the cert back to the correct site and it was up again. Also, I then created a self-signed certificate for my other test site.

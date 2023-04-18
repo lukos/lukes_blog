@@ -1,0 +1,17 @@
+---
+layout: post
+title: IP Addresses on Netgear FVS318N VPN Router
+date: '2016-06-09T08:00:00.003-07:00'
+author: Luke Briner
+tags:
+- VPN
+- visible
+- errors
+- IP Address
+- Connections
+- Netgear
+- IP Addresses
+modified_time: '2016-06-09T08:00:56.089-07:00'
+---
+
+Wow, another one of those jobs which seems impossible until it works and then it seems easy! It is also another reminder that the internet is too full of old outdated information, poor answers to questions and anecdotal answers "This random thing solved it for me..."<br /><br />Anyway, I am attempting to set up an IPSEC VPN on my Netgear FVS318N, a wireless VPN router which is pretty cool featurewise. I have the additional pain that it is behind another DSL router since the Netgear does not support VDSL so first I had to setup the port forwarding from one to the other and followed this:&nbsp;<a href="https://www.shrew.net/support/Howto_Netgear">https://www.shrew.net/support/Howto_Netgear</a> to setup an IPSEC VPN.<br /><br />On the suggestion of a colleague, I could test the work setup from work by using my phone as a mobile hotspot!<br /><br />The first problem was that on <b>Windows 10</b>, there is a problem with DNE and something or other that makes the VPN client (Shrewsoft) not connect. Instead, it times out and shows disconnected from key daemon. I followed the instructions here:&nbsp;<a href="http://www.ruudborst.nl/shrewsoft-vpn-filter-blocks-traffic-on-windows-10/">http://www.ruudborst.nl/shrewsoft-vpn-filter-blocks-traffic-on-windows-10/</a> to run a CISCO cleaner and DNE setup. The CISCO one works for Shrewsoft and I think this only applies to Windows 10 but some people reported problems on Windows 8.<br /><br />I then connected the VPN and it showed tunnel established but I couldn't seem to ping any of the internal hosts on my company network. What is really confusing is that none of the guides seem to explain what IP addresses need to match the internal network and which ones need to be completely different so here goes:<br /><br /><b>Mode Config</b><br />First Pool = A UNIQUE range of IP addresses that should NOT match the internal network. These will be the VPN client IP addresses.<br />WINS/DNS Server = This should MATCH your actual DNS/WINS Server (at least I think so!) they don't appear to be virtual IP addresses.<br />Local IP Address = Should MATCH the range of the INTERNAL network - usually 3 numbers followed by a zero<br />Local Subnet Mask = Should MATCH the subnet mask of the INTERNAL network, usually 255.255.255.0<br /><br /><b>Client Setup</b><br />Policy Tab = You must have a topology entry that will route your INTERNAL network IP addresses through the VPN tunnel rather than attempting to send them through your default gateway which is likely to be your main internet connection. In other words, this entry must match the Local IP Address/Subnet specified in the Mode Config setup. If you have multiple internal LANS (vlans) then you can add multiple entries here to route all of them to the VPN router through the tunnel.<br /><br />Now it works!<br /><br />

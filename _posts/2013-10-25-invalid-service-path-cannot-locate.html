@@ -1,0 +1,18 @@
+---
+layout: post
+title: Invalid service path! Cannot locate ServiceDefinition.csdef in current folder
+  or parent folders
+date: '2013-10-25T03:35:00.000-07:00'
+author: Luke Briner
+tags:
+- Invalid service path
+- Azure
+- Error
+- Powershell
+- Add-AzurePHPWorkerRole
+- cmdlet
+- ServiceDefinition.csdef
+modified_time: '2013-10-25T03:35:35.015-07:00'
+---
+
+This was really confusing me, I got this error attempting to add a PHP worker role to my cloud service and the ServiceDefinition.csdef was DEFINITELY in the correct directory!<br /><br />Anyway, I had to download the source code for the Azure CmdLets and spent an hour working out how to get it to debug and use the modified source to log more verbose information (anyone else find that the verbose is not very verbose!).<br /><br />...anyway, this error means one of two things, firstly, it means what it looks like it means but secondly, once it finds the ServiceDefinition.csdef file and knows the correct directory, it then parses the ServiceConfiguration.Cloud.cscfg and reads all the roles that exist and then looks for their directories being present, if it doesn't find all the role directories, it assumes the csdef is not correct and rather than recursing like it does when it first looks for the csdef file, it just fails with the same error text.<br /><br />This was caused, in my case, because I had added a non-PHP worker role (assuming it would be C# - it wasn't!), deleted the folder and ran Add-AzurePHPWorkerRole at which point I got the error. It would be nice to have a more specific error here, otherwise, there is no point in displaying what it does!<br /><br />I edited the cscfg files and the csdef file, removed the old role sections and ran the cmdlet again and it was all good!

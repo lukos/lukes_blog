@@ -1,0 +1,14 @@
+---
+layout: post
+title: ".Net MVC5 - RedirectToAction not Redirecting in the browser"
+date: '2016-09-28T05:31:00.000-07:00'
+author: Luke Briner
+tags:
+- browser
+- ".net"
+- MVC
+- RedirectToAction
+modified_time: '2016-09-28T05:31:25.567-07:00'
+---
+
+I had a funny one on a test site I was using. Very simple MVC app, a page that requires a login and then a logout link that does the following:<br /><br /><pre>public ActionResult Logout()<br />{<br />    Request.GetOwinContext().Authentication.SignOut();<br />    return RedirectToAction("Index");<br />}</pre><br />However, after calling this code, a 302 is returned to the browser for the redirect but it doesn't include the Location HTTP header pointing to the new location, so the browser does not redirect. Instead, the user has the click the link on the displayed page. <br /><br />I thought this was very strange and dug into the code that produces the Redirect inside System.Web.HttpResponse and found that the Location was always added using the same url that was correctly inserted into the response body. Clearly something was removing the header after it was added and before the redirect took place.<br /><br />After I commented out SignOut(), the redirect worked correctly so somehow, for some reason, IAuthenticationManager.SignOut() is removing the Location header, but AFTER it has been added in the next line.<br /><br />I haven't found a reason on stack overflow but I might dig a bit deeper into SignOut to find out what is happening.<br /><br />

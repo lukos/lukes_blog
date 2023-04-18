@@ -1,0 +1,10 @@
+---
+layout: post
+title: Optimisation Up Front
+date: '2012-02-24T02:34:00.003-08:00'
+author: Luke Briner
+tags:
+modified_time: '2012-02-24T02:34:59.098-08:00'
+---
+
+They say, "the first rule of optimisation is don't" and there is an element of truth here. If it is going to take time and introduce confusing looking code to fix a possible performance issue then there is a chance it is not worth doing. However, "late optimisation" where we wait to see what performance problems are is also risky because as Bertrand Meyer says, "code should be open to extension and closed to modification - the open/closed pattern". Changes are always risky, I have made many 'easy/low risk changes' that have broken something and made me say, "oh yeah, I didn't think of that". So what do we do? Waste time up front or risk breaking code by changing it later?<br />Well, I want to suggest that there are certain things which are optimal by default and which cost little extra time to develop and which will probably lead to few performance problems. If we learn to code like this then we have well-performing products. For more subtle performance issues, we would probably end up either re-writing a whole sub-system which is not so risky because we will know what to re-test or otherwise we will add a totally new module such as a caching mechanism which again, as new code, will be more obvious to test.<br />What can we add in from the beginning? Well it is hard to be too prescriptive but if we know a method is called frequently, we should be conscious of decisions like the ordering of logic statements - putting the one most likely to fail first so we don't have to call the remainder of the checks. We might also be conscious of not calling notoriously slow operations like file or network IO on methods that are frequently called, we should instinctively know to put the file into memory or buffer the network calls. We need to use patterns and keep objects small, slick and obvious so that we can easily see that methods will perform well since they will only do a handful of things before calling something else.

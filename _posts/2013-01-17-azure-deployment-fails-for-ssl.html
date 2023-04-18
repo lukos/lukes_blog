@@ -1,0 +1,16 @@
+---
+layout: post
+title: Azure Deployment Fails for SSL
+date: '2013-01-17T06:04:00.000-08:00'
+author: Luke Briner
+tags:
+- Deployment
+- Azure
+- Error
+- Object Reference Not Set
+- Null Reference
+- Publish
+modified_time: '2013-01-17T06:04:23.335-08:00'
+---
+
+I got the following error when trying to deploy an Azure project. This project had previously (successfully) been deployed but I was trying to move it to another subscription:<br /><br />13:35:01 - Preparing deployment for AzureWeb2 - 17/01/2013 13:34:56 with Subscription ID 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' using Service Management URL 'https://management.core.windows.net/'...<br />13:35:01 - Connecting...<br />13:35:06 - Object reference not set to an instance of an object.<br />13:35:06 - Deployment failed with a fatal error<br /><br />(The short answer is I hadn't uploaded ALL of the SSL certs to the service I was deploying to.)<br /><br />The problem was not noticeably described anywhere in any more detail and I couldn't find anything on Google that described how to log the error except that a manual deployment might help.<br /><br />I worked out that I could upload to blob storage via the server explorer in Visual Studio and then "upload a deployment" from inside the management portal which then gave a more useful error:<br /><br />"<span style="-webkit-text-size-adjust: auto; -webkit-text-stroke-width: 0px; background-color: #495461; color: white; display: inline !important; float: none; font-family: 'Segoe UI'; font-size: 12px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: 2; text-align: left; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px;">The certificate with thumbprint 01e3910d7f7cxxxxxxxxxxxxa1aa4b3de11c77f5 was not found."</span><br /><br />This obviously explained the problem but what was confusing was that although I had two certificates linked to the project, only 1 of these was specified on an endpoint (this second one was a test certificate) so it seems strange that the deployment itself failed rather than a failure at runtime. It would also have been nice if Visual Studio displayed the same error as the management portal did!.<br /><br />Anyway, as you might expect, once I also uploaded the second cert, it was all fine.

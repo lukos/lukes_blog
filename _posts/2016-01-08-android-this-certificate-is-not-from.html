@@ -1,0 +1,22 @@
+---
+layout: post
+title: Android "This certificate is not from a trusted authority" or "no peer certificate"
+  errors - fine on desktop!
+date: '2016-01-08T07:42:00.000-08:00'
+author: Luke Briner
+tags:
+- browser
+- chains
+- Java
+- peer certificate
+- mobile
+- ssl
+- Error
+- Certificates
+- desktop
+- Android
+- native
+modified_time: '2016-01-08T07:42:25.534-08:00'
+---
+
+<h3>Moving from Azure VMs back to Cloud Services</h3>Sooooo, I am running a cloud service in a pair of VMs. It started life as a cloud service (PaaS) on Azure but after someone broke the Azure Powershell tools, it no longer deployed and so I went traditional and installed it manually.<br /><br />Recently, I decided to change it back. VMs are OK in that you can deploy very quickly using Powershell/SVN etc. but they also require regular maintenance and monitoring and they are also slightly more expensive than the equivalent cloud services.<br /><h3>The Problem</h3>Anyway, deployed it all, tested it in Chrome and it looked fine so I changed over the DNS to point to the new cloud service. Our SSO service seemed to work OK but the Android app didn't so after a hasty swap back, I opened the Android app in the debugger to find out what was happening.<br /><br />Getting to the web service call showed the exception "No peer certificate", which I understand but which didn't make sense. I visited the site in the browser and even ran a couple of SSL tests like the Qualys one and they reported no problems. Clearly there was a chain problem. As a quick check, I also tried to visit the same URL in the Android browser and got another error, which was more useful:&nbsp;"This certificate is not from a trusted authority", it also showed the certificate chain and the fact that the chain was somehow broken - again, I knew what this meant <i>in theory</i>&nbsp;but didn't understand why it was OK from the desktop and from the online test tools.<br /><br />A clue was that the Qualys test showed 2 certificate paths, one that pointed to a new CA root certificate and another longer chain that used something called a cross-root to point to an older root certificate, something done for backward compatibility reasons (but one which causes problems!).<br /><h3>The Cause</h3>Windows (and other servers?) use the issuer and subject names to match certificate chains up, it turns out that although I had my own "COMODO RSA Certification Authority" intermediate certificate (which used the cross-root and old root cert), it was also the name of a trusted root certificate in Windows - a newer cert.<br /><br />Windows <a href="https://support.microsoft.com/en-us/kb/2831004" target="_blank">scores the paths</a> (apparently) and all things being equal, chooses the shorter one as the standard certificate path to use in the SSL handshake - or at least, the validation process on the client does this.<br /><br />In this case, the shorter path used a newer root certificate that simply isn't present on Android (not sure how often these are updated). You can see what is supported under settings -&gt; security -&gt; trusted credentials.<br /><br />For some reason, desktops can handle this, probably because their root certs are more up to date but they also cache intermediate certificates, which might make a site work because of a previously visited site.<br /><h3>The Solution</h3>You have to break the path you don't want by deleting the relevant certificates (the ones whose names conflict). In this case, I deleted the newer root cert by logging in with remote desktop. I also REBOOTED and then only a single path gets returned and it all works again.<br /><br />Clearly, I have to be aware that there is a chance this problem will rear its head again if the cloud services are every deployed again from scratch. I should probably write a script to delete the offending certificate but for now I will add it to the checklist for deployment so a quick check can ascertain if the problem is still resolved or not.

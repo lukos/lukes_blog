@@ -1,0 +1,10 @@
+---
+layout: post
+title: Execute Deployment Script In Single-User Mode
+date: '2011-10-24T06:44:00.000-07:00'
+author: Luke Briner
+tags:
+modified_time: '2011-10-24T06:44:29.244-07:00'
+---
+
+This is an option in Visual Studio database projects under the sqldeployment file. The intention is simple enough. If there is a danger that a database might be accessed by other entities while deploying, you tick this box and after the database is created, it is set to single user mode while the script carries on adding schema objects etc. For some reason, at the end, it is not put back into multi-user mode - which I guess would have to be done manually.<br />Anyway, the problem I had was that I upgraded a database project that had been built in Visual Studio 2008 to Visual Studio 2010. I did this so I could target the SQL Server 2008 schema (compatibility level 100). There was a problem after deployment in that the database I had deployed (not surprisingly) was in single-user mode which meant it didn't work on our web application. I was confused because I had not changed anything in the database projects, just rebuilt them in 2010. It was also confusing because only 1 database was affected. The second point was simply answered by the fact that only 1 database had this option ticked but why had the problem only just surfaced.<br />When I checked the database.sql that had been deployed from the project, it was only after upgrading to 2010 that the single user mode had been added to the sql. In other words, it appears that a bug in VS2008 was ignoring this tick box and this had been fixed in VS 2010.<br />Great stuff eh? I can't find any other specific hits in Google for this so maybe no-one noticed (like we didn't).

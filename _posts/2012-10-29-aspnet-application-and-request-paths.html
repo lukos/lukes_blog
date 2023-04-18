@@ -1,0 +1,10 @@
+---
+layout: post
+title: ASP.net Application and Request Paths Explained
+date: '2012-10-29T05:24:00.000-07:00'
+author: Luke Briner
+tags:
+modified_time: '2012-10-29T05:24:45.381-07:00'
+---
+
+I want to do something simple. Using the current request, obtain the absolute url of the site root and then add another file path to it. For example, taking the request which might be http://www.example.com/myapp/directory/current.aspx, I want to obtain http://www.example.com/myapp and then I want to add on e.g. /otherdir/otherfile.aspx to be used in a password reset email.<br />Anyway, not really doable out-of-the box but then I realised what I really wanted was a reference for all the path relevant elements of the request object so I could work out which bits I needed to glue together. Well, here it is:<br /><br /><pre style="color: black;">HttpRequest<br />-&gt;ApplicationPath = "/MyApp"<br />-&gt;AppRelativeCurrentExecutionFilePath = "~/SubDir/Current.aspx"<br />-&gt;CurrentExecutionFilePath = "/MyApp/SubDir/Current.aspx"<br />-&gt;CurrentExecutionFilePathExtension = ".aspx"<br />-&gt;FilePath= "/MyApp/SubDir/Current.aspx"<br />-&gt;Path= "/MyApp/SubDir/Current.aspx"<br />-&gt;PhysicalApplicationPath= "C:\\inetpub\\wwwroot\\MyApp\\"<br />-&gt;PhysicalPath=&nbsp;"C:\\inetpub\\wwwroot\\MyApp\\SubDir\\Current.aspx"<br />-&gt;RawUrl= "/MyApp/SubDir/Current.aspx"<br />-&gt;Url<br />-&gt;-&gt;AbsolutePath = "/MyApp/SubDir/Current.aspx"<br />-&gt;-&gt;AbsoluteUri = "http://localhost/MyApp/SubDir/Current.aspx"<br />-&gt;-&gt;Authority = "localhost"<br />-&gt;-&gt;DnsSafeHost = "localhost"<br />-&gt;-&gt;Host = "localhost"<br />-&gt;-&gt;LocalPath = "/MyApp/SubDir/Current.aspx"<br />-&gt;-&gt;OriginalString = "http://localhost:80/MyApp/SubDir/Current.aspx"<br />-&gt;-&gt;PathAndQuery = "/MyApp/SubDir/Current.aspx"<br />-&gt;-&gt;Port = 80<br />-&gt;-&gt;Scheme = "http"<br />-&gt;-&gt;Segments<br />-&gt;-&gt;-&gt;[0] = "/"<br />-&gt;-&gt;-&gt;[1] = "MyApp/"<br />-&gt;-&gt;-&gt;[2] = "SubDir/"<br />-&gt;-&gt;-&gt;[3] = "Current.aspx"<br />-&gt;UserHostAddress= "127.0.0.1"<br />-&gt;UserHostName= "127.0.0.1"<br /></pre>

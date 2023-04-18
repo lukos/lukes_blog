@@ -1,0 +1,11 @@
+---
+layout: post
+title: OO Design - do it properly
+date: '2011-06-06T12:19:00.001-07:00'
+author: Luke Briner
+tags:
+- OO Design
+modified_time: '2011-06-06T12:25:58.779-07:00'
+---
+
+If there is one thing I have noticed about software, it is that people tend to do something well up to a point and then let it all fall down with a "quick hack". In fact, there is no such thing because a quick hack immediately creates technical debt which invariably takes much longer to fix later on, if it is fixed at all. Once you have compromised in one area, it is then hard to try and keep the OO design pure in other areas and before you know it, your code has become a great ball of mud.<br />For instance, at work we have a service which is used by more than one customer so it has a base part and then a customer-specific part. However, somehow, the base project has ended up with an id of type Guid which is actually customer specific but which goes through the design as if it was customer agnostic. The result? Well, now we are not clear where these Guids should live because another customer simply uses an integer for a customer ID and not a Guid. The design is polluted and other decisions have been made which are not good.<br />One of the problems is that people are still taught in very structured, low level ways, to think about guids and ints and strings even though normal people don't understand such concepts. All they understand is a "product ID" or "text".<br />When we design in OO, we must be merciless with abstraction. Even if our id is a Guid, we should make it an abstract type since the fact it is a guid is irrelevant, it is a unique key and could be abstracted into UniqueKey which can inherit or contain whatever it needs to. This way, the abstraction holds true when another customer uses text for a unique key because IT IS STILL A UNIQUE KEY!<br />The thing is, we only learn these things after a mistake is made which is why it is important to train, to code-review and to retain people who are good at their job by recognising and rewarding them otherwise they will think the grass is greener on the other side and jump ship, leaving us with the average people who are not good enough to move jobs or who are not interested enough in work to care!

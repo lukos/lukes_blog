@@ -1,0 +1,10 @@
+---
+layout: post
+title: 'System.MissingMethodException : Method ''blah'' not found.'
+date: '2019-06-21T05:21:00.002-07:00'
+author: Luke Briner
+tags:
+modified_time: '2019-06-21T05:21:54.696-07:00'
+---
+
+I don't use reflection much in .Net but we are updating some libraries and one C# library was using Microsoft.VisualBasic to call a method!<br /><br />I replaced it with some basic InvokeMember code but despite the parameters looking correct, I got the above error even though I knew the Property I was calling was present on the target object (.Net sees Properties as methods!)<br /><br />The problem I had was with the array of objects that are passed to set the property. Generally, the downcast to the correct type would just work when invoking the method but I had changed this:<br /><br /><span style="font-family: &quot;Courier New&quot;, Courier, monospace;">(FeatureStatus?) val ? 1 : 0</span><br /><br />to this:<br /><span style="font-family: &quot;Courier New&quot;, Courier, monospace;"><br /></span><span style="font-family: &quot;Courier New&quot;, Courier, monospace;">(object)val ? 1 : 0</span><br /><br />Of course, 1 and 0 are integers, not FeatureStatus enum types so when reflection was looking for a property that took a FeatureStatus, it couldn't find one and I got the error. I had to change it to this:<br /><br /><span style="font-family: &quot;Courier New&quot;, Courier, monospace;">(object)(FeatureStatus?)val ? 1 : 0</span><br /><br />So it all boxed up correctly and worked!

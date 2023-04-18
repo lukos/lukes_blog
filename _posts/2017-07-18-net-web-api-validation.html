@@ -1,0 +1,15 @@
+---
+layout: post
+title: ".Net Web API Validation"
+date: '2017-07-18T07:04:00.002-07:00'
+author: Luke Briner
+tags:
+- ".net"
+- MVC
+- actions
+- validation
+- Web Api
+modified_time: '2017-07-18T07:04:37.862-07:00'
+---
+
+So I'm writing a Web Api .Net service to call from some mobile apps. Before you ask, I haven't used .Net Core since it requires all the support libraries are portable and that is not a 5 minute job!<br /><br />Anyway, it basically works but I found a couple of funnies that have been reported elsewhere but they are not things that are obviously broken - thank goodness for Unit Tests!<br /><br />1) I have an attribute that validates the model required by the API action and then sets BadRequest if the model doesn't validate - this saves calling if (ModelState.IsValid) everywhere. It didn't seem to work, IsValid was true when I called an action with no parameters. The reason? If the model is null, it passes validation! Terrible but true. I had to add an additional line of code to ensure the model was null before checking whether it was valid.<br /><br />2) The RegularExpressionAttribute does not validate empty strings according to the regex. It would be nice if it was a property of the attribute but it isn't, it just doesn't. Again, I had to subclass RegularExpressionAttribute, override IsValid to ensure the value is not empty and then call the base class IsValid. I then subclassed this into my specific Attributes so that they all work as expected.

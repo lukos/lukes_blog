@@ -1,0 +1,14 @@
+---
+layout: post
+title: Using hashing AND symmetric encryption
+date: '2013-05-16T05:45:00.001-07:00'
+author: Luke Briner
+tags:
+- encryption
+- symmetrical
+- hashing
+- symmetric
+modified_time: '2013-05-16T05:45:44.186-07:00'
+---
+
+I'm talking about on the same piece of data! What?<br /><br />Well, we sometimes think that we can choose either/or but in some cases we might need both. Let me explain, it all comes back to the way in which symmetric encryption works and the way hashing has to work.<br /><br />Hashing a value MUST produce a consistent value. Why? Because all you can use it for is to compare with another hash of the same value, if they were different, you would not know whether there is a match or not. This consistency is why hashing is useful but sadly it is also its downfall. Since I know that a hash algorithm is consistent, I can also hash values and compare their results with a hash that I am attacking. If I find a match, I know what data created the hash!<br /><br />Symmetric encryption, which is designed to be unencrypted with the same (or directly related) key as the encryption key, would be weak if it was consistent since this would allow similar attacks as we find in hash attacks. For this reason, a good implementation will create a random initialisation vector and use this to seed the encryption. That means that encrypting the same thing twice will produce two different results. In this case, however, we don't care, because we will store the IV along with the encrypted data and use this to seed the decryption process to get the original data.<br /><br />Take a scenario however. Imagine you have encrypted an email address in your database against each user and someone wants to register a new account. You want to ensure the email address is not taken, what do you do? You cannot encrypt the given email and compare it in the database because you are using symmetric encryption (since you might want to decrypt the original email and use it somehow) so encrypting it again means you will get a different value. The other horrible alternative is to effectively get all user rows and iteratively check the given email against the decrypted version from each record. As well as being horribly inefficient (and not scalable), it also risks exposes data into memory which is another risk.<br /><br />The solution in this case is to do both. Symmetric encryption gives you the option of decrypting and using the data, while hashing gives you the option of doing a simple WHERE clause in your database to check for duplicates. So, you see, there is a place for both. Is it more secure than just using a non-initialised symmetric algorithm that produces the same output for a given input? Hmm, not sure but I think slightly because the hashes never have to come out from the database whereas the symmetric data could be exposed (accidentally or otherwise) and be less likely to be cracked, if used with the IV.

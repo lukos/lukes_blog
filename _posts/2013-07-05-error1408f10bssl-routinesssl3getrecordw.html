@@ -1,0 +1,18 @@
+---
+layout: post
+title: 'error:1408F10B:SSL routines:SSL3_GET_RECORD:wrong version number '
+date: '2013-07-05T09:29:00.001-07:00'
+author: Luke Briner
+tags:
+- email
+- ssl
+- Yii
+- errors
+- gmail
+- ssl3_get_record
+- smtp
+- tls
+modified_time: '2013-07-05T09:29:25.197-07:00'
+---
+
+Possibly my best post title to date but I got this error trying to send mail from Yii in PHP via a Gmail relay. It all looks a bit esoteric but like many errors, once explained, it all makes sense.<br /><br />This relates to Gmail having two SSL/TLS ports. 465 is for SSL (i.e. pre-TLS) and port 587 for TLS. For most people, SSL and TLS are used interchangeably but not here! I was trying to relay via 587 and had, what I thought, was TLS enabled. As it happens, the mail extension for Yii didn't actually support TLS (or I have it configured wrongly) and was attempting to negotiate SSL with a TLS-only port. The error means the server doesn't support SSLv3.<br /><br />I simply changed the config to use port 465 and we are back in business.<br /><br />Good Yii Config:<br /><br /><span style="font-family: &quot;Courier New&quot;,Courier,monospace;"><b>&nbsp;'mail' =&gt; array(<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'class' =&gt; 'ext.mail.YiiMail',<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'transportType' =&gt; 'smtp',<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'transportOptions'=&gt;array(<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'host'=&gt;'smtp.gmail.com',<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'encryption'=&gt;'tls',<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'username'=&gt;'xxx@gmail.com',<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'password'=&gt;'xxxxxxxxxxxx',<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'port'=&gt;465,<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ),<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'logging' =&gt; true,<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'dryRun' =&gt; false<br />&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ),</b></span>

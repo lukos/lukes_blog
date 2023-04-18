@@ -1,0 +1,12 @@
+---
+layout: post
+title: CacheItemRemovedCallback not firing
+date: '2010-01-12T03:33:00.000-08:00'
+author: Luke Briner
+tags:
+- asp.net
+- cache
+modified_time: '2010-01-12T03:38:58.600-08:00'
+---
+
+I was getting a bit annoyed using HttpRuntime.Cache in an asp.net app. I really needed the cache since I was generating reports and to do these each time can be very slow (~30secs). The problem was that the cache never seemed to expire.<br />When caching, I used the Add() function to add a placeholder of the string "caching" and then started a thread to do the work, this was to prevent caching the item more than once at a time. Inside the thread function, after generating the report, I then used the indexer [] brackets to update the "caching" placeholder to point to the generated report. This worked in as much as it was caching but it never expired. I added a CacheItemRemovedCallback function just to check and it was never called.<br />After trying loads of things, I found that calling the Insert function via the indexer [] form does NOT re-use the expiry settings of the original Add function and possibly also not the dependency and removed callbacks - it sets the item to no expiry.<br />All I had to do was call the Insert function directly and give it the expiry I wanted and all was well again. Another major omission from the MSDN docs but at least now you know!

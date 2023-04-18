@@ -1,0 +1,14 @@
+---
+layout: post
+title: 'FakeItEasy unit test error - System.NotImplementedException : The method or
+  operation is not implemented.'
+date: '2019-02-20T09:15:00.003-08:00'
+author: Luke Briner
+tags:
+- unit testing
+- Error
+- fakeiteasy
+modified_time: '2019-02-20T09:15:56.603-08:00'
+---
+
+So I was trying to set up a fake and got an error pointing towards an unimplemented ToString() method in my fake db context.<br /><br />The reason? I was attempting to mock a call on an object that was not a fake! I should have created my context as A.Fake<ismartdbcontext>() whereas I was using the built-in EF FakeSmartDbContext(), which of course is not a fake object!</ismartdbcontext><br /><br />Presumably, FakeItEasy was trying to calling ToString to generate a useful error but for reasons unknown, FakeSmartDbContext has ToString coded with a NotImplementedException!<br /><br />Replace FakeSmartDbContext with A.Fake<ismartdbcontext>() and we're all good!</ismartdbcontext>

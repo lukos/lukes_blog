@@ -1,0 +1,14 @@
+---
+layout: post
+title: Windows 10 is a pain for developers
+date: '2016-05-18T10:01:00.005-07:00'
+author: Luke Briner
+tags:
+- Microsoft
+- developers
+- uac
+- windows 10
+modified_time: '2016-05-18T10:01:58.111-07:00'
+---
+
+User Account Control: Microsoft's largely pitiful attempt to make their system secure. Every time an application wants to do something important, it pops a dialog and you press OK or cancel. Sounds fine in theory except that normal users have no idea whether an application should do these things anyway.<br /><br />It was manageable because in Windows 7, you could easily disable it completely. I need to do this as a developer. I need to run the browser as Administrator when I access certain sites that use Client Certificates, otherwise the browser does not have permission to access the private keys and in most cases, it doesn't show you a useful error, it just doesn't work. (Hint: Use Chrome- it gives the most useful error codes)<br /><br />But I also need to run Visual Studio, Powershell, Command Prompt, mmc.exe and other programs like most developers do and many of these won't work as non-administrator (or they pretend to work and then produce esoteric errors).<br /><br />So what? Well he's the rub. In Windows 10, you cannot disable UAC without also disabling any Metro applications, which are obviously super secure and couldn't possibly work without UAC.<br /><br />So what can you do now? You have to leave UAC at a low level (which is not disabled) and then set the advanced properties of each of your shortcuts to "Run as Administrator". Woe betide if you double-click a Solution from Explorer, which opens Visual Studio normally.<br /><br />Of course, the real problem is that most of the "important" changes that these programs are making should not be important but are because many apps require access to the registry or c:\windows. In reality, they should have their own private registries and private file access and then they can do whatever they want inside their sandboxes without any admin prompts.<br /><br />Another weird one relates to HTTP 2, which is available in Windows 10, even though it doesn't seem to support any secure HTTP2 approved cipher suites, which means that local hosted sites don't work. The solution there is to disable HTTP2!<br /><br />I think I have ironed out most of the problems but I fail to see how MS wouldn't have seen these issues during testing. Maybe they did and thought, ah what the hell!

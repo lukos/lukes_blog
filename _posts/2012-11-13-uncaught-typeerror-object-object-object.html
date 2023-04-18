@@ -1,0 +1,17 @@
+---
+layout: post
+title: 'Uncaught TypeError: Object [object Object] has no method ''dialog'''
+date: '2012-11-13T03:16:00.000-08:00'
+author: Luke Briner
+tags:
+- asp.net
+- dialog
+- jquery ui
+- errors
+- visual studio
+- visual studio projects
+- jQuery
+modified_time: '2012-11-13T03:16:28.215-08:00'
+---
+
+This one was caused in the unseen belly of an ASP.Net v4.5 web forms application.  <br /><br />I had two pages that were both supposed to display jQuery dialogs. One of these worked correctly and the other didn't with the above error. There were only 2 jquery files and they were added using cassette bundling and as it happens, each page was also using a different master page (which were basically the same).<br /><br />After finding this answer on Stack overflow:&nbsp;<a href="http://stackoverflow.com/questions/8786104/uncaught-typeerror-object-object-object-has-no-method-dialog">http://stackoverflow.com/questions/8786104/uncaught-typeerror-object-object-object-has-no-method-dialog</a> I was struck by the possibility of multiple-includes of jQuery being the problem. I looked at each of my pages and sure enough, the one that worked had only the reference that I had included via bundling whereas the one that didn't work had an additional jQuery include beneath the form. This one I <b>hadn't</b>&nbsp;added.<br /><br />It turns out that asp.net adds this one which would be OK - I could remove my own reference - except that it ONLY appears when you have validation on the page which means that you can't easily workaround the problem. Since I pull in these script bundles from the master pages, I don't want to start having two sets of bundles and trying to trick each page into using the correct one. Also, if I changed a page, it might break by either removing or adding in the second reference.<br /><br />There might be other better fixes but fortunately, I could set the validators on the page which wasn't working to disable client validation which then removes the need for the auto jquery reference which then means it all works again.<br /><br />These kinds of things are a real shame because it is this kind of "smoke and mirrors" which is really hard to debug and which is not easily worked around. It reminds me of the horrible dialog language in Visual Studio 6 which was trying to be helpful but it just became another black box which mostly worked and occasionally produced weird results which you couldn't debug. I thought MS were moving away from this and starting to use code for everything so at least it was de-buggable. Otherwise, they could just add a static reference to jQuery in the master page and leave it there - removable if you don't need any client scripting (which is unlikely).

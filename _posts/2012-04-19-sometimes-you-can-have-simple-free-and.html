@@ -1,0 +1,16 @@
+---
+layout: post
+title: Sometimes you can have simple, free and effective
+date: '2012-04-19T03:44:00.003-07:00'
+author: Luke Briner
+tags:
+- faults
+- intermittent
+- router
+- wireless
+- macbook
+- wifi
+modified_time: '2012-04-19T03:44:22.382-07:00'
+---
+
+What am I talking about? I bought a new MacBook pro laptop. Without defending it too much, for music software, it is much more consistent than Windows (no random defrags or virus scans) and the battery life is fantastic.<br />Anyway, I bought it and went home and immediately had problems connecting to my wifi - it sometimes connected, sometimes didn't (timed out), it dropped out and ran slow as well but was fine on the ethernet cable. My best guess was that the MacBook reception was not great and the D-Link DIR-615 output possibly not very high. Other devices connected OK so the router wasn't completely busted and I doubted the MacBook was broken, albeit the aluminium wasn't helping.<br />I noticed online that loads of people had similar problems and I wasn't too keen to shell out £120 for an Apple router or risk buying another that may or may not work. I couldn't imagine Virgin Media agreeing to replace anything.<br />Anyway, the solution was&nbsp;<a href="http://www.dd-wrt.com/" target="_blank">dd-wrt</a>&nbsp;an open source Linux project which is a replacement for your router software. Of course, this sounds like it is either difficult to do or perhaps there was some hidden charge (if you like it, buy it) but none of these was the case.<br />I simply looked up my router which was listed, downloaded the firmware and uploaded it to the router as if it was a D-Link update and it was all sorted, the output boosted and the MacBook now has no problems with wifi.<br />Things to note:<br /><br /><ol><li>Write down your host name from the existing router along with any specific dns settings etc, these will obviously all be lost when you update and you will need to enter them again. Most of the defaults were fine however, it would just be port-forwards, mac filtering etc. that you might have setup yourself.</li><li>The default dns range was different between the DLink and wrt software so any static ip addresses on your home devices would need changing.</li><li>You risk bricking your router if you use the wrong firmware etc so be warned!</li><li>I had to fully reboot the cable modem and router (off for 30 seconds) which meant I obtained a new public IP address but it meant the modem mac address cloned properly into the router.</li></ol>

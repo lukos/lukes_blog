@@ -1,0 +1,19 @@
+---
+layout: post
+title: 'Cannot copy-and-paste into Remote Desktop login box '
+date: '2015-04-29T03:07:00.001-07:00'
+author: Luke Briner
+tags:
+- RDP
+- Remote Desktop
+- Error
+- passwords
+- keepass
+- password
+- copy and paste
+- logging on
+- cannot log in
+modified_time: '2015-04-29T03:07:53.051-07:00'
+---
+
+Well, I thought I couldn't but tl;dr it was user error!<br /><br />I use KeePass for passwords because I have so many and I want them to be secure. Apart from the extra hassle, it seems to work OK except in this one case. I have a newly created Windows Server 2012 and whenever I try and copy the password from KeePass into the Remote Desktop window to login, it doesn't work. If I copy it via another program, it doesn't work. If I type it in manually, it works fine.<br /><br />I was searching all over the interwebs to find out what was going on and why Remote Desktop was misbehaving (even it worked on other servers!) and then one day, it hit me.<br /><br />Was that last character a zero or an O (how do you spell O?)<br /><br />Why does it matter? The server was created as a VM via X2Go which does not allow copy and paste from host to VMs running Windows so I had generated a password in KeePass and then had to type it into the VM when it was created - I had misread the generated password and typed a zero instead of an O.<br /><br />Of course, every time I wanted to login from KeePass it wouldn't work because KeePass was copying the O that was really at the end of the password. I changed the O to 0 in KeePass and hey-presto. Back in business!

@@ -1,0 +1,15 @@
+---
+layout: post
+title: New to MongoDB and starting out
+date: '2017-05-09T04:43:00.001-07:00'
+author: Luke Briner
+tags:
+- mongodb
+- permission
+- newbie
+- auth failed
+- setting up
+modified_time: '2017-05-09T04:43:40.093-07:00'
+---
+
+When you first try something new, you don't know what you don't know. Unfortunately with MongoDB, there is a large mixture of old and new tutorials. Some of them are still linked from the official site even though they are not relevant any more.<br /><br />So there are two things I wanted to point out when using the instructions from MongoDB and doing your first operations on a database.<br /><br />Firstly, the instructions about setting up auth and creating an admin user are incomplete. You try and connect to a test database and it doesn't work. Why? Because the official docs only tell you to give the admin user a role of userAdminAnyDatabase, which is exactly what it sounds like. If you are just playing around and don't want to start creating users, you will also need to use dbAdminAnyDatabase and readWriteAnyDatabase roles. If you have already set the user up, you will need to use the console and run <a href="https://docs.mongodb.com/manual/reference/method/db.updateUser/" target="_blank">db.updateUser()</a><br /><br />Secondly, you should know that the operations on the SDK are lazy-invoked. For instance, if you call GetDatabase(), it will return a meta-object whether or not the client can reach the server. It is only when you actually need to query or write to the database that the connection is attempted and at this point, the operation might fail for several reasons. This means that you can use, for instance, GetCollection() and test for null to see if it exists, because it will never be null even if the collection doesn't exist (but you'll find out later!). Instead, in that example, you would instead use something like await db.ListCollectionsAsync(), which will block and call onto the database.<br /><br />Thirdly, you should know that users are usually added to individual databases, so you would need to use the database name as part of the credential. HOWEVER, if you need to access several databases with the same user, you should instead create a single user in admin (which is the name you would pass in the credential for database) and add roles to this user that specify the database see example <a href="https://docs.mongodb.com/manual/reference/method/db.updateUser/" target="_blank">here</a>&nbsp;and the large list of built-in roles <a href="https://docs.mongodb.com/manual/reference/built-in-roles/#built-in-roles" target="_blank">here</a>. Please don't deploy production systems with super user connections!

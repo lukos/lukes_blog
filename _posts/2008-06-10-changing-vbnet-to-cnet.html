@@ -1,0 +1,10 @@
+---
+layout: post
+title: Changing Vb.net to C#.net
+date: '2008-06-10T05:33:00.000-07:00'
+author: Luke Briner
+tags:
+modified_time: '2008-06-10T05:41:57.030-07:00'
+---
+
+I thought I would share a few experiences changing vb.net 'code-behind' files into c# using Visual Studio 2005 for an asp.net web site.<br />1) Make sure you are not changing files in the wrong place - it won't work!!<br />2) You can leave the solution open when you do so: Go into windows explorer and rename the code file from something.aspx.vb to something.aspx.cs<br />3) Open the aspx html file for the file yu have changed in the solution and change the page directive to language="c#" and CodeFile="something.aspx.cs".<br />4) Important! save and close the aspx file before compiling. If you don't do this, the compiler will change things in the 'c#' file back to VB style - e.g. "namespace" will become "Namespace" and "try" will become "Try". It took me a while to find out.<br />5) Open the code file which is currently full of vb but now expecting c# and do some find and replaces to make the syntax correct. For example find and replace "If " with "if ( " and "End If" with "}" (Don't worry about indenting, you can do this later.<br />6) Hopefully you can work out most of the differences between C# and Vb but some of the funny ones are a) VB uses = instead of == in logical comparison. Fortunately c# will complain about this! b) If VB functions take no arguments, they are called with no brackets which in c# will cause an error which is slightly helpful as to the cause (i.e. you need ToString() instead of ToString) c) VB doesn't use brackets and semi-colons for scoping code so these will need adding.<br /><br />Enjoy.

@@ -1,0 +1,13 @@
+---
+layout: post
+title: The 'Beta' ASP Calendar Control
+date: '2010-09-20T05:43:00.000-07:00'
+author: Luke Briner
+tags:
+- asp.net
+- bugs
+- asp:calendar
+modified_time: '2010-09-20T05:50:31.804-07:00'
+---
+
+We are having problems on our web site with the jQuery datepicker when used inline to look like a calendar. The problem only exists in IE8 (surprise, surprise) and it is fine in FF but anyway, I was recommended the asp calendar which although a server control might do everything we needed it to.<br />In terms of functionality, I think it provides all the things we need, you can say whether you are allowed to select months, weeks and/or days and you can also style various aspects. I must admit there were a few things which made it look a bit amateur though. <br />The color for the day table cells is harded coded to black so you cannot override this inthe styles. Also, you cannot set the styles for the selected day because although it is theoretically possible to do, the styles are not used and are not reported back to the code behind either apparently (very sloppy Microsoft, you do have testing procedures?). The other thing that you can't do is apply a margin to the day cells (which I was trying to do to match the JQuery calendar). This is presumably because the day cells also have a hard-coded width of 14% which takes precedence over the request for a margin which would require wider cells.<br />My conclusion? Well, to be pragmatic, this control works where the jQuery one doesn't despite being a server control which is less than ideal. Also, because it is a server control, things like date selection all work with the correct types and I don't have to cast between strings and dates in the code-behind. I guess I'll use it.

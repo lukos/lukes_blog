@@ -1,0 +1,17 @@
+---
+layout: post
+title: Netbeans project from Windows won't open on Ubuntu
+date: '2014-06-21T11:22:00.001-07:00'
+author: Luke Briner
+tags:
+- ubuntu
+- windows
+- linux
+- subversion
+- netbeans
+- project
+- svn
+modified_time: '2014-06-21T11:22:31.687-07:00'
+---
+
+I have used Netbeans for quite a while and find it great for PHP development. Recently, I setup a new Ubuntu PC at home to do some dev work and downloaded a Netbeans project from Subversion.<br /><br />I installed Netbeans from the Ubuntu repos and tried to open the project downloaded from my Subversion repo and it wouldn't see the project to open it, despite the folders appearing to be there.<br /><br />I went back to work and double-checked that I hadn't missed a file. I hadn't.<br /><br />It suddenly occurred to me to check the versions and although I was running 7.3 at work on Windows, the version in the Ubuntu repo (for some reason) is only version 7.0.2, which meant it couldn't recognise the project structure for my Windows project.<br /><br />It was nothing to do with Windows vs Ubuntu. I had to uninstall the old version of Netbeans and install a version directly from the Netbeans web site and it all worked fine!

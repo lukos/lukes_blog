@@ -1,0 +1,15 @@
+---
+layout: post
+title: 'CodeIgniter: You have specified an invalid database connection group.'
+date: '2013-10-14T08:47:00.002-07:00'
+author: Luke Briner
+tags:
+- database
+- errors
+- codeigniter
+- configuration
+- connection group
+modified_time: '2013-10-14T08:47:40.811-07:00'
+---
+
+We are currently going through a range of frameworks trying to create and test plugins for our authentication system at <a href="http://pixelpin.co.uk/" target="_blank">pixelpin.co.uk</a>. Out of habit, we have been creating a database and user for each of the frameworks and plumbing them in to the framework. CodeIgniter was not happy.<br /><br />My colleague was working through a tutorial and trying to display a list of news items, bringing up the page caused a few errors including the one above. This was because in the config.php file, the value of $active_group was set to 'test' even though the database connection settings were all set against 'default' (there were no settings for 'test').<br /><br />That fixed however, the page still did not work but fixing the first problem had only uncovered something else. Using a set of "echo 'Hello'; die();" lines throughout code, we worked out that a line in the controller that was supposed to return the query results (as an array) failed.<br /><br />We tried to connect to the database manually with the user we had created for the framework and realised that somehow the permissions were not set up correctly. This might have been because we recreated the database but not the user and although the user still looked to have permissions to the DB, in fact, it didn't.<br /><br />We re-ran the permission code and it all worked. We had assumed that CodeIgniter uses the database by default since the site was working, but clearly, it only uses the database for developer-created tables that might or might not be required as opposed to things like wordpress which are data driven right from the off.<br /><br />Moral: Development is messy and hard!

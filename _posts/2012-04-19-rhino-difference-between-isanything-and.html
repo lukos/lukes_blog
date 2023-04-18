@@ -1,0 +1,12 @@
+---
+layout: post
+title: Rhino difference between .Is.Anything and .Is.Typeof
+date: '2012-04-19T04:13:00.000-07:00'
+author: Luke Briner
+tags:
+- mocks
+- Rhino
+modified_time: '2012-06-19T08:02:37.669-07:00'
+---
+
+Rhino mocks, when matching arguments, it is preferential, as usual, to be as specific as you can about expected arguments (including repeat information). For instance, if you will call a method with e.g. a username, then set the expectation to expect that specific username:<br /><br />Mock.Expect(r =&gt; r.SetUsername(Arg<string>.Is.Equal("expectedusername"))).Repeat.Once()</string><br /><br />There is an "Is" constraint called Anything. You might expect the following to match any string:<br /><br />Mock.Expect(r =&gt; r.SetUsername(Arg<string>.Is.Anything)).Repeat.Once() </string><br /><br />But it doesn't! It matches anything! This is slightly misleading since the Arg class is parameterised and would seem a bit redundant but it is still the way it is. What you should do to achieve this functionality is to use TypeOf instead:<br /><br />Mock.Expect(r =&gt; r.SetUsername(Arg<string>.Is.TypeOf)).Repeat.Once() </string>

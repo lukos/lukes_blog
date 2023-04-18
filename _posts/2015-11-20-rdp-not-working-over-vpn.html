@@ -1,0 +1,13 @@
+---
+layout: post
+title: RDP not working over VPN
+date: '2015-11-20T06:33:00.002-08:00'
+author: Luke Briner
+tags:
+- RDP
+- VPN
+- cannot connect
+modified_time: '2015-11-20T06:33:44.521-08:00'
+---
+
+I have just had the joy of setting up a VPN, something which requires a masters degree! Once I got to the point of amazement that it worked, I then wanted to try Remote Desktop over VPN since that was the reason for it in the first place. These Remote Desktops work fine when plugged into the LAN.<br /><br />I could RDP to one server but not another when connected via the VPN. This was useful, because it meant that RDP was generally being allowed (the VPN didn't also have a firewall blocking stuff) so it narrowed it down to the specific server I couldn't contact.<br /><br />I looked at the rule in Windows Firewall with Advanced Features and spotted two things that might affect it. One is blocking edge traversal which is a security control that is supposed to block unintended access for remote people who have tunnelled into the network and have a local IP address. I set that to "Enable" since I thought that might be the problem. The second thing was I had locked down access to remote ip addresses from the "Local Subnet" under scope. Although this was kind of correct, the VPN sends out IP addresses in a different range to clients (I couldn't get it to work with the same range of IPs as the internal network) so these were being blocked!<br /><br />All I did was add another ip address rule for my other range of IP addresses and hey presto, it works!

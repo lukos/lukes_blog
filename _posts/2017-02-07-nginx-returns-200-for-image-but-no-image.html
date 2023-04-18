@@ -1,0 +1,13 @@
+---
+layout: post
+title: nginx returns 200 for image but no image!
+date: '2017-02-07T02:24:00.000-08:00'
+author: Luke Briner
+tags:
+- nginx
+- images
+- '200'
+modified_time: '2017-02-07T02:24:02.888-08:00'
+---
+
+This was a weird one. I copied a site into a new directory on a web server, set up nginx for the new site and accessed it. The php files worked as expected but I noticed an image wasn't displayed properly.<br /><br />When I looked in the network tab, the server had returned a 200 for the image but trying to view the image showed something that wasn't the image it was supposed to be.<br /><br />Very confusing but very simple!<br /><br />The images I had copied up were corrupted somehow (possibly a previous use of WinSCP in text mode?) so the browser couldn't displayed them properly although nginx found them and returned them.<br /><br />I had the originals on the web server so re-copied those into the new directory and it was all good!

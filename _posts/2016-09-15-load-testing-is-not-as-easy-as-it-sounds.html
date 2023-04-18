@@ -1,0 +1,13 @@
+---
+layout: post
+title: Load Testing is not as easy as it sounds
+date: '2016-09-15T09:15:00.002-07:00'
+author: Luke Briner
+tags:
+- Azure
+- vsts
+- Load testing
+modified_time: '2016-09-15T09:15:42.221-07:00'
+---
+
+So we have an authentication-as-a-service product called PixelPin. We want to load test it so we can a) tell our customers that it can definitely handle their X,000 customers logging in at the same time, and also to benchmark performance to find any bottlenecks and let us see the effect of architecture changes.<br /><br />So far, so good.<br /><br />When it comes to planning the load test, it is actually really hard. Setting up the tests is easy enough using Visual Studio Team Services and Visual Studio Enterprise Edition but actually working out what to test and how is hard.<br /><br />Why? Because there are so many variables. Various cloud services, bandwidth, CPU, memory and even dependent services that are used for testing like a dummy OAuth login site. If the test site cannot handle enough user load then the load test won't be stressing the tested system anywhere near enough.<br /><br />In fact, our first step is to try and work out which variables can be ignored. If a certain system is hardly struggling to manage the load, let's not spend any time with that and instead work on the really slow parts.<br /><br />Another question that can be hard is how to simulate a realistic load test. There's no point saying we can handle 5000 requests per second hitting the home page when that is not what people will be doing. We need to think about the mix of journeys, the effect that caching and browser mix might have on things and a whole host of other reality checks.<br /><br />You also get another problem if you are not careful about setting up your test environment. We created 5000 test users and put them into a spreadsheet that the tests use to fire at the test site but if you aren't careful (and we weren't), then the same user account is hit twice in VERY quick succession and causes an error that would never happen in real life (unless a real user and an attacker happened to do that). You start having to really understand what the load test is doing under the covers, how is it selecting the users from the spreadsheet? Can I have 2 test agents running at the same time or will that cause parallel errors that shouldn't happen?<br /><br />It is going to take weeks to sort through the random errors (errors which are usually caused by an underlying problem, the error itself doesn't show that) and then to decide how to measure what we are trying to measure in a suitable way.<br /><br />Load Testing is not as easy as it sounds!

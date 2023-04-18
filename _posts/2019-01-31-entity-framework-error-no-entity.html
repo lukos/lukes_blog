@@ -1,0 +1,15 @@
+---
+layout: post
+title: Entity Framework Error - "no entity framework provider found for the ADO.NET
+  provider with invariant name"
+date: '2019-01-31T01:42:00.003-08:00'
+author: Luke Briner
+tags:
+- DI
+- Error
+- Entity Framework
+- EF6
+modified_time: '2019-01-31T01:42:44.590-08:00'
+---
+
+This was a weird one. We have an app that uses both Entity Framework (EF) for models and Dapper for raw SQL queries. We have a repository model and were calling some methods in 3 separate repos:<br /><br />Surveys.GetById(sid); // OK<br />Reports.GetById(rid); // OK<br />Members.GetById(mid); // EF Exception: no entity framework.....<br /><br />Digging deeper, the first two were calling Dapper.Contrib.Extensions.SqlMapperExtensions.Get<t>(), which just creates SQL so that makes sense.</t><br /><br />The third one was calling DbContext.Set<t>(), a poorly named method that Gets a Set of entities! This was in EF so this made some sense. Dapper was working with direct SQL, EF wasn't. In fact we were calling Set().Where() to get the specific item and the complaint was only when Where() was called.</t><br /><br />So we modified the code to remove Where() just to see what happened and Set() worked fine, although subsequently calling Where() then made it fail again. Of course, many EF methods are lazy-evaluated so calling Set() doesn't go and get everything, it creates a query in memory and is only sent to the DB once a result method is called and the correct select and where clause can be created.<br /><br />Some surfing revealed several people having the same issue and a particularly horrible SO example where there are lots of (different) answers to the same problem including good, bad and ugly! <a href="https://stackoverflow.com/questions/18455747/">https://stackoverflow.com/questions/18455747/</a><br /><br />The bottom line is that an app normally loads Entity Framework implicitly from configuration, which is why App.Config is modified when you install it. This causes a lazy-load of the EF configuration and it all works. In my case, this was missing, because I wasn't using EF directly in the app but in a library referenced from the app. There is a hack that by calling the following code anywhere and any time before you need EF, you can force a load (you could avoid an EF reference in the app by putting this in the library somewhere):<br /><br /><pre class="default prettyprint prettyprinted"><code><span class="pln"></span><span class="kwd">var</span><span class="pln"> instance </span><span class="pun">=</span><span class="pln"> </span><span class="typ">System</span><span class="pun">.</span><span class="typ">Data</span><span class="pun">.</span><span class="typ">Entity</span><span class="pun">.</span><span class="typ">SqlServer</span><span class="pun">.</span><span class="typ">SqlProviderServices</span><span class="pun">.</span><span class="typ">Instance</span><span class="pun">;</span></code></pre><pre class="default prettyprint prettyprinted"><code><span class="pun">&nbsp;</span></code></pre>Or you can install EF to the app using nuget, probably the proper solution, so that everything is visible and configurable.

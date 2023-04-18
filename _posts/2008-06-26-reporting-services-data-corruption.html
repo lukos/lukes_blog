@@ -1,0 +1,13 @@
+---
+layout: post
+title: Reporting Services Data Corruption
+date: '2008-06-26T05:42:00.000-07:00'
+author: Luke Briner
+tags:
+- bug
+- Reporting Services
+- corrupted data
+modified_time: '2008-06-26T05:47:07.556-07:00'
+---
+
+Not sure how you might find this post via google. Not sure what you would search for but maybe: Reporting Services, Corrupted Data, Corrupted Layout, Preview Layout not Working, Array index out of bounds in preview, preview doesn't match data, grouping not working as expected.<br />Anyway, however you got here, I experienced some very weird stuff in a reporting services report and it was related to RS caching data for the report before changing the sql for the data source. Despite pressing refresh and save and all sorts of things I was getting very weird errors, fields appearing in the wrong place on the preview, weird error messages and just something appearing to be not right. The fix? Close Visual Studio, find the folder with the report in and delete the reportname.rdl.data file and then reopen. VS will requery the data and you should hopefully be alright. Sweet as.

@@ -1,0 +1,10 @@
+---
+layout: post
+title: A code quality test
+date: '2011-12-09T03:31:00.001-08:00'
+author: Luke Briner
+tags:
+modified_time: '2011-12-09T03:39:52.789-08:00'
+---
+
+Looks at the following code (which compiles) and see what is wrong with it:  <pre>var myDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month + 1, 1 );</pre> Spot it? I didn't! The obvious intention is to create a date which is the 1st of the next month, in general it works as expected but when the month is December, month + 1 = 13 which will understandably cause the constructor to throw an exception. The compiler won't catch this because the types are correct.  What point am I making? Well, quality is about learning from mistakes. What can we learn from the above code? Obviously we could simply attribute it to human error and say a code review might pick it up (but possibly/probably not) but what else can we decide? Well, one thing about strongly typed languages is that we should aim to get the compiler to test as much as possible on our behalf to catch these sorts of errors so the real issue is that there should NOT be a DateTime constructor that takes 3 integers for arguments. It sounds reasonable on paper but it means that for 99% of combinations of parameters, the constructor will throw an exception. What we should have instead is a constructor that takes enumerated values and then we could make use of the AddMonths method (which we could have used in the above code) to get something more like this:  <pre>var myDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DayOfMonth.First ).AddMonths(1);</pre> Which would give a much more solid representation of what we are doing and would make it harder to fudge. That way, we would have to cast a number to an enum if we wanted to hack the code and this would be much more obvious in a code review:  <pre>var myDate = new DateTime(DateTime.Today.Year, (MonthOfYear)((int)DateTime.Today.Month + 1), DayOfMonth.First );</pre> So you can get quality even in subtle ways - now all I have to do is update the code review process and get MS to drop the silly 3 x integer constructor.

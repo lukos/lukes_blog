@@ -1,0 +1,17 @@
+---
+layout: post
+title: Clearing the Postback Response in ASP.Net
+date: '2013-01-31T06:21:00.000-08:00'
+author: Luke Briner
+tags:
+- asp.net
+- postback
+- Response.End
+- not clearing response
+- Redirect
+- reduce redirect bandwidth
+- Response
+modified_time: '2013-05-16T07:25:39.346-07:00'
+---
+
+Most of us don't think too much about bandwidth usage of our applications since the first rule of optimization is: don't. If we want to speed things up we might just gzip the pages or whatever but while I am working on a system which is massively multi-user, any savings I can make in the response are potentially large savings in bandwidth, something which is great for cloud services which charge for bandwidth.<br />I realised much to my surprise that if you call Response.Redirect in the code behind after a postback, all this does is add in some html to the response like this:<br /><br /><pre style="background-color: #eeeeee; border: 1px dashed #999999; color: black; font-family: Andale Mono, Lucida Console, Monaco, fixed, monospace; font-size: 12px; line-height: 14px; overflow: auto; padding: 5px; width: 100%;"><code>&lt;html&gt;&lt;head&gt;&lt;title&gt;Object moved&lt;/title&gt;&lt;/head&gt;&lt;body&gt;<br />&lt;h2&gt;Object moved to &lt;a href="/blah/blah.aspx"&gt;here&lt;/a&gt;.&lt;/h2&gt;<br />&lt;/body&gt;&lt;/html&gt;<br /><br /></code></pre><br />...but the body of the page is still returned after this html code even though the browser will shortly be redirecting. This effectively doubles the bandwidth requirement for the system since every page is returned once on the GET and once on the POST. I decided to write a method that all pages could call for redirect purposes which would only return the redirect code and nothing else. I had to play around with all the similar and confusing methods that are available in ASP.net and ended up with this:<br /><br /><br /><pre style="background-color: #eeeeee; border: 1px dashed #999999; color: black; font-family: Andale Mono, Lucida Console, Monaco, fixed, monospace; font-size: 12px; line-height: 14px; overflow: auto; padding: 5px; width: 100%;"><code> internal static void Redirect(HttpContext context, string location)<br />        {<br />            context.Response.Clear();<br />            context.Response.Redirect(location, false);<br />            context.ApplicationInstance.CompleteRequest();<br />            context.Response.End();<br />        }<br /></code></pre><br />The first line clears anything that is already in the response. The second effectively generates the html that will cause the redirect and "false" means it won't throw a thread abort exception in the process. The third line ensures that no other filters or pipelines will be called (which might add additional data to the response) and the last one ensures that the default Render method is not called which would put the page into the output.

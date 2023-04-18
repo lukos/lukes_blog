@@ -1,0 +1,18 @@
+---
+layout: post
+title: Android app crashes with no stack trace after calling startActivityForResult
+  or startActivity
+date: '2015-06-11T07:15:00.001-07:00'
+author: Luke Briner
+tags:
+- mobile
+- debugging
+- errors
+- app
+- crash
+- debugger
+- Android
+modified_time: '2015-06-11T07:15:36.529-07:00'
+---
+
+I don't write loads of Android code and it has been about 6 months since I last did anything in anger but I once again ran up Android Studio (HIGHLY recommended for Android development) and set about creating a new demo app to use with our PixelPin mobile app. I will write a few specific posts about things that I have seen.<br /><br />The most major was trying to use the app to call into an Activity I had added to the project. The debugger wouldn't report anything, the app just died when calling startActivityForResult.<br /><br />The problem? Not adding the activity into the application manifest! I just about caught the error in the logcat output but sadly, my Samsung S4 mini spits out about 10 errors a second! from all manner of services and apps, something that is very poor in my opinion since logging is recommended to be switched off in production, partly for security and partly for usability.<br /><br />Added it into the manifest and cleaned the project - it was all good!

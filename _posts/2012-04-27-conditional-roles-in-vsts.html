@@ -1,0 +1,14 @@
+---
+layout: post
+title: Conditional Roles in VSTS
+date: '2012-04-27T08:02:00.001-07:00'
+author: Luke Briner
+tags:
+- database
+- security
+- vsts
+- role
+modified_time: '2012-04-27T08:02:55.105-07:00'
+---
+
+We have databases that exist separately in our dev environment but are deployed into common databases. This is fine since we produce schemas and these are all added to the common databases and work fine. We had a problem though in that we share roles across the databases. If we include the role in multiple databases, they work fine in isolation but when the second schema is created on the common database, it fails to create the role since it already exists. It therefore bombs out which means nothing is created in the database. It would appear that it is not possible to include the conditional addition of the role, if you add IF NOT EXISTS... to the role sql in the VSTS project, it will not build. The only workaround I have found so far is to create the role conditionally in the pre-deploy file and then assign its privileges in the post-deploy file. Not great but it works.

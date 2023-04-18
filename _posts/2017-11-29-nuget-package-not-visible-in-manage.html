@@ -1,0 +1,15 @@
+---
+layout: post
+title: NuGet package not visible in Manage NuGet Packages
+date: '2017-11-29T04:16:00.003-08:00'
+author: Luke Briner
+tags:
+- nuget
+- visual studio 2015
+- visual studio 2017
+- private repo
+- visual studio
+modified_time: '2017-11-29T04:16:41.621-08:00'
+---
+
+I had published a package to a private NuGet repo and even though it was visible in one project, it was not visible in another. I looked on the server and it was definitely there.<br /><br />This happened because the NuGet package was targeting .Net 4.6.1 but the project was only targeting 4.5.1 so it was simply not listed.<br /><br />I updated the project to 4.6.1 and the package appeared!

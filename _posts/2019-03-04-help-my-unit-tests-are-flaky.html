@@ -1,0 +1,13 @@
+---
+layout: post
+title: 'Help: My Unit tests are flaky!'
+date: '2019-03-04T05:39:00.004-08:00'
+author: Luke Briner
+tags:
+- errors
+- flaky
+- Unit Tests
+modified_time: '2019-03-06T05:02:32.924-08:00'
+---
+
+Flaky in this instance meaning that sometimes they work, sometimes they don't.<br /><br />When you have automated testing, you need to be able to rely on tests always going green unless you have actually broken something but in many cases, we have tests that every now and then fail. Here are some reasons this might be happening:<br /><br /><ol><li>Parallelism enabled, means that if certain tests are called at the same time and share any resources, they might fail. In many cases, it is slower but easier simply to disable parallelism for most test projects.</li><li>Caching anything can cause data that you want to look "stale" to still look fresh. Although caching is helpful in production, you should ideally inject a NoCache for basic functionality and only inject a real cache for testing the caching of responses.</li><li>Any kind of random generation during tests is risky. You might, for example, generate random passwords to test a password policy but unless you are careful, a very small sample of the random output might be enough to cause the test to fail. We had one example where calling RandomAlphanumeric would cause a failure if it didn't include at least 1 number, which of course was uncommon but possible. If you like the idea of random, then run a test locally 100000 times (or more) before deciding your random range and your validation policy are correct.</li><li>Rate-limiting functionality can cause random errors when tests are running quickly but interestingly, they can also cause less random errors since the same test is likely to be the place where the rate-limiting kicks in. This, also, needs to be injectable and disablable if possible.</li><li>Asynchronous handling might mean that a subsequent call to check something fails since the initial call has not actually finished yet. If you know you are using asynchronous checks then you will need to work out if you can do something clever or whether you will have to inject sleeps to give the first call time to complete.</li><li>Limits on database/network connections if running functional tests</li><li>Flaky networks/OS/infrastructure if using multiple servers/databases/functional tests etc.</li><li>Using HTTP clients incorrectly so that requests and responses are not completely separated from each other (especially if using different credentials to call the server). </li></ol>Tracking these down is not always easy but if you have coded your application well, you should be able to see genuine errors somewhere! 

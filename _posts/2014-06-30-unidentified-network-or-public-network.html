@@ -1,0 +1,17 @@
+---
+layout: post
+title: Unidentified network or public network in Windows under virtio
+date: '2014-06-30T07:14:00.003-07:00'
+author: Luke Briner
+tags:
+- Virtual Machine
+- windows
+- Network Card
+- Networks
+- Virtual Box
+- Windows 7
+- Windows Server
+modified_time: '2014-06-30T07:14:49.792-07:00'
+---
+
+When running Windows Server under Virtual Box, you might find that the network appears as "un-identified network" and it therefore defaults to the public firewall profile. There are two reasons for this, that are related.<br /><br />Basically, Windows looks for a default gateway to decide whether the network is a private network or not. If you have forgotten to set this in the TCP properties, or it has not been set by DHCP or you have entered it incorrectly, this will cause the problem.<br /><br />The other problem relates to host-only networks, which you might use to lock down communication between two servers. Since, again, there is no default gateway or DHCP on a host-only network, Windows cannot identify it. This time, it won't even appear in the networks page so you can't configure it. You need to use a registry hack to tell Windows that the network is trusted and this will cause it to display correctly. Follow the instructions <a href="http://niallbest.com/unidentified-networks-in-windows-how-to-make-them-private/" target="_blank">here</a>.

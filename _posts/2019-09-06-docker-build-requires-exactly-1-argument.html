@@ -1,0 +1,15 @@
+---
+layout: post
+title: '"docker build" requires exactly 1 argument'
+date: '2019-09-06T03:50:00.003-07:00'
+author: Luke Briner
+tags:
+- docker
+- Error
+- isolation
+- build
+- TeamCity
+modified_time: '2019-09-06T03:50:53.523-07:00'
+---
+
+Learning docker is hard when all the examples just work but doing something that should be simple doesn't!<br /><br />The above error is usually caused by people not specifying the working location in the docker build command, often by missing the full-stop (period) in an example command:<br /><br /><b><span style="font-family: &quot;Courier New&quot;, Courier, monospace;">docker build -f dockerfile .</span></b><br /><br />Then you get the error that as well as the switches, there should be exactly one argument.<br /><br />However, you also get the error if you did something like this:<br /><br /><b><span style="font-family: &quot;Courier New&quot;, Courier, monospace;">docker build -f dockerfile --isolation .</span></b><br /><br />Why? Because isolation should be in the form of isolation=hyperv or whatever and the missing = sign confuses the build process so instead of a nice error like "You forgot the value of isolation, you idiot", you instead get the error above!<br /><br />Check your command and check that the example you have copied is correct.

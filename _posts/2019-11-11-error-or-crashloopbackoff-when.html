@@ -1,0 +1,16 @@
+---
+layout: post
+title: Error or CrashLoopBackOff when deploying dotnet core container to Azure Kubernetes
+  Service
+date: '2019-11-11T09:30:00.000-08:00'
+author: Luke Briner
+tags:
+- docker
+- aks
+- CrashLoopBackOff
+- kubernetes
+- exit code 140
+modified_time: '2019-11-11T09:30:05.866-08:00'
+---
+
+This was really confusing because I was sure that the new service I was deploying to AKS was basically the same as one that was already working but when deploying, my pods were showing the following (with kubectl get pods):<br /><br /><b><pod name=""> 0/1&nbsp;&nbsp;&nbsp;&nbsp; CrashLoopBackOff&nbsp;&nbsp;&nbsp;&nbsp; 8&nbsp;&nbsp;&nbsp;&nbsp; 2m30</pod></b><br /><br />Where the 0/1 is the ready number and 8 is the number of restarts.<br /><br />If you call <i>kubectl describe pod/<pod name=""></pod></i> you get stuff that isn't too helpful except it says it is terminated and the exit code: 140 - hmmm. <br /><br />I then realised that you could call <i>kubectl log <pod name=""> -p</pod></i> and got something MUCH more helpful:<br /><b><br /></b><b>Error: An assembly specified in the application dependencies manifest Microservices.Messaging.deps.json) was not found: package: 'Dapper.Contrib', version: '2.0.30' path: 'lib/netstandard2.0/Dapper.Contrib.dll'</b><br /><br />This is when I realised that I had copied the new (broken) Dockerfile from a service that runs unit tests and does not include any third-party packages (and is currently unused!) and the service that is actually working does not run unit tests and does have third-party packages.<br /><br />What I had done was by adding in a unit test step, I had removed dotnet publish, thinking it was not doing anything special. Of course, what it does is package all referenced packages into the target directory ready for deployment. Added this back in and all was good with the world again.

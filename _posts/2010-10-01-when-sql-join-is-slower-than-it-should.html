@@ -1,0 +1,17 @@
+---
+layout: post
+title: When a SQL JOIN is slower than it should be
+date: '2010-10-01T07:47:00.001-07:00'
+author: Luke Briner
+tags:
+- sql server
+- t-sql
+- slow
+- performance
+- sql server 2005
+- join
+- sql
+modified_time: '2010-10-01T07:54:55.418-07:00'
+---
+
+I've experienced the situation a few times where select * from viewA runs very fast, select * from viewB is very fast but when joined together, they are very slow (like 10 times the execution time).<br />I also had today the scenario where joining an old view was fine but joining a new one, which was not only virtually identical but with less columns and one less join, took 30 minutes instead of 10 seconds!<br />I have experienced minor improvements by changing join orders and trying to use more efficient WHERE clauses, avoiding SELECT in the WHERE clause etc but this was a whole other league of performance issue. When you only join two views, you don't have many options but I tried simplifying the ON clause (no different), removed the GROUP BY (no difference) remove the column which was summing an amount (no difference) and then I realised the only thing remaining was the JOIN. I changed this from INNER JOIN to LEFT OUTER JOIN and all of a sudden, I was back up and running.<br />As it happens, there are no rows in view 1 which do not appear in view 2 so the INNER JOIN isn't actually required here but I was still surprised. I looked into a few web posts and the best answer was, "an inner join is an implicit outer join + where column is not null" but I don't actually believe this and still wouldn't expect the problem in my 500 row dataset but obviously somehow it is a problem (although this is by FAR the worst case of it I have ever seen).

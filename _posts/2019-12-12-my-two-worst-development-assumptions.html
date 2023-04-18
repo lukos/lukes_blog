@@ -1,0 +1,10 @@
+---
+layout: post
+title: My two worst development assumptions
+date: '2019-12-12T03:22:00.001-08:00'
+author: Luke Briner
+tags:
+modified_time: '2019-12-12T03:22:11.719-08:00'
+---
+
+<span style="font-size: large;">1) It was working before so someone broke something</span><br /><span style="font-size: large;"><br /></span><span style="font-size: large;">2) I didn't change anything so it can't be broken</span><br /><br />These two constantly haunt me.<br /><br />An example of the first is a load of functional tests that have always been green suddenly start going red. We assume they were written correctly then we find arbitrary sleeps, which are now not quite long enough for the result to occur or the database was a little slower than usual. They are failing but nothing was broken except the original tests!<br /><br />The second is quite common when you don't touch much code and a test or build fails and we say, "All I did was..." then we find some javascript that is now broken, a JS method that has now been replaced with another of the same name (even if you didn't wire up your new one) or even an accidental use of a class or id which conflicts with something else.

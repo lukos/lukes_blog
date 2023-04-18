@@ -1,0 +1,15 @@
+---
+layout: post
+title: 'Docker login: Error response from daemon: login attempt to registry failed
+  with status: 400 Bad Request'
+date: '2021-06-16T08:37:00.002-07:00'
+author: Luke Briner
+tags:
+- '400'
+- docker-registry
+- docker
+- kubernetes
+modified_time: '2021-06-16T08:37:20.206-07:00'
+---
+
+<p>&nbsp;One of the problems when you are doing something quite new is that it is not always easy to split it into separate testable steps.</p><p>I was creating my own self-hosted docker-registry image on Kubernetes which included a new DNS entry, ingress, pods and then overrides to enable authentication etc. After doing what I thought was correct, I attempted to login and saw this error. It is a bit misleading because this error doesn't mean bad request in the usual sense but <i>also</i> means that your creds are not correct or could not be checked.</p><p>I disagree with error messages which attempt to add extra security by obscuring the real problem. You shouldn't need to rely on error messages to keep brute-forcers at bay, just return "auth failed" or whatever as a 401, it would help much more.</p><p>Anyway, I was using the correct username and password which I had created as an htpasswd file which was mapped as a secret into each of the pods so why wasn't it working?</p><p>First check by logging into one of the pods that the volume is present in the correct location (under /auth/htpasswd) which should match the environment variable REGISTRY_AUTH_HTPASSWD_PATH in the deployment yaml (it did).</p><p>However, I then cat'd the contents of the file and noticed that although it looked correct in notepad++ locally, it had 2 boxes at the beginning of the line in the pod. What happened? Boxes usually means encoding issues and surely enough, I looked at the encoding for the file in notepad++ and it showed UCS-2 (whatever that is!). I had to delete the deployment so I could delete the secret, save the htpasswd file I created as ANSI instead and then reupload the secret and re-deploy the registry deployment.</p><p>Success!<br /></p>

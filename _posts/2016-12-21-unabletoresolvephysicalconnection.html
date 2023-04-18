@@ -1,0 +1,16 @@
+---
+layout: post
+title: UnableToResolvePhysicalConnection UnableToConnect
+date: '2016-12-21T03:57:00.003-08:00'
+author: Luke Briner
+tags:
+- client
+- ssl
+- stackexchange
+- Error
+- redis
+- Connections
+modified_time: '2017-01-25T04:32:20.229-08:00'
+---
+
+<div class="MsoNormal" style="background-color: white; color: #222222; font-family: arial, sans-serif; font-size: 12.8px;">"No connection is available to service this operation: GET"<u></u><u></u></div><div class="MsoNormal" style="background-color: white; color: #222222; font-family: arial, sans-serif; font-size: 12.8px;">"It was not possible to connect to the redis server(s); to create a disconnected multiplexer, disable AbortOnConnectFail. ConnectTimeout"</div><div class="MsoNormal" style="background-color: white; color: #222222; font-family: arial, sans-serif; font-size: 12.8px;"><br /></div><div class="MsoNormal" style="background-color: white; color: #222222; font-family: arial, sans-serif; font-size: 12.8px;">Redis, running on Windows with the default settings.</div><div class="MsoNormal" style="background-color: white; color: #222222; font-family: arial, sans-serif; font-size: 12.8px;"><br /></div><div class="MsoNormal" style="background-color: white; color: #222222; font-family: arial, sans-serif; font-size: 12.8px;">The problem? ssl was set to true in the connection string but not setup on the server. I set ssl to false (it is only for development) and it all works fine. Why would this not return a useful error like "ssl not setup on server"?</div><div class="MsoNormal" style="background-color: white; color: #222222; font-family: arial, sans-serif; font-size: 12.8px;"><br /></div><div class="MsoNormal" style="background-color: white; color: #222222; font-family: arial, sans-serif; font-size: 12.8px;">We only found out when one of our Devs happened to spot the ssl setting and wondered if that was why it worked in production and not in dev!</div>

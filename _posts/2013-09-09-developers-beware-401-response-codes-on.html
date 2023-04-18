@@ -1,0 +1,21 @@
+---
+layout: post
+title: 'Developers: Beware 401 response codes on IIS!'
+date: '2013-09-09T10:27:00.002-07:00'
+author: Luke Briner
+tags:
+- Exception
+- Yii
+- Error
+- CHttpException
+- freeze
+- Hanging
+- broken
+- '401'
+- iis
+- Lockup
+- php
+modified_time: '2013-09-09T10:27:57.230-07:00'
+---
+
+This problem was causing me to use very naughty words: A PHP Yii app using the built-in CHttpException class and every time I tried to return a 401 (unauthorised) exception, the request for the page would lock up. Change it to pretty much any other code and it was fine.<br /><br />Lots of other weirdness ensued, at one point, just echoing "hello" to the output was enough to make it work but remove this line and it locks up again.<br /><br />What was happening (looking in Fiddler) was that the response headers came through OK but the body never did. Looking at the content-length, it was correct as per the information I was sending back to the user.<br /><br />Long story short, it appears that IIS is deciding, on your behalf to remove the body on any 401 responses. I say IIS not because I know but I can't see it being anything else! This means when you write to the response, the content-length is set correctly so the client is waiting for it - but it never comes!<br /><br />Anyway, needless to say, I had to remove the error messages I was sending back with the 401 and just include the correct challenge header instead.

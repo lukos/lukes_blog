@@ -1,0 +1,17 @@
+---
+layout: post
+title: 'CryptographicException: Specified padding mode is not valid for this algorithm'
+date: '2018-07-03T02:23:00.001-07:00'
+author: Luke Briner
+tags:
+- aes
+- Error
+- padding
+- Cryptography
+- padding mode
+- rijndael
+- pkcs7
+modified_time: '2018-07-03T02:23:30.855-07:00'
+---
+
+Do you ever get this when decrypting AES data?<br /><br />Me too! Let us understand what this means and why it happens.<br /><br />tldr: Bad padding on the encrypted data or an incorrect key<br /><br />The Advanced Encryption Standard was a competition that was won by Vincent Rijmen and Joan Daemen with their Rijndael cipher. AES is basically a set of 3 of the possible combinations of parameters available in Rijndael but although you will see AES in lots of places, some libraries will instead refer to Rijndael and you have to be a bit careful because it is easy to confuse block sizes and key sizes.<br /><h3>Block Size</h3><div>Because of the way the maths of a Block Cipher work securely, all data to be encrypted has to be a multiple of the block size. For Rijndael, the <i>block size</i> is 128 bits regardless of the key size! i.e. 8 bytes.</div><div><br /></div><div>What happens if your data isn't a multiple of 8 bytes? The encryption cipher would error unless you enable automatic padding (you could do it manually, but you don't need to). There are different ways to do it but the basic idea is to do it in a way that the decryption process can work out what is padding and what isn't since the padding is just numbers like the plain 'text'!</div><div><br /></div><div>In .Net, they use PKCS7 padding, which involves adding bytes with a value equal to the number of bytes you are padding, e.g.</div><div><br /></div><div>01</div><div>02 02</div><div>03 03 03</div><div>etc.</div><div><br /></div><div>The important thing is that padding is carried out before encryption takes place.</div><div><br /></div><div>If the padding is somehow corrupted/removed etc. then you will see the Cryptographic Exception, as expected when you attempt decryption. You might also see it if you are attempting to decrypt data that was encrypted using a different block size that doesn't match the block size of AES - since AES has the same block size between families, this would only happen with data encrypted with a different cipher and I assume is uncommon.</div><h3>Decryption</h3><div>So what happens when you decrypt? Assuming you use the correct key, the decrypted data will end with 1 x 1 or 2 x 2 or 3 x 3 etc. bytes which will tell the decryptor the amount of padding that was added which can be stripped before the plain text is returned.</div><div><br /></div><div>What happens if you use an incorrect key? It depends!</div><div><br /></div><div>If you have no padding or the (wrongly) decrypted data happens to have a valid padding by chance, you will simply get garbage plain text. In any situation where the padding is invalid (for example, the entire plain text with the assumed padding implies it is not a multiple of 128 bits) then you will get the Exception stating that the padding mode is invalid!</div><div><br /></div><div>You should always have a known working utility to hand to test any problem cipher text to quickly determine whether the data you are decrypting has been corrupted/changed or whether the problem is with the code you are using to decrypt it or even the more likely scenario of using the wrong key to decrypt it.</div>

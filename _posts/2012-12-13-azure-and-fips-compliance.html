@@ -1,0 +1,15 @@
+---
+layout: post
+title: Azure and FIPs compliance
+date: '2012-12-13T06:48:00.000-08:00'
+author: Luke Briner
+tags:
+- ".net"
+- Azure
+- FIPs
+- visual studio errors
+- errors
+modified_time: '2012-12-13T06:48:09.946-08:00'
+---
+
+I like using the best encryption quality that is readily available, it gives me a warm glow. As stated in the previous post, you can force Windows to require the use of only FIPs compliant encryption libraries. I have been using this registry switch on my local box to ensure that the application I am developing ticks the correct boxes so imagine my surprise when deploying to Windows Azure and receiving the following error:<br /><br /><pre style="background-color: #eeeeee; border: 1px dashed #999999; color: black; font-family: Andale Mono, Lucida Console, Monaco, fixed, monospace; font-size: 12px; line-height: 14px; overflow: auto; padding: 5px; width: 100%;"><code>Error    104    The "CSPack" task failed unexpectedly.<br />System.InvalidOperationException: This implementation is not part of the Windows Platform FIPS validated cryptographic algorithms.<br />   at System.Security.Cryptography.SHA256Managed..ctor()<br />   at Microsoft.ServiceHosting.Tools.Packaging.PackageManifest..ctor(IPackageSecurity rsa, EncryptionType encryptionType)<br />   at Microsoft.ServiceHosting.Tools.Packaging.PackageCreator..ctor(String serviceModelFile, String serviceDescription, IPackageSecurity encrypt, Dictionary`2 namedPackageCollection, String versionInfo)<br />   at Microsoft.ServiceHosting.Tools.Packaging.ServiceApplicationPackage.CreateServiceApplicationPackage(String serviceModelFileName, String serviceDescriptionFile, Stream output, IPackageSecurity encrypt, Dictionary`2 namedStreamCollection, String userInfo, EventHandler`1 rolePackagePartAddedHandler)<br />   at Microsoft.ServiceHosting.Tools.MSBuildTasks.CSPack.TryCreatePackage(ServiceDefinitionModel sm)<br />   at Microsoft.ServiceHosting.Tools.MSBuildTasks.CSPack.Execute()<br />   at Microsoft.Build.BackEnd.TaskExecutionHost.Microsoft.Build.BackEnd.ITaskExecutionHost.Execute()<br />   at Microsoft.Build.BackEnd.TaskBuilder.&lt;ExecuteInstantiatedTask&gt;d__20.MoveNext()    C:\Program Files (x86)\MSBuild\Microsoft\VisualStudio\v11.0\Windows Azure Tools\1.8\Microsoft.WindowsAzure.targets    2873    5    CloudApp<br /><br /></code></pre><br />Well not really complete surprise, since the FIPs switch prohibits the use of the "...Managed" libraries in .Net, whereas we should be using the "...CryptoServiceProvider" libraries instead. Of course, I have no control over the Azure deployment but I don't really understand why MS would use the non-FIPs library when there is a FIPs compliant one available. Perhaps the FIPs variants do something nasty with unmanaged libraries... Anyway, solution was to disabled the FIPs checking in the registry and try again!

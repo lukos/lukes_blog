@@ -1,0 +1,16 @@
+---
+layout: post
+title: Calling SQL Server from Yii on Ubuntu
+date: '2013-04-05T09:19:00.001-07:00'
+author: Luke Briner
+tags:
+- sql server
+- ubuntu
+- odbc
+- Yii
+- TDS
+- free-tds
+modified_time: '2013-04-05T09:19:19.187-07:00'
+---
+
+I hit an issue today that I didn't think would still exist. There is no native way to call SQL Server from Linux despite both their existence for a long time. It seems Microsoft have created a Native driver but it only exists on Windows (not surprisingly).<br />Anyway, there is a way and it uses ODBC (generic database connections) + TDS (some old-school database protocol that SQL Server supports). More specifically, we will use free-tds, a Linux project.<br />Most of the information at <a href="https://secure.kitserve.org.uk/content/accessing-microsoft-sql-server-php-ubuntu-using-pdo-odbc-and-freetds" target="_blank">this </a>blog post is correct but the example you are supposed to copy did not exist in my installation (Ubuntu 12.10) and the Yii specific part was missing (although I assume this would mostly be the same as per other database technologies and frameworks). So it is in a nutshell:<br /><br /><ol><li>Install <b>freetds-bin, freetds-common, tdsodbc, odbcinst, php5-odbc</b> and <b>unixodbc</b> from the package manager. Some of these will pull in some of the others as dependencies.</li><li>Edit <b>/etc/odbcinst.ini</b> and add in the following lines:<br /><br /> [mssql] # note this must match the driver name in the connection string<br />Description = MS Sql Server<br />Driver = /usr/lib/x86_64-linux-gnu/odbc/libtdsodbc.so<br />Setup = /usr/lib/x86_64-linux-gnu/odbc/libtdsS.so<br />UsageCount = 1<br />FileUsage = 1</li><li>Restart your web server: <b>sudo service apache2 restart</b></li><li>Set your Yii connection string thus:<br /><br /><span style="font-family: &quot;Courier New&quot;,Courier,monospace;">'connectionString' =&gt; 'odbc:Driver=mssql;Port=1433;Server=192.168.1.115;Database=MyDatabase;UID=username;PWD=password123'</span></li><li>Note the colon between odbc and Driver, it is not a semi-colon.</li><li>It should all work fine</li><li>Note this is not a great solution because TDS is old-school and no doubt not optimised. Also odbc is an abstraction level which may or may not help performance. I think I eventually might run the php on a Windows box which can access a native PHP PDO driver.<br /><br /></li></ol>

@@ -1,0 +1,13 @@
+---
+layout: post
+title: KDE4 Network Manager fails after upgrade
+date: '2010-12-07T12:36:00.000-08:00'
+author: Luke Briner
+tags:
+- networkmanager
+- networking
+- kde4
+modified_time: '2010-12-07T12:41:27.415-08:00'
+---
+
+Not sure exactly when but I did an upgrade to KDE4 and the kernel and in the process my networking stopped working, wireless and wired. It worked fine in recovery mode and I did another update in case there was a fix but no dice.<br />Fortunately I have a friend who knows the score, he told me to:<br /><pre>sudo nano /etc/NetworkManager/nm-system-settings.conf</pre><br />and set managed=true instead of false. I then had to:<br /><pre>sudo nano /var/lib/NetworkManager/NetworkManager.state</pre><br />and set NetworkingEnabled=true. I then had to restart the service:<br /><pre>sudo service network-manager restart</pre><br />and it was all good again. Well done whoever made that happen in a package upgrade! Most people, including me, would not easily find out what has happened and would conclude that Windows works better even if we hate M$.

@@ -1,0 +1,13 @@
+---
+layout: post
+title: Ajax Control Toolkit AutoCompleteExtender problems
+date: '2010-02-17T01:57:00.000-08:00'
+author: Luke Briner
+tags:
+- AutoCompleteExtender
+- asp.net
+- Ajax
+modified_time: '2010-02-17T02:18:28.310-08:00'
+---
+
+I have used this autocomplete control and to be honest it seemed to work pretty much as expected. However, I had originally coded it into a specific page and wanted to make it into an asp.net user control so I could use it all over the place. I had problems though so here are the things I had to do to make it work:<br /><ol><li>Move the service method from the class to a web service (I already had one so I added it to that). Make sure that the web service is marked with [ScriptService] and the method with [ScriptMethod] I also marked it as [WebMethod] just for fun.</li><li>This method when in a web service MUST be non-static and although it can have any name, it MUST return a string[] or List<string> and MUST have two parameters that are of the type AND NAME: <span style="font-weight: bold;">string prefixText, int count</span> since the reflection system uses the names to look these up (messy but that is how it is!)</li><li>For some reason I couldn't use a server tag to insert the unique ID of my text box control into the TargetControlID of the autocomplete control since it would be mangled inside a master page. I therefore added the code: <span style="font-weight: bold;">autoCompleteExtender1.TargetControlID = enterSearchNumber.UniqueID;</span> into the Page_Load method inside my user control. This is NOT inside <span style="font-weight: bold;">if (!IsPostBack)</span> so that it links every time.</li><li>I created an event in the user control that is fired when the user presses a "Load" button using the normal EventArgs type technique and which returns the selected object in the event args.</li><li>I set the ServicePath property of the autocompleteextender inside my UserControl to (in my case) <span style="font-weight: bold;">servicepath="~/Quotation/BusinessLogicAccess.asmx"</span> and also obviously set the servicemethod property to the name of the function.<br /></li><li>Then since it is used inside an UpdatePanel for Ajax, I had to add the following inside my ScriptManager: <span style="font-weight: bold;"><asp:servicereference path="~/Quotation/BusinessLogicAccess.asmx"></span></li></ol>Other than that, it was the normal UserControl stuff like using @Register in the control to link to the AjaxControlToolkit.dll and using it as normal.<span style="font-weight: bold;"><br /></span>

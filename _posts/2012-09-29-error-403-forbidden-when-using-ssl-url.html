@@ -1,0 +1,15 @@
+---
+layout: post
+title: Error 403 Forbidden when using SSL Url Rewrite
+date: '2012-09-29T05:54:00.001-07:00'
+author: Luke Briner
+tags:
+- error 403
+- ssl
+- url rewrite
+- redirection
+- iis
+modified_time: '2012-09-29T05:54:14.111-07:00'
+---
+
+Sadly, there is no neat way in IIS to redirect at http traffic to https. Nowadays, you can achieve this kind of functionality by writing a url rewrite rule into either web.config (for that site only) or applicationhost.config for the whole server. This rule lives under system.webserver and might look something like this:<br /><br /><rewrite></rewrite><br />&nbsp; &nbsp; &nbsp; &nbsp; <rules></rules><br />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <rule name="Http to Https" stopprocessing="true"></rule><br />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <match url="(.*)"></match><br />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<conditions></conditions><br />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<add input="{HTTPS}" pattern="^OFF$"></add><br />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <br />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <action redirecttype="SeeOther" type="Redirect" url="https://{HTTP_HOST}/{R:1}"></action><br />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <br />&nbsp; &nbsp; &nbsp; &nbsp; <br />&nbsp; &nbsp; &nbsp; <br />Once you upload this, the redirect will occur but if you get a 403 error, the reason is that you must set the site to NOT require ssl in IIS. This is under SSL Settings for the web site you are using. If you require this then although you should be rewriting the url, the original request for http will not be allowed to be processed. Simply disable "require ssl" and then the rewrite rule will ensure all requests stay on ssl.<br />

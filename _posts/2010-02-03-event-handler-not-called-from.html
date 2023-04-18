@@ -1,0 +1,15 @@
+---
+layout: post
+title: Event Handler not called from DropDownList
+date: '2010-02-03T01:43:00.000-08:00'
+author: Luke Briner
+tags:
+- asp.net
+- DropDownList
+- Ajax
+- Master Pages
+- Event Handling
+modified_time: '2010-02-03T01:52:16.683-08:00'
+---
+
+Had a really annoying problem with an asp.net site, one of those things that turns out to be really simple yet takes ages to track down. I have a master page with a script manager and update panel and then a contentplaceholder inside the update panel so that the content area of all new pages on the site can have ajax for free. People talk about large overheads etc but quite simply the updates are much snappier with the update panel and you get a free 'waiting' dropsheet if it takes a while to do.<br />Anyway, in my page, I had a dropdownlist with a list of categories in it and an event handler connected to onselectedindexchanged, I set autopostback to true but although i could get the postback, the page would not call the event handler. I assumed it was a combination of Ajax and master pages but it was much more simple.<br />The data I had bound my list to was a collection that expects an int (for datavaluefield) and a display string for the datatextfield. Since my data did not have unique ids, I returned zero for each value. What happened then? Well since the value didn't change when I changed the dropdownlist, the system didn't detect that the selected index had changed and didn't call the event handler. It would have been more obvious if the event was called onselectedvaluechanged since the form only posts back the selected value and not the index but anyway, hope this helps someone else.

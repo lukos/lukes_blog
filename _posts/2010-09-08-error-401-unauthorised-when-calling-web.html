@@ -1,0 +1,16 @@
+---
+layout: post
+title: 'Error 401: Unauthorised when calling web service'
+date: '2010-09-08T07:15:00.000-07:00'
+author: Luke Briner
+tags:
+- asp.net
+- authentication
+- HTTPS
+- web services
+- Unauthorised
+- '401'
+modified_time: '2010-09-08T07:20:43.575-07:00'
+---
+
+I was calling a web service from code in ASP.net and got the dreaded 401 error. The web service was fine from a browser (but I couldn't execute anything since the test page only works on the local server and this remote). I used the Visual Studio "Add Web Reference" and logged into the HTTPS web service, it all seemed fine.<br />In the end, I ran up Fiddler (the web browser tool) and accessed the web service in the browser, the header came back telling me that the web service was expecting "Negotiate/NTLM" authentication and I was attempting to authenticate using basic. It now works and here is the code I had to use:<br /><pre><br />MyWebService service = new MyWebService();<br />CredentialCache myCredentials = new CredentialCache();<br />myCredentials.Add(new Uri(service.Url), "Negotiate", new NetworkCredential("MyUserName", "MyPassword"));<br />service.Credentials = myCredentials;<br />service.PreAuthenticate = true;<br />// Call functions etc<br /></pre><br />Note, I did not require any special certificate code which some people have suggested and this works on an HTTPS connection. I also did not need to specify the domain in the Add() function, just the username and password.

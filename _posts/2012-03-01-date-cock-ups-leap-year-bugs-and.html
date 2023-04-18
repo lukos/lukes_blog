@@ -1,0 +1,10 @@
+---
+layout: post
+title: Date Cock-ups, Leap Year Bugs and Management
+date: '2012-03-01T02:04:00.000-08:00'
+author: Luke Briner
+tags:
+modified_time: '2012-03-01T02:04:12.514-08:00'
+---
+
+We experienced a problem testing our code yesterday related to some date math which tried to project a date back 18 years to 29th Feb which fell over. It was embarrassing enough but then we had to ask how it happened. If we are honest, if someone was not very experienced, it would be an easy mistake to make. There were no unit tests but even if there were, would we test or be able to test this anomaly? I don't know if the code was code-reviewed but even if it was, would the reviewer have spotted the latent fault? I saw some code recently with a similar bug and I didn't spot the mistake despite considering myself pretty experienced.<br />In this case, the question has to be raised about the software process and more particularly, the way in which management have or haven't ensured the suitability of this process.<br />In reality, there is always a danger that something will happen once, the real test of a quality process is whether we allow it to happen again. The first time someone spotted the ease of injecting a date/time bug, there should have been somewhere to hang that knowledge, these opportunities are few and far between and sadly most of us don't think like that. We think, "thank goodness I caught that bug" and it stops there. The only realistic chance of catching something like this which would have easily slipped through code review, unit testing and system testing would be to have learned from someone else's mistake. A simple check added to a code review checklist, "have you considered whether date maths might cause a crash?".<br />Managers, you have been warned - sort your processes out.

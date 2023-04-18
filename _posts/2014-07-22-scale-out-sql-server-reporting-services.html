@@ -1,0 +1,19 @@
+---
+layout: post
+title: Scale-out SQL Server Reporting Services (SSRS) aka Separating Databases and
+  Web Servers
+date: '2014-07-22T03:45:00.000-07:00'
+author: Luke Briner
+tags:
+- Microsoft
+- reporting
+- Reporting Services Configuration Manager
+- scale-out
+- ssrs
+- Error
+- errors
+- Reporting Services
+modified_time: '2014-07-22T03:45:30.399-07:00'
+---
+
+<h2>Problem</h2>I have a small pair of test servers, one is not publicly accessible and contains some SQL databases, the other is publicly accessible and has various web applications running on it. I wanted to start using Reporting Services and naturally wanted to put the web server bits on the web server and the databases on the database server.<br /><br />It turns out this is either not possible or very hard unless you on a domain, something which I am 1) not and 2) unable to do due to other network conflicts with an existing domain.<br /><h2>Explanation</h2><div>The mechanism to separate databases and the web report servers works using something called a "Scale Out Deployment". The actual installation is easy enough, you first install reporting services databases and configuration onto the database machine (but tell the installation NOT to configure it, in other words, don't create all the web servers etc.). You then run up the configuration tool and check that your settings are as desired such as the correct user names to run the reporting services Windows service as (this is affected by all manner of decisions like whether you need to hop onto other servers etc.).</div><div><br /></div><div>Once this is done, you install just the reporting services module onto your web server and even though it looks like it is also installing the database engine, it doesn't. You also tell this not to configure during installation and you also run up the reporting services configuration tool although this time, you want to connect to the remote server that is hosting the databases.</div><div><br /></div><div>This is where it gets difficult because MS uses WMI to call across from one server to another and this requires credentials to pass between the machines. From what I could tell, it uses the credentials of the report server Windows service to gain access to the other machine. If you are not on a domain, no credentials will work across both machines - there is no trust relationship - so the initial connection dialog won't work and you get the error message, "A connection to the computer cannot be established" when you click the Find button.</div><div><br /></div><div>If you were on a domain, you could use a domain account for the local Windows service and then add the same account into the WMI DCOM permissions on the origin server to allow access as described here:&nbsp;<a href="http://msdn.microsoft.com/en-us/library/ms365170.aspx" target="_blank">http://msdn.microsoft.com/en-us/library/ms365170.aspx</a></div><div><br /></div><div>I couldn't so I ended up installing the ssrs web servers and databases onto the web server all on the same box. It still didn't all work but that is for another post...</div>

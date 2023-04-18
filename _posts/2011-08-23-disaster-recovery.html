@@ -1,0 +1,11 @@
+---
+layout: post
+title: Disaster Recovery
+date: '2011-08-23T01:21:00.000-07:00'
+author: Luke Briner
+tags:
+- disaster recovery
+modified_time: '2011-08-23T01:21:37.131-07:00'
+---
+
+It's quite fashionable nowadays to talk about DR (disaster recovery) or what happens when something goes wrong. For lots of people though, they can only think about backups and the money to buy a new server if it breaks but DR has to encompass much more than this. It is all very well having backups but do you ever restore them to make sure they work? There is too much at stake to assume it will be alright. What happens after you make an upgrade to your database servers or web servers? Do you restore the backups again to make sure they <i>still </i>work? You might have UPSs on your servers but what happens when the power goes off? Do you assume it will not be off for more than 5 minutes? Do your UPSs cause the servers to shutdown so they are left clean or do you just wait for the UPS to run out and the servers to die? What would happen if your offices burned down? Would you be able to continue business or would all of your important information be lost?<br />Fortunately, it isn't rocket science, you simply need to perform a fault analysis of every element in your network (not <i>every </i>workstation but <i>a</i>&nbsp;workstation), servers, power supplies, UPSs, backups, internet etc. and then consider what would happen, how you would know and what you would do about it.

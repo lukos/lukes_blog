@@ -1,0 +1,10 @@
+---
+layout: post
+title: Events and access in .Net
+date: '2008-06-26T02:39:00.000-07:00'
+author: Luke Briner
+tags:
+modified_time: '2008-06-26T02:48:47.327-07:00'
+---
+
+I was trying something today in C# (.net) that I thought might be doable, although I wasn't sure.<br />I wanted to pass the event from an object into another object so that the second (helper) object could subscribe to the event. I think of events as objects so didn't think this would be a problem. I added the event to my event source class:<br /><pre>public event EventHandler WorkDayChanged;</pre><br />I then passed this event externally to the constructor of my helper class:<br /><pre>ColourBoundRectangle r = new ColourBoundRectangle(w.WorkDayChanged, w.GetTypeNumber);</pre><br />but when I compiled, I got the error:<br /><pre>The event 'ResourcingBusinessObjects.WorkDay.WorkDayChanged' can only appear on the left hand side of += or -=</pre><br />I didn't really understand but here is the crack: when you use the word "event" on the event in the event source class, it will only allow external objects to add and remove handlers to the event, even though it is public. If you want to access the event as an event object, you must miss off the word event and use (in my case):<br /><pre>public EventHandler WorkDayChanged;</pre><br />Which seemed to compile OK anyway! I tried the code but the events weren't being fired (in the debugger I noticed that the events were empty at the time of firing) even though I was calling += on the event with my helper class. Nice having a good debugger, I realised that because the event is really a delegate which seems to behave like a value type, because I wasn't passing it by ref into my helper class, I was adding a handler onto a local copy of the event which went out of scope outside of the constructor. I simply changed my code to:<br /><pre>ColourBoundRectangle r = new ColourBoundRectangle(ref w.WorkDayChanged, w.GetTypeNumber);</pre><br />And it was all fine. Sweet.

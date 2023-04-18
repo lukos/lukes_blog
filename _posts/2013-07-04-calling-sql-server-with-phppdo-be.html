@@ -1,0 +1,15 @@
+---
+layout: post
+title: Calling SQL Server with PHP/PDO, be careful with parameter positions
+date: '2013-07-04T07:47:00.002-07:00'
+author: Luke Briner
+tags:
+- pdo
+- sql server
+- stored procedures
+- php
+- sql
+modified_time: '2013-07-04T07:47:31.550-07:00'
+---
+
+Take the following code:<br /><br /><span style="font-family: &quot;Courier New&quot;,Courier,monospace;"><span style="font-size: x-small;">$command=$connection-&gt;createCommand('EXECUTE procSetUserImage :userid, :filename, :ipaddress');<br />$command-&gt;bindValue(':userid', $userid);<br />$command-&gt;bindValue(':filename', $filename);<br />$command-&gt;bindValue(':ipaddress', $_SERVER['REMOTE_ADDR']);</span></span><br /><br />And this stored procedure:<br /><br /><span style="font-size: x-small;"><span style="font-family: &quot;Courier New&quot;,Courier,monospace;">CREATE PROC <b>procSetUserImage </b>@userid <b>INT</b>, @ipaddress <b>VARCHAR(20)</b>, @filename <b>VARCHAR(20)</b></span></span><br /><br />Would you expect it to work? I did but it doesn't, the filename is passed into the ipaddress parameter and vice-versa. This is because the names in the PHP are just substitution placeholders and not symbolic links to the actual parameters in the stored procedures.<br /><br />In other words make sure you put them in the right order!

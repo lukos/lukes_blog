@@ -1,0 +1,13 @@
+---
+layout: post
+title: Cannot find file named 'approot\bin\startup.cmd' for startup task
+date: '2013-02-11T07:04:00.001-08:00'
+author: Luke Briner
+tags:
+- Azure
+- startup
+- approot\bin
+modified_time: '2013-02-11T07:04:14.401-08:00'
+---
+
+Another pain. If you are trying to create a startup command file for Azure to run when starting up new instances, you might find the error as above. In my case this was because when copying MyFolder/startup.cmd to the output directory, Visual Studio was also copying the parent directory and the file ended up being at approot\bin\MyFolder\startup. Rather than changing the path of the startup script specified in the csdef, I just moved the command file up to the application level and deleted the directory.

@@ -1,0 +1,11 @@
+---
+layout: post
+title: Perforce, Depots and Workspaces
+date: '2011-01-31T01:12:00.001-08:00'
+author: Luke Briner
+tags:
+- Perforce
+modified_time: '2011-01-31T01:27:29.759-08:00'
+---
+
+I have started using Perforce Source Control recently and having previously used Visual Sourcesafe and Subversion (with Tortoise in Windows), I thought it would be a pretty straight swap but being new to depots and workspaces is very confusing so I thought I would provide an idiots guide from someone who doesn't understand enough of it to make it confusing (yet!).<div><ol><li>The depot is the repository on the server but filtered to only show the section from your CURRENT workspace</li><li>The workspace shows ALL of your workspace files from ALL of your workspaces including files/folders that are not present in the depot.</li><li>You should create an "ALL" workspace to include the entire depot so that you can always browse to something you haven't got and "Get latest Revision"</li></ol><div>For example, suppose you have a depot with folders named A, B, C and you want one workspace for working on A and one for B. You would need to create, initially, an "ALL" workspace including everything. If you click on the depot tab with this workspace selected, you will see A, B and C. On the workspace tab - at this point - you will have nothing because you haven't taken any files.</div></div><div>Imagine you now create and select a new workspace pointing only at A, on the depot tab now, you will only see A and after right-clicking and "Get Latest Revision", your workspace tab will now show A even if you change workspace.</div><div>Do the same for B and you will now see A and B in your workspace and B in the depot if that new workspace is selected:</div><br /><table style="width:240px;"><br /><thead><td style="width:100px;">Workspace selected</td><td style="width:60px;">Depot</td><td>Workspace</td></thead><br /><tr><td>"ALL"</td><td>A,B,C</td><td>A,B</td></tr><br /><tr><td>A</td><td>A</td><td>A,B</td></tr><br /><tr><td>B</td><td>B</td><td>A,B</td></tr><br /></table><br />It is a little confusing but hey, if you have to use it, you have to use it!

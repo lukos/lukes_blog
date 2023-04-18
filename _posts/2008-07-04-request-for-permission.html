@@ -1,0 +1,16 @@
+---
+layout: post
+title: Request for permission SqlClientPermission failed
+date: '2008-07-04T01:50:00.000-07:00'
+author: Luke Briner
+tags:
+- permissions
+- security
+- xaml
+- wpf
+- xbap
+- sql
+modified_time: '2008-07-04T01:55:16.914-07:00'
+---
+
+I am developing an XAML Windows Presentation Foundation (WPF) app which is designed to be browser only (an XBAP) and when trying to debug it using a shared database library, I got the above exception when it called SqlConnection.open even though it had an identical string to another working part of the system. I was concerned that it was related to user contexts and session and authentication and other nastys that hide under the covers of a web app but fortunately it was easier than that.<br />My XBAP application was marked as partial trust which means it is more likely to be loaded without hassle on a strangers browser if you posted an xbap on your company web site for example. This trust level however means amongst other things, you cannot open a connection to a database (fair enough I guess, you could be trying to hack someones pc). If however you mark it as Full Trust (under project properties -> security) it will only be loaded from a trusted location i.e. the local intranet usually unless a user specifically allows it or turns the down the security on their browser but it does mean that you can do more useful stuff like opening connections to databases.<br />I switched it to full trust since this is for a corporate network and it worked fine (well in fact it came up with an unrelated error but that is another story!).

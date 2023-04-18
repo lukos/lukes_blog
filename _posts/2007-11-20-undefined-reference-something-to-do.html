@@ -1,0 +1,10 @@
+---
+layout: post
+title: Undefined reference, something to do with signals and moc
+date: '2007-11-20T07:25:00.000-08:00'
+author: Luke Briner
+tags:
+modified_time: '2007-11-20T07:28:43.416-08:00'
+---
+
+I'm using KDevelop in KDE to write a QT4 app and added a signal to my class. When I built the project and rebuilt it it came up with an undefined reference error even though my syntax was correct. I found out it was something to do with the meta-object compiler (moc) which creates code to handle the signals and slots.<br />First thing was I needed to add the Q_OBJECT macro to the start of the class declaration in my .h file. This would be OK but after building it still produced the error and I was extremely confused. A little searching on the web and it said that I would need to run "tmake" to parse my project files and notice the newly added Q_OBJECT macro, it also helpfully mentioned that it is automatically run when the project file is changed so I opened my project.pro file, changed a letter and changed it back to mark it as modified, press build, selected to reload the 'modified' project file and tmake worked its magic and made my project build. Sweet - better than manually adding all the moc entries as I did before!!

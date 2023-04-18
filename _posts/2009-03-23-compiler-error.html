@@ -1,0 +1,12 @@
+---
+layout: post
+title: Compiler error
+date: '2009-03-23T05:06:00.000-07:00'
+author: Luke Briner
+tags:
+- asp.net
+- visual studio errors
+modified_time: '2009-03-23T05:08:50.498-07:00'
+---
+
+Ever got this one?:<br />"An error occurred during the compilation of a resource required to service this request. Please review the following specific error details and modify your source code appropriately" <br />"The compiler failed with error code 1" <br /><br />Beautiful and helpful all at the same time. Anyway, in my case this was caused by the inherits in the top of the aspx file pointing to the correct name of class but not the correct namespace. For some reason it is not a build error you just get this wonderful error instead. The detail of the error says, "....._ascx.FrameworkInitialize()': no suitable method found to override" which is equally unhelpful.

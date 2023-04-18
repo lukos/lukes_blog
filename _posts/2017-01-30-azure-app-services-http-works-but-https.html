@@ -1,0 +1,21 @@
+---
+layout: post
+title: Azure App Services. http works but https doesn't
+date: '2017-01-30T07:11:00.000-08:00'
+author: Luke Briner
+tags:
+- iis 8
+- Microsoft
+- Azure
+- ssl
+- Error
+- client certs
+- errors
+- '500'
+- app services
+- iis
+- tls
+modified_time: '2017-01-30T07:11:17.627-08:00'
+---
+
+The statement in the title is not true but I thought it was. Why?<br /><br />I deployed from Visual Studio, using web deploy, directly to an App Services web app. It was a WCF web service project and when I visited with http, it worked fine. I then uploaded a TLS cert, setup the custom domain, tried to visit and BANG.<br /><br />Once I had enabled all my detailed errors and read the log, the only information was 0x80070005 - Access Denied.<br /><br />No real clues what was going on and what "access" is deined.<br /><br />Anyway, after 90 minutes of poking around by an MS support technician, it appears that there is a compatibility problem when using Client Certificates. I was using one and although I had not used Resource Manager to deploy the app, there is a resource manager and its default configuration is:<br /><br />"clientCertEnabled": false,<br /><br />Open up the site's resource group in Resource Explorer, navigate to the site itself and you'll see the json on the right-hand side. Press the Edit button, find this setting, edit it to be true and PUT it and it should all magically come to life!<br /><br />I need to automate this, but it will be fine for now.

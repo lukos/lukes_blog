@@ -1,0 +1,15 @@
+---
+layout: post
+title: Rhino Mocks - Get broken after running test with WCF
+date: '2011-03-21T04:11:00.000-07:00'
+author: Luke Briner
+tags:
+- Mock
+- WCF
+- Unit Tests
+- NUnit
+- Rhino
+modified_time: '2011-03-21T04:18:25.467-07:00'
+---
+
+I discovered something that might explain why tests sometimes seem to fail after an individual test has failed for no obvious reason.<br />Often in NUnit, you setup various mocks in [TestFixtureSetup] and then run one or more tests. In [TestFixtureTearDown], these mocks are disposed of. What is important to know is that if an exception is thrown during TestFixtureSetup, the TestFixtureTearDown is NOT called.<br />What this means is that suppose your mock #1 redirects an endpoint to a locally hosted mock, if you setup mock #1 but while setting up mock #2 an exception is thrown, then mock #1 will not be disposed and this means one of two things might happen. Firstly, when you try and setup the mock again, it might fail on the basis that something is already "listening" at the endpoint it is trying to use. Secondly, if you don't dispose the mock, the endpoint is not reset back to what it should be. In this case, if another test does not use a mock but DOES use the endpoint for something then it will have been left pointing to your local mock site but with nothing listening on it. Your test might then fail because it gets no response to its request.<br />To avoid all of this, add a catch to your TestFixtureSetup which will call Dispose on all mocks if they are not null in the case of an exception.

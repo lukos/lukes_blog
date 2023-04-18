@@ -1,0 +1,15 @@
+---
+layout: post
+title: domain.com being added to my DNS queries from Windows 7
+date: '2014-05-21T04:55:00.001-07:00'
+author: Luke Briner
+tags:
+- domain.com
+- nslookup
+- DNS
+- windows
+- Windows 7
+modified_time: '2014-05-21T04:55:36.172-07:00'
+---
+
+While waiting for a DNS record to update, I was using nslookup to see the TTL information and noticed something funny. While looking up my.pixelpin.co.uk, I saw that one of the queries is to my.pixelpin.co.uk.domain.com, which seems weird since I am not part of a domain.<br /><br />When I looked, domain.com is just a domain name registrar so this didn't seem right. After not finding much on Google, I eventually discovered that Windows has a built-in DNS search list. When you query dns records, it tags the entries from the list onto the end of the search string to try and resolve host names automatically.<br /><br />For instance, if your domain was the same as your company name, you might have pixelpin.co.uk and if you attempt to lookup testserver, it will assume this means testserver.pixelpin.co.uk, That's all great but where did domain.com come from?<br /><br />Well it appears that although this search list can and probably should be set centrally using Group policy, if you join a domain at any point, the domain is automatically added to the search list. In my case, I connected to a test domain at one point and guess what the default windows domain is called? domain.com!<br /><br />This was ages ago and probably this means that a lot of DNS requests hit domain.com's nameservers from people like me.<br /><br />More unusually, it can only be set in the Registry if you need to change it, it does not appear to be exposed via a GUI anywhere. The key is: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\SearchList<br /><br />And the value is a comma-delimited set of domain names to fully qualify any DNS requests. I have naturally removed domain.com from there!

@@ -1,0 +1,21 @@
+---
+layout: post
+title: Cannot add IIS App Pool identity to windows permissions
+date: '2016-07-01T03:53:00.000-07:00'
+author: Luke Briner
+tags:
+- permissions
+- App Pool Identity
+- IIS8
+- windows
+- App Pool
+- IIS7
+- Application Pool Identity
+- Application Pool
+- iis
+- IIS7.5
+modified_time: '2016-07-01T03:53:17.251-07:00'
+thumbnail: https://4.bp.blogspot.com/-lese3wFpU2g/V3ZKY8Ji9LI/AAAAAAAAA0Y/u8pTl6pZ_7cpT1owrCNr--FIh5DVsgdkgCLcB/s72-c/Capture.PNG
+---
+
+IIS7 and above have a really useful and secure feature where Application Pools each have their own user account which makes it harder for a hacked web application to access directories that it shouldn't.<br /><br />Of course, this means that some developers get lazy and change it to use Network Service or such like because "it just works" but you really shouldn't do this. You should assign permissions correctly so it works. Microsoft makes this easy if slightly un-intuitive when adding permissions to folders.<br /><br />Usually, the app pool gets no permissions by default - not even read. You will almost certainly have to start by editing the folder permissions of the web app on disk and add the app pool use. You do this by searching for the application pool user by its name but adding "IIS AppPool" as in IIS AppPool\appPoolName:<br /><br /><div class="separator" style="clear: both; text-align: center;"><a href="https://4.bp.blogspot.com/-lese3wFpU2g/V3ZKY8Ji9LI/AAAAAAAAA0Y/u8pTl6pZ_7cpT1owrCNr--FIh5DVsgdkgCLcB/s1600/Capture.PNG" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="175" src="https://4.bp.blogspot.com/-lese3wFpU2g/V3ZKY8Ji9LI/AAAAAAAAA0Y/u8pTl6pZ_7cpT1owrCNr--FIh5DVsgdkgCLcB/s320/Capture.PNG" width="320" /></a></div><br />When you then click check names, if it WORKS, then the name changes to an underlined version:<br /><br /><div class="separator" style="clear: both; text-align: center;"><a href="https://1.bp.blogspot.com/-m1LkhOa1hfE/V3ZKq0t4KWI/AAAAAAAAA0c/bi310bXB-pgcpYYUUggKC_GXqrlmx0q7ACLcB/s1600/Capture.PNG" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="177" src="https://1.bp.blogspot.com/-m1LkhOa1hfE/V3ZKq0t4KWI/AAAAAAAAA0c/bi310bXB-pgcpYYUUggKC_GXqrlmx0q7ACLcB/s320/Capture.PNG" width="320" /></a></div><div class="separator" style="clear: both; text-align: center;"><br /></div><div class="separator" style="clear: both; text-align: center;"><br /></div>BUT. If you try and just type Default and press Check Names, it DOESN'T work, you have to type IIS AppPool\ at the start.<br /><br />BUT sometimes it still doesn't work, even if you know the user exists. There are two reasons this will happen.<br /><br />1) You have the wrong "location" set. You need to use the local machine location, not a domain since the users do not exist on the domain. If you press Locations and it wants a domain login, just press escape and eventually the list will come up where you can select the local machine without needing to enter domain creds.<br />2) You do not have Ownership of the folder you are trying to add users to. For some reason, this does not prevent you opening the dialog but when you search for the IIS names, they simply aren't found. Go back up a level and make sure you are the owner of the folder. I had an example where although I was an Administrator, the folder was owned by "Administrators" and not by "Luke". Weird but true.

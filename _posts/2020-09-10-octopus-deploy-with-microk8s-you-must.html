@@ -1,0 +1,11 @@
+---
+layout: post
+title: Octopus Deploy with MicroK8S - You must be logged in to the server (the server
+  has asked for the client to provide credentials)
+date: '2020-09-10T05:49:00.002-07:00'
+author: Luke Briner
+tags:
+modified_time: '2020-09-10T05:49:36.338-07:00'
+---
+
+<p>&nbsp;One of the most annoying errors is when you don't think you have changed anything and you suddenly see an error!</p><p>We have a microservices deployment on Octopus Deploy that points to a MicroK8S cluster on Ubuntu for development and an Azure Kubernetes Service for production. We had deployed successfully on Friday to development but today (the following Thursday), I noticed that it couldn't connect to the dev cluster.</p><p>The error in the log was: <b>You must be logged in to the server (the server has asked for the client to provide credentials)</b></p><p>I obviously wondered about credentials expiring (they didn't), changes to the network/firewall (no changes) and then got a bit side-tracked with the fact that client and server versions of K8S need to be close: the client needs to be within 1 minor version above or below the server version. I spent an hour upgrading AKS to 1.17 since the dev cluster is already 1.19 and then downloaded and installed kubectl for 1.18 onto the Octopus but it still didn't work - AKS was fine but the dev cluster was not.</p><p>Eventually, after setting up a local cluster config and connecting to the cluster manually (and thank goodness it eventually worked), I realised that something was different on the dev cluster. Instead of username/password, the admin account was now showing as username/token.&nbsp;</p><p>I found that by running <b>microk8s config</b> on the dev VM and it prints it in plain text!<br /></p><p>Fortunately, Octopus supports tokens so I had to add the named token, updated the connection to the infrastructure and it worked!</p><p>I still do not know exactly what has happened but I can only assume that microk8s was updated automatically in the last week and the upgrade must have changed the password to a token, perhaps for security reasons or feature changes, who knows.<br /></p>

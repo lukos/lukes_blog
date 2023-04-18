@@ -1,0 +1,18 @@
+---
+layout: post
+title: Client authentication broken (Azure) - cert expired
+date: '2016-01-11T06:51:00.002-08:00'
+author: Luke Briner
+tags:
+- Azure
+- expired
+- ssl
+- errors
+- Certificates
+- x509
+- expiry
+- client authentication
+modified_time: '2016-01-11T06:51:49.699-08:00'
+---
+
+I woke up to a message on my phone, "The system is not working". Gulp, we only have one system so if it isn't working, that's pretty serious.<br /><br />Ignoring the red-herring caused by Virgin media returning random IP addresses to DNS requests, I realised that the client certificate used for authentication between web app and web service had expired. I didn't actually realise this was an issue for client auth, although it is fair enough. I then scrambled around for an hour or so trying to fix it, and test it and deploy all the changes. Here is what I learned that should save you some time!<br /><br />Note: You will often need to use <b>mmc.exe</b> to manage certificates. When you run it, choose File-&gt;Add/Remove snap-in-&gt;certificates and either choose Local Machine or Current User (or both if you need to).<br /><br /><br /><ol><li>You need a cert that has not expired!</li><li>Your certificate needs to have Client Authentication as one of its permitted uses.</li><li>It needs to be in the relevant store (usually LocalMachine/My, which needs to be matched on your local machine to test it with).</li><li>You <i>might</i> need to give permission for all users to read the private key of the cert in mmc.exe depending on what testing you are doing.</li><li>The certificate needs to chain to a root certificate. Theoretically, you could do this on Azure by installing your own root cert on the cloud service but this is not directly supported by Visual Studio and would need to be done via Powershell or similar in the startup script.</li><li>You need to make sure that you have uploaded the new certificate into the certificates tab of the portal (for app and web service).</li><li>You need to reference the new certificate in the Azure project (role) settings so that Azure installs it into the cloud instance from the certificates tab.</li><li>You need to change the thumbprint in the service settings of the web service to reference the new thumbprint. It is easiest to copy this from the Azure portal because the thumbprint is displayed in a single block of text.</li><li>Upload the modified web service and access it from the browser. You should be offered a dialog to select a client cert, choosing it should allow you to access the svc of the web service. If it is not in the list you are shown, it is either expired, not present in the store for the Local User or does not have Client Authentication as one of its uses. It <i>might</i>&nbsp;be caused if the certificate does not chain on your local machine, you can check this in mmc.exe by double-clicking the certificate and choosing the Certification Path tab.</li><li>You will probably need to refresh the service references for the web app (see below).</li><li>If you have used Windows credential manager for client certs, you will need to update this to use the new cert otherwise svcutil.exe will fail with 403 (forbidden).</li><li>Refresh the service references in the web app.</li><li>Change the thumbprint for the client cert in the web app (probably web.config).</li><li>If you can test the web app locally, it will save you the upload time to find out if it doesn't!</li><li>If you get a 403 at any point, it means the certificate cannot be founded or read. This might mean the permissions are not correct, the certificate is not in the correct store (remember to differentiate between CurrentUser and LocalMachine) or you do not have permissions to read it from the store.</li></ol>

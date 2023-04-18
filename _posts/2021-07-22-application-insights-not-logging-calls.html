@@ -1,0 +1,13 @@
+---
+layout: post
+title: Application Insights not logging calls to all Actions in web service
+date: '2021-07-22T07:05:00.003-07:00'
+author: Luke Briner
+tags:
+- cloudflare
+- kubernetes
+- Application Insights
+modified_time: '2021-07-22T07:05:26.365-07:00'
+---
+
+<p>&nbsp;Every time you get a really weird error like this, you need to remember that it is more likely to be user error so you need to step back and look at exactly what you are doing which is different than usual.</p><p>We had a microservice running a dotnet core service and it was logging healthcheck calls all happily but calls to a specific controller were not being logged at all, which was weird. These were actually being called via a Cloudflare page rule but since the code worked when calling via CF, I didn't step back to realise what was happening.</p><p>The live stats on App Insights are not clear enough to tell whether your requests are hitting the service and in my case, I was running 3 instances so checking each pods logs for the request was going to be a pain.</p><p>The problem was the CF rule!</p><p>Or rather, our authoring of it. The rule did what it was supposed to, which wasn't what we thought it did. We had used Host Header Rewrite to change the host of a domain path ourservice.com/path so that it could direct to the new microservice, leaving the base domain to go where it used to go.</p><p>Host Header Rewrite doesn't redirect it however, the requests will still go to the same origin, just with a different host header. Why did this work then? Because by bad luck (or good luck?), the endpoint it hit happened to have a wildcard hostname and a virtual directory with the same name as our path that pointed to the old version of our microservice! Yes, it behaved identically - by accident.</p><p>What we needed to use instead was Resolve Override page rule which doesn't just change the header but instead, it forwards the request to a different backend WITHOUT a redirect taking place, which is exactly what we wanted to replace an old IIS virtual directory.</p><p>Winner!<br /></p>

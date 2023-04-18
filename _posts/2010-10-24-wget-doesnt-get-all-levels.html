@@ -1,0 +1,14 @@
+---
+layout: post
+title: wget doesn't get all levels
+date: '2010-10-24T03:37:00.000-07:00'
+author: Luke Briner
+tags:
+- levels
+- recursion
+- wget
+- ftp
+modified_time: '2010-10-24T03:42:59.210-07:00'
+---
+
+I had a problem trying to grab a whole directory structure of files from an ftp site using wget. When I tried to get the files directly they were fine but when trying to get the whole site, it didn't get certain files which definitely existed.<br /><br />It turns out that wget defaults to 5 levels of depth, even when downloading physical files from ftp (rather than following symlinks). I changed it so it so that it uses 10 levels instead with -l10 and it was fine. The number of levels make sense when you see the default output structure of servername/dri1/dir2/dir3/dir4 even though your files might appear to be level 4.<br /><br />I'm not sure if rsync is easier to use for this purpose but the wget command is easy enough:<br /><pre><br />wget -r -N -l10 ftp://username:password@servername/dir<br /></pre><br />Where -r is recursion, -N only gets items that have been modified and -l10 increases the number of levels to 10 (That is 'L' 10, not 110!)

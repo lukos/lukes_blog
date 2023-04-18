@@ -1,0 +1,16 @@
+---
+layout: post
+title: JWT, JWE, JWS in .Net - Pt 2 - Validating JWS
+date: '2017-10-16T01:31:00.000-07:00'
+author: Luke Briner
+tags:
+- ".net"
+- JWT
+- validation
+- JWE
+- JwtHeader
+- JWS
+modified_time: '2017-10-16T04:33:33.221-07:00'
+---
+
+Fortunately, validating a JWS (and for that matter, a JWE) is very straight-forward thanks to JwtSecurityTokenHandler.ValidateToken().<br /><br />Quite simply, you take the serialized string, create a TokenValidationParameters object with the relevant fields filled in to validate and then call ValidateToken, it looks like the following. Note that the same code is used for JWS and JWE tokens, the only difference is whether you fill in the TokenDecryptionKey property. This shows both:<br /><br /><pre style="background: #f0f0f0; border: 1px dashed #cccccc; color: black; font-family: &quot;arial&quot;; font-size: 12px; height: auto; line-height: 20px; overflow: auto; padding: 0px; text-align: left; width: 99%;"><code style="color: black; word-wrap: normal;"> private ClaimsPrincipal ValidateToken(string tokenString, byte[] keybytes)  <br /> {  <br />   var signingkey = new X509SecurityKey(new X509Certificate2(certFilePath,certPassword));  <br />   var jwt = new System.IdentityModel.Tokens.Jwt.JwtSecurityToken(tokenString);  <br />   // Verification  <br />   var tokenValidationParameters = new TokenValidationParameters()  <br />   {  <br />     ValidAudiences = new string[]  <br />     {  <br />       "123456"  // Needs to match what was set in aud property of token<br />     },  <br />     ValidIssuers = new string[]  <br />     {  <br />       "https://logindev.pixelpin.co.uk"  // Needs to match iss property of token<br />     },  <br />     IssuerSigningKey = signingkey,  <br />     TokenDecryptionKey = keybytes == null ? null : new SymmetricSecurityKey(keybytes)  <br />   };  <br />   SecurityToken validatedToken;  <br />   var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();  <br />   return handler.ValidateToken(tokenString, tokenValidationParameters, out validatedToken);  <br /> }  <br /></code></pre><br />In my method (in a Unit Test), I simply return the ClaimsPrincipal that is returned from ValidateToken() but you could also get the validated and decrypted token that is returned as an out parameter if you wanted to continue to use it.<br /><br />Also note that I am simply loading the same pfx I used to sign the token to validate it, whereas in real like, you are likely to visit the url of the issuer and perhaps https://theurl.com/.well-known/jwks and find the public key for the signed data using the kid property from the token.<br /><br />This method allows the caller to pass null for the keybytes if only validating a signed JWS or real key bytes matching the encryption key used for the JWE. This is for pre-shared keys only. In a later post, I will talk about extracting the encryption key, which is actually embedded in a JWE and does not need to be pre-shared.<br /><br />In <a href="http://lukieb.blogspot.co.uk/2017/10/jwt-jwe-jws-in-net-pt-3-jwe.html">part 3</a>, we'll look at JWE (encrypted JWT)

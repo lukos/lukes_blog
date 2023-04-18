@@ -1,0 +1,15 @@
+---
+layout: post
+title: Linq Select not projecting into SQL statement
+date: '2020-02-10T08:25:00.001-08:00'
+author: Luke Briner
+tags:
+- Linq
+- not working
+- entities
+- SELECT
+- sql
+modified_time: '2020-02-10T08:25:08.854-08:00'
+---
+
+One of the cool things about Select in Linq is that it will determine which columns are actually selected from the database when the query is run, which is great if you only need a couple.<br /><br />Well it is supposed to but it wasn't working and I couldn't find the problem. It was simply selecting all columns from my object.<br /><br />It was because the column I was projecting was not actually a DB column but a derived property, in code, which essentially renames a DB column into something more meaningful. EF Core was either clever enough or too stupid to know which columns this actually referred to so it downloaded the whole lot.<br /><br />I changed it to map the correct db column and it all worked happily ever after!

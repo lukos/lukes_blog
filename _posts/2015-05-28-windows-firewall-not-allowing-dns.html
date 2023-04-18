@@ -1,0 +1,22 @@
+---
+layout: post
+title: Windows Firewall not allowing DNS queries through.
+date: '2015-05-28T10:53:00.000-07:00'
+author: Luke Briner
+tags:
+- domain
+- dc
+- nslookup
+- active directory
+- Windows Server
+- firewall
+- DNS
+- domain controller
+- ping
+- Server 2012
+- Windows Firewall
+- server 2012 R2
+modified_time: '2015-05-28T10:53:41.430-07:00'
+---
+
+Arrrrggggghhhhhhh<br /><br />tl;dr Restart the DNS service<br /><br />I just spent 2 hours trying to find out what was wrong with my Firewall setup. There was nothing wrong with it.<br /><br />I have a Windows Server 2012 Domain Controller which also runs DNS (but only for the Windows network, it lives inside a Linux network!). I had successfully connected one machine to the domain but when I tried to do the same with the second, it couldn't find the domain.<br /><br />The whole management around AD and Domain is horrifically complicated, not something for the faint-hearted but I could work out a few things.<br /><br />Firstly, I knew the DNS was working, including forwarders because it worked on the domain controller itself. I also knew that because the first machine had joined the domain, the domain was basically setup correctly.<br /><br />I tried to compare network setup between the machine that worked and the one that didn't and there was nothing obvious. I started trying ping and nslookup (they get their results from different places so they can come out with different answers!) and to make sure I wasn't getting led up the garden path, I disabled the second network card onto the Linux network leaving only one physical route via the host-only network and through the DC to the outside world.<br /><br />I eventually worked out that with the firewall OFF on the DC, the DNS lookup worked correctly but if it was ON, it didn't. Easy right? Some rule problem? I went through it all loads of times, double-checked rule settings, ports, Googled the correct rules and all sorts but it still didn't work. I even tried switching logging on in GP editor to see what rule was being hit and it didn't work at all - it logged precisely nothing.<br /><br />For some reason, after being confused, I decided to try and restart the DNS service. Guess what? It all started to work as expected and I could join the second machine to the domain!<br /><br />WTF?<br /><br />I have no idea what I had done to the DC to make it's firewall basically block everything even though it wasn't supposed to. I also have no idea why restarting it would make it work but I have decided that I dislike this whole area. Look through the firewall and there are loads of services, many of which I have never heard of and which might be required for something useful or not. Other services require a plethora of weird and unrelated ports to be opened and through all of that, all of the DC setup is carried out through a load of tree-view windows using old-fashioned languages and millions of dialogs. There is no distinction between the settings you are likely to be interested in and most of them have no way to restore defaults for those moments when after trying 100 things, you eventually fix it and want to reset everything you tried in the process!<br /><br />

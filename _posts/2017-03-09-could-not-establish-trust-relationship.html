@@ -1,0 +1,20 @@
+---
+layout: post
+title: Could not establish trust relationship for the SSL/TLS secure channel with
+  authority
+date: '2017-03-09T06:01:00.000-08:00'
+author: Luke Briner
+tags:
+- Traffic Manager
+- Azure
+- Exception
+- ssl
+- Error
+- SecurityNegotiationException
+- WCF
+- tls
+modified_time: '2017-03-09T06:01:26.313-08:00'
+thumbnail: https://2.bp.blogspot.com/-oZxFCp2yIZ8/WMFdt8eHtdI/AAAAAAAAA5I/wmNVBiWREfoWAdlnOVOtj4fHwgSUL5F8QCLcB/s72-c/Capture.PNG
+---
+
+This was a surprising and annoying error we experienced on Microsoft Azure when our web app was calling a WCF web service but it was only happening randomly.<br /><br />Fortunately, I knew certain things worked which made it easier to narrow-down the problem.<br /><br />I knew the web service worked, I knew I could connect to it with a valid SSL certificate chain, the only variable was that I was using Azure Traffic Manager to balance load between Japan and Ireland. Normally, the web apps in their respective areas would get sent to their local web service but in the unlikely event an entire web service dies, Traffic Manager could send the request to the other data centre.<br /><br />Every now and then, I would see the following error:<br /><br /><div class="separator" style="clear: both; text-align: center;"><a href="https://2.bp.blogspot.com/-oZxFCp2yIZ8/WMFdt8eHtdI/AAAAAAAAA5I/wmNVBiWREfoWAdlnOVOtj4fHwgSUL5F8QCLcB/s1600/Capture.PNG" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="71" src="https://2.bp.blogspot.com/-oZxFCp2yIZ8/WMFdt8eHtdI/AAAAAAAAA5I/wmNVBiWREfoWAdlnOVOtj4fHwgSUL5F8QCLcB/s400/Capture.PNG" width="400" /></a></div><br />The underlying issue is that when you make an SSL connection to a load balancer, the load balancer terminates the SSL (usually) so that if your request gets sent to a different web server, your connection stays up OK.<br /><br />HOWEVER, if your request gets sent to another load-balancer, which would happen if Traffic Manager decided your previous one was unavailable, then the SSL connection cannot be resumed on the new load-balancer and you get the error above which, as often, contains a misleading message.<br /><br />You wouldn't notice this effect in a browser since browser will automatically retry the connection if it drops, in which case they would reestablish the connection to the new load balancer and carry on. The call from the web app to the web service uses SvcUtil.exe to create a proxy class and this doesn't have any built-in functionality for reestablishing dropped SSL connections, it will instead throw the Exception and fail.<br /><br />There is a project that provides some error handling for web service clients provided <a href="http://smartwcfclient.codeplex.com/" rel="nofollow" target="_blank">here</a>, which I haven't tried but which looks like it might get around the problem.<br /><br />I have worked around the problem by disabling Traffic Manager for the app to web service call so it is always local, which opens up a small risk if one web service died, but it should be OK for now.

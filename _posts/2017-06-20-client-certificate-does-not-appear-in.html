@@ -1,0 +1,17 @@
+---
+layout: post
+title: Client Certificate does not appear in Windows Credential Manager
+date: '2017-06-20T05:37:00.003-07:00'
+author: Luke Briner
+tags:
+- client cert
+- client certificates
+- windows
+- update service reference
+- WCF
+- client authentication
+- windows 10
+modified_time: '2017-06-20T05:37:48.934-07:00'
+---
+
+This is one of those jobs I have done several times but couldn't remember why it didn't work the next time.<br /><br />You add a client certificate to your personal store under Current User, it is in-date, it chains OK but when using Windows Credential Manager to add a connection, it doesn't offer you this certificate to choose,.<br /><br />As pointed out <a href="https://stackoverflow.com/a/26098918/1688830" target="_blank">here</a>, you have to edit the properties of the certificate and untick "Smart Card Logon" and "Any Purpose" otherwise Windows will ask for a Smart Card to access the client cert!

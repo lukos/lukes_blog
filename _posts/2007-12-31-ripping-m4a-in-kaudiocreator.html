@@ -1,0 +1,10 @@
+---
+layout: post
+title: Ripping m4a in KAudioCreator
+date: '2007-12-31T02:30:00.000-08:00'
+author: Luke Briner
+tags:
+modified_time: '2007-12-31T02:35:45.094-08:00'
+---
+
+Stupid blogger has deleted my post 3 times when pressing the preview button!!<br />I wanted to rip my audio into AAC (MPEG 4 audio) format since my current oggs do not play on my Archos MP3/4 player. KAudioCreator does not support AAC straight from the box so this is what I did:<br />1) install faac from the repos<br />2) Run up KAudioCreator and then Settings -> Configure KAudioCreator<br />3) Click the encoder tab<br />4) Add a new encoder type called AAC, with m4a extension (which tells the encoder what sort of encoding to do at encode time) and then use the following command line:<br />faac -b 128 --title %{title} --comment %{comment} --artist %{artist} --album %{albumtitle} --year %{year} --track %{number} --genre %{genre} -w -o %o %f<br />5) Press OK and then setup your rip path if it is not already correct, mine is:<br />~/My Music/%{albumartist}/%{albumtitle}/%{number} - %{title}.%{extension}<br />6) MAKE SURE that your new encoder is highlighted in the list before pressing OK. This ensures it is your default encoder.<br />7) nice!

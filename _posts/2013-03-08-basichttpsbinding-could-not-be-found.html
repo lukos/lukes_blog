@@ -1,0 +1,17 @@
+---
+layout: post
+title: basicHttpsBinding could not be found
+date: '2013-03-08T05:02:00.002-08:00'
+author: Luke Briner
+tags:
+- basicHttpsBinding
+- errors
+- WCF
+- udpBinding
+- visual studio
+- netHttpBinding
+- bindings
+modified_time: '2013-03-08T05:02:35.754-08:00'
+---
+
+I am undergoing the infuriatingly slow process of trying to get a wcf service working with client certificates and have used the above binding for the metadata so that I can add a service reference to a visual studio client. I found the solution here: <a href="http://blogs.msdn.com/b/praburaj/archive/2012/08/21/configuration-binding-extension-system-servicemodel-bindings-nethttpbinding-or-system-servicemodel-bindings-basichttpsbinding-or-system-servicemodel-bindings-udpbinding-could-not-be-found-on-upgrade-to-net-4-5-rtm.aspx" target="_blank">http://blogs.msdn.com/b/praburaj/</a> and it relates to the fact that this (and a few other bindings) are only available in .net 4.5. Despite my project being set to use 4.5, the web config, by default, was targeting version 4.0. The fix is to adjust web config by doing the following under system.web (obviously debug="true" is temporary:<br /><br /><br /><pre style="background-color: #eeeeee; border: 1px dashed #999999; color: black; font-family: Andale Mono, Lucida Console, Monaco, fixed, monospace; font-size: 12px; line-height: 14px; overflow: auto; padding: 5px; width: 100%;"><code>&lt;compilation debug="true" targetFramework="4.5" /&gt;<br />&lt;httpRuntime targetFramework="4.5"/&gt;<br /></code></pre><br />The full error was <b>Configuration binding extension 'system.serviceModel/bindings/basicHttpsBinding' could not be found. Verify that this binding extension is properly registered in system.serviceModel/extensions/bindingExtensions and that it is spelled correctly.</b>

@@ -1,0 +1,10 @@
+---
+layout: post
+title: The definition of the object is hidden
+date: '2008-07-07T07:56:00.000-07:00'
+author: Luke Briner
+tags:
+modified_time: '2008-07-07T08:07:45.459-07:00'
+---
+
+Strange compiler error today in VS2005 C# ASP.net web site. I had renamed a couple of old files and copied some back into the web directory from elsewhere and hit "Build". I got loads of errors in that fields in the csharp file I copied back into the solution were not defined even though they clearly were in the aspx file. I checkd all the usual spellings, @Page names etc and still nothing. When I right-clicked the field names and selected "go to definition", it went into the aspx page and then gave the suitably abstract error "The definition of the object is hidden" which is fine except it was very confusing (apparently it is talking about the actual code rather than the server control on the page).<br />Anyway to cut a long story long, it was because the build tool digs everything out of the web directories including my old definitions of the pages I was building. It then obviously linked the names to the old class definition and then complained that my new definitions didn't work. All I had to do was remove the backup files from the directory (or presumably could have renamed them to a different extension) and it was all fine.<br />How flipping annoying.

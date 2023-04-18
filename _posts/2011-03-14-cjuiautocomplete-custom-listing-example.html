@@ -1,0 +1,15 @@
+---
+layout: post
+title: CJuiAutoComplete Custom Listing Example
+date: '2011-03-14T13:37:00.000-07:00'
+author: Luke Briner
+tags:
+- autocomplete
+- Yii
+- CJuiAutoComplete
+- Ajax
+- jQuery
+modified_time: '2014-03-08T10:05:40.032-08:00'
+---
+
+The CJuiAutoComplete in Yii is great but because it uses the standard interface, there is one thing that cannot be done directly with the Yii control, that is customising the list that is displayed when you type something in. In my last example was a simple list that just displayed the label and selected this when you clicked it (and stored an id number in a hidden field) but in my case, I am searching for church names and there would be lots of duplicates so the name of the church by itself is not enough. <br />There is an 'undocumented' feature of the jQuery autocomplete (which the Yii control uses) which is mentioned on various forums and which can be used to override the default behaviour. It is called _renderItem and which by default only prints the labels. This needs to be 'manually' linked to the jQuery object since it cannot be joined directly to the CJuiAutoComplete and this uses the Yii function registerScript(). Anyway, this is the code I used (see my earlier example for what all the other controls are):<br /><pre>Yii::app()-&gt;clientScript-&gt;registerScript('custom_church_search','<br />    $("#churchac").data( "autocomplete" )._renderItem = function( ul, item ) {<br /> return $( "&lt;li&gt;&lt;/li&gt;" )<br /> .data( "item.autocomplete", item )<br /> .append( "&lt;a&gt;" + item.label + ", " + item.street + ", " + item.city + "&lt;/a&gt;" )<br /> .appendTo( ul );<br />};');</pre><br />Most of these names and code I left as per the example because I wasn't totally sure what they were. The only things I changed were the name of the script which is used as a dictionary lookup, the jQuery selector (#churchac) and the line which appends the &lt;a&gt; reference. This by default prints only item.label. In my case, all I did was add some commas and the street and city names. You should retain the &lt;a&gt; tags if you want the arrow keys and such like to work.<br /><h2>Update&nbsp;</h2>I tried to use this recently and it didn't work (cannot set _renderItem on undefined). I don't know what has changed, it is possibly a timing issue in my code, but a workaround is to modify the _renderItem method for ALL instances of autocomplete by re-defining the main definition instead of only the one for this specific instance. You do this by changing line 2 from:<br /><br /><pre>$("#churchac").data( "autocomplete" )._renderItem = function( ul, item ) {</pre><pre>&nbsp;</pre><pre>to</pre><pre>&nbsp;</pre><pre>$.ui.autocomplete.prototype._renderItem = function( ul, item ) { </pre><br />Note that since I only apply this script in my controller action for one page, it will only affect the autocomplete control(s) on that one page.

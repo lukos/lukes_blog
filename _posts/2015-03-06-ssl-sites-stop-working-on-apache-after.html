@@ -1,0 +1,22 @@
+---
+layout: post
+title: SSL sites stop working on Apache after upgrade from Ubuntu 12.04 to 14.04
+date: '2015-03-06T07:51:00.002-08:00'
+author: Luke Briner
+tags:
+- Chrome
+- ubuntu
+- '14.04'
+- protocol error
+- ssl
+- apache2
+- tls
+- '12.04'
+- web server
+- mod_ssl
+- upgrade
+- apache
+modified_time: '2015-03-06T07:51:21.891-08:00'
+---
+
+Well this was messy! I ran do-release-upgrade on a server running 12.04 and after it finished and rebooted, the ssl sites wouldn't work. I got&nbsp;err_ssl_protocol_error in Chrome when trying to access the sites.<br /><br />Since Apache is really popular, there are LOADS of articles about how to set up SSL and what can go wrong etc. and since I didn't really know what had happened, I tried/checked various things.<br /><br /><br /><ol><li>Was apache running on port 443?</li><li>Could I access the site with open ssl to check the cert? No, the suggested command line errored!</li><li>Was the config OK? I <i>thought</i>&nbsp;it was because i ran config test and it succeeded.</li><li>Did port 80/http work? When I copied in the config from default-ssl.conf into 000-default.conf, firstly I got some config errors (needed to have all&nbsp;+/- and not just some) and port 80/http worked fine.</li><li>Were all my conf files named *.conf? (it used to take everything from mods and conf-enabled but now only those with *.conf). Mine were already called *.conf</li><li>Did the ssl conf file match the version that dpkg kindly dumped in the directory during the upgrade? Yep, pretty much except for changes I had made for my server.</li><li>Could I use wget locally to see anything useful? I got a 404 when using http and port 443 and an ssl error when using https and 443 so no clue there.</li><li>Was there some weird protocol issue going on? Well apparently larger TLS 1.2 headers can cause problems on some proxies and possibly my site was now insisting on something too new/too old. I modified default-ssl.conf to set SSLProtocol to All -SSLv2 -SSLv3 and tried again - no dice but at least the site was stronger!</li></ol><div>I was pulling what little is left of my hair out until I found another post with another simpler answer:</div><div><br /></div><blockquote class="tr_bq">sudo a2ensite default-ssl</blockquote><div><br /></div><div>It worked! Simple as that. Why wasn't this already set from before the upgrade? No idea but it is also why its config was incorrect but not showing up as an error when starting apache. I should have looked into sites-enabled but I didn't think to since the original files are in sites-available.</div><div><br /></div><div>Aaarrgghhh but on the other hand - phew!</div>

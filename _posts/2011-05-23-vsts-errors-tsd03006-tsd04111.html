@@ -1,0 +1,13 @@
+---
+layout: post
+title: VSTS Errors - TSD03006, TSD04111
+date: '2011-05-23T04:54:00.000-07:00'
+author: Luke Briner
+tags:
+- databases
+- sql server
+- vsts
+modified_time: '2011-05-23T05:43:13.447-07:00'
+---
+
+Error TSD03006: <unnamed> has an unresolved reference to object.<br />This pain in the neck had occurred after creating a new VSTS project and adding what I thought was perfect SQL. The error pointed to Database.sqlpermissions and said the role I had granted a permission for did not exist even though it did!<br />Well there were two things wrong in my project and one assumption which made it hard to track down. The fundamental problem was I had spelt authorisation with an S instead of a Z in my role SQL which made it invalid but my assumption was that errors are printed in dependency order (i.e. fix the first one to fix the rest). This assumption was wrong and the error for the role was the last one listed!<br />The other problem was that even if your database properties say that your database is case-insensitive, the build environment will only recognise references that match case. For example if you reference a column called id with [Id], the reference will fail.

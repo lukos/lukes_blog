@@ -1,0 +1,15 @@
+---
+layout: post
+title: Headers and Footers referring to report items
+date: '2008-09-22T04:12:00.001-07:00'
+author: Luke Briner
+tags:
+- Report
+- Microsoft Reporting Services
+- Fields
+- Footers
+- Headers
+modified_time: '2008-09-22T04:19:31.844-07:00'
+---
+
+If you have used Microsoft Reporting Services and have tried to make a header or footer more complex that just plain text and images, you have probably at one point received the error: "The Value expression for the textbox 'Item_Desc' refers to a field. Fields cannot be used in page headers or footers." What a pain in the jacksie.<br />You'll be pleased to know there is a workaround although currently it is limited. What you need to do is put the field you want to refer to into the report body and set the visibility-hidden to true (assuming you do not want to show it in the body). In the textbox for the header or footer, refer to the hidden textbox value rather than the field itself: <strong>=ReportItems("Item_DescTextBox").Value</strong> This is permitted for some reason, although it is annoying. Presumably it is related to the header trying to render outside of the report body but who knows.<br />There is a gotcha though, you might find in some reports, that the item appears in some headers/footers but not others. Quite simply, if the hidden textbox is not visible on the page that the header and footer is on, it cannot be referred to which is total garbage but that is how it is. If this happens, you need to try and put the field into a part of the report body that is repeated on every page. For instance, if you have some intro text, a table and then some summary text, put the hidden field inside one of the repeating table rows and try and make sure part of this table is on the first and last pages, this way, the header and footer will always be able to refer to it.

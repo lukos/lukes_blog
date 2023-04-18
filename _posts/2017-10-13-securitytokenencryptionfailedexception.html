@@ -1,0 +1,19 @@
+---
+layout: post
+title: 'SecurityTokenEncryptionFailedException: IDX10615: Encryption failed. No support
+  for: Algorithm'
+date: '2017-10-13T10:02:00.000-07:00'
+author: Luke Briner
+tags:
+- JWT
+- encryption
+- Exception
+- Error
+- JWE
+- Algorithm
+- IdentityModel
+- JWS
+modified_time: '2017-10-13T10:02:36.422-07:00'
+---
+
+Microsoft.IdentityModel.Tokens.SecurityTokenEncryptionFailedException: IDX10615: Encryption failed. No support for: Algorithm when trying to create an instance of&nbsp;Microsoft.IdentityModel.Tokens.EncryptingCredentials()<br /><br />I tried variations for parameter 2 (alg) but none seemed to work. I was really foxed until I found the source code online and realised that I was passing in the signing key (RSA256) rather than the encryption key (AES256) for the first parameter!<br /><br />The code will attempt to use the key's crypto factory to lookup the specified algorithm and obviously that won't work when trying to specify AES on an RSA key.<br /><br />Just a typo!<br /><br />While I'm here, the algorithms for alg and enc need to be the same length because they will use the same key (parameter 1).

@@ -1,0 +1,13 @@
+---
+layout: post
+title: Service Broker Queue not calling Activation Procedure
+date: '2010-11-19T04:14:00.000-08:00'
+author: Luke Briner
+tags:
+- security
+- sql server 2005
+- Service Broker
+modified_time: '2010-11-19T04:23:59.676-08:00'
+---
+
+More fun with the Service Broker today on SQL Server 2005. I had got everything working on a test database and wanted to move the changes into the live database, both on the same server. I scripted all the stuff up and then realise service broker wasn't running. I found this because when I selected from sys.transmission_queue (which should be empty if the message is delivered to a queue), the exception column told me this. I tried to alter database to enable service broker but it wouldn't work with users logged in and I didn't want to boot all few hundred of them off! I wrote a SQL server job that ran the enable code at 5:50am with the following code:<br /><pre><br />CREATE PROC [dbo].[procEnableBroker]<br />AS<br />BEGIN TRY<br /> ALTER DATABASE MyDb SET ENABLE_BROKER WITH ROLLBACK IMMEDIATE ;<br />END TRY<br />BEGIN CATCH<br /> ALTER DATABASE MyDb SET NEW_BROKER WITH ROLLBACK IMMEDIATE ;<br />END CATCH<br /></pre><br />I needed the second bit in the catch which was some weird thing about needing a new service broker ID? The rollback boots out any uncommitted transactions and does the alter.<br />This all seemed OK so the messages were now being put on the queue but the queue was not calling the activation proc. If I ran the proc manually, it worked OK so I ended up thinking it was something to do with permissions. I followed some MS advice which as usual is buried amongst a lot of smoke and mirrors and did the following:<br /><pre><br />EXECUTE AS USER='dbo';<br />EXEC [dbo].[procQueueActiviationProc]<br /></pre><br />in order to match the user that it would normally run as (EXECUTE AS OWNER on the queue) and then I got the old, "the remote server could not be accessed because the current security context is not trusted". All I had to do then was to call:<br /><pre><br />ALTER DATABASE MyDb SET TRUSTWORTHY ON<br /></pre><br />And then after a little while and poking the queue again, it all came into life. I quite like the idea of Asynchronous calls for some things, this is a proc that updates a load of readonly fields and which takes up to about 10 seconds, something that we needn't wait for.

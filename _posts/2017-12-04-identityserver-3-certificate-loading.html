@@ -1,0 +1,22 @@
+---
+layout: post
+title: IdentityServer 3 certificate loading woes!
+date: '2017-12-04T09:17:00.000-08:00'
+author: Luke Briner
+tags:
+- errors
+- IIS7
+- pfx
+- app services
+- IIS7.5
+- Azure
+- Error
+- IIS8
+- IdentityServer
+- Certificates
+- iis
+- certificate
+modified_time: '2017-12-04T09:18:49.407-08:00'
+---
+
+<b>TL;DR:</b> Set <b>Load User Profile</b> to <b>True</b> on the Application Pool (advanced settings)<br /><br />We have a cloud system that uses IdentityServer and loads signing certificates from pfx files in the App_Data folder - works great.<br /><br />We've deployed an on-premises system based on the same code and it doesn't work. The following errors are logged:<br /><br /><br /><ul><li>ERROR Startup - Signing certificate has no private key or the private key is not accessible. Make sure the account running your application has access to the private key</li></ul><div>Which is definitely not true. Same certs as production, same passwords, files definitely there and can be imported into the Cert store to prove it.</div><div><br /></div><div>I ignored this initially but when we then log in over OpenID Connect, it gets to token signing and bang:</div><div><br /></div><div><ul><li>System.InvalidOperationException: IDX10614: AsymmetricSecurityKey.GetSignatureFormater( 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256' ) threw an exception.</li><li>SignatureAlgorithm: 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256', check to make sure the SignatureAlgorithm is supported.</li><li>Exception:'System.Security.Cryptography.CryptographicException: Invalid provider type specified.</li><li>If you only need to verify signatures the parameter 'willBeUseForSigning' should be false if the private key is not be available</li></ul><div>Which is actually a pile of errors that are not actually related to the problem. I wasted a ton of time creating a different format of signing key (lots of forums say that .Net doesn't work with the Enhanced Security Provider), created some new certs directly into the local Cert store, exported them as pfx into the same location, changed the web.config to use these new keys but now the site won't load! Disable CustomErrors and now get this error:</div></div><div><br /></div><div><ul><li>System.Security.Cryptography.CryptographicException: The system cannot find the file specified.</li></ul><div>Which is really weird since the new certs are in the same place. This is, however, a more useful error. I double-checked everything and it seemed weird until I realised that the error doesn't necessarily mean that the cert file itself is not found but it does something weird and tries to load the user profile to check certain parts of the certificate (which seems strange when loading from file but anyway...) I then found a <a href="http://www.daves-blog.net/post/2014/06/16/X509Certificate-The-System-cannot-find-the-file-specified.aspx" rel="nofollow" target="_blank">useful blog post</a> that says that the app pool doesn't load the user profile by default, which is why it doesn't work. IIS -&gt; Application Pools -&gt; Select -&gt; Advanced Settings -&gt; Load User Profile -&gt; True</div></div><div><br /></div><div>I enabled this and the site worked! I then reverted to the original certs and they worked too so this was simply IdentityServer covering up a random error or not providing a helpful enough error message. This also explains why it works on Azure, where the App Services system must simply enable Load User Profile by default.</div>

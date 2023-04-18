@@ -1,0 +1,13 @@
+---
+layout: post
+title: Workflow, workflow, workflow
+date: '2011-05-03T13:37:00.000-07:00'
+author: Luke Briner
+tags:
+- programming
+- workflow
+- visual studio
+modified_time: '2011-05-03T13:44:20.227-07:00'
+---
+
+I've been using Windows Workflow this year and to be honest, I really like it. Well, I like it in theory but there are a few things that are buggy (I am using version 3.5) and which could easily cause me to not use it if I had a choice:<br /><div><ol><li>The projects take an age to load and compile. VS2005 and about 100 projects but still, it is virtually unusable and I would imagine that many organisations have projects larger than this. I have a quad core with 8Gb so I would expect it to fly.</li><li>If you make the name of an activity the same as the class name, it will not tell you that it is invalid. What actually happens is that it will create a new member variable with the new name but keep the old name as it is so it looks unchanged. The newly created member will be unreferenced. Not sure why the names can't match.</li><li>I have quite a few problems related to VS2005 crashing and shutting down and this coupled with the time it takes to load the project is impossible!</li><li>The Toolbox takes about 2 minutes to populate (open the first time) with all the activities in my solution. I tried deleting a load of them from the toolbox so I can just have the ones I need but for some reason, they are automatically all added in again when you build.</li></ol><div>For state-machine type systems however, Workflow is definitely worth the hassle because it reduces the amount of code you otherwise have to write to produce a pseudo state-machine in normal classes. The designer is pretty usable too. Just make sure you understand dependency properties and the correct levelling of activities otherwise you will end up with a hotch-potch of non-reusable components that all require code activities everywhere to tie them together.</div></div>

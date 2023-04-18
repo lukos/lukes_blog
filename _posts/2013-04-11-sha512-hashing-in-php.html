@@ -1,0 +1,16 @@
+---
+layout: post
+title: SHA512 hashing in PHP
+date: '2013-04-11T09:02:00.000-07:00'
+author: Luke Briner
+tags:
+- ".net"
+- salt
+- SHA512
+- hashing
+- php
+- Hash
+modified_time: '2013-04-11T09:02:06.215-07:00'
+---
+
+I am currently trying to use PHP and .Net to work with the same data. One of the effects of this is having to hash and decrypt in the same way as I have done in .Net. This means two things. Firstly, I get a reference version with which to compare my PHP version so I know when I've done it correctly. Secondly, because of this, I get to catch things I cocked up in the .Net version!<br /><h3>Hashing</h3>I was trying to do something pretty standard. SHA512 with a fixed salt value. There was nothing tricky in the .Net code and I assumed it would be quick and easy. I tried this:<br /><br /><pre style="background-color: #eeeeee; border: 1px dashed #999999; color: black; font-family: Andale Mono, Lucida Console, Monaco, fixed, monospace; font-size: 12px; line-height: 14px; overflow: auto; padding: 5px; width: 100%;"><code>$hash = openssl_digest($plainText.$hashsalt, "sha512");<br />return base64_encode($hash);<br /></code></pre><br />You can see that I have a $plaintText and a $hashsalt but despite trying this (and peeling through all the other variables I might have got wrong in my project) the hash wouldn't match the one I produced in .Net. I (eventually) reread the docs for openssl_digest and realised there was an optional parameter which tells the function to override its default behaviour which is to binhex encode the result of the hash so it is safe to send over non-binary channels. I personally think this default behaviour is poor because it is not obvious (apart from the manual) that this happens by default. Anyway, all I had to do was change it to this:<br /><br /><pre style="background-color: #eeeeee; border: 1px dashed #999999; color: black; font-family: Andale Mono, Lucida Console, Monaco, fixed, monospace; font-size: 12px; line-height: 14px; overflow: auto; padding: 5px; width: 100%;"><code>$hash = openssl_digest($plainText.$hashsalt, "sha512", TRUE);<br />return base64_encode($hash);<br /></code></pre><br />and the optional parameter tells it to return the raw hash (which I was then base64 encoding anyway).<br /><br />I am pleased to say that this works and the result is identical to what happens in .Net when you hash with SHA512 and base 64 encode!

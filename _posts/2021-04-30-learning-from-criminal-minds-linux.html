@@ -1,0 +1,14 @@
+---
+layout: post
+title: Learning from Criminal Minds - Linux aliases
+date: '2021-04-30T03:15:00.001-07:00'
+author: Luke Briner
+tags:
+- aliases
+- docker
+- ubuntu
+- linux
+modified_time: '2021-04-30T03:15:29.149-07:00'
+---
+
+<p>&nbsp;Let's be honest, most IT and "hacking" on TV and films is nonsense.&nbsp;</p><p>The one that always gets me is when they say something to Penelope Garcia like "Find all men between 25 and 35 in Ohio who have been released from prison in the last 5 years and own a house with at least 4 bedrooms". With the most simple query that looks something like this, the result is quickly forthcoming:</p><p>Ohio:</p><p>&nbsp; Male: 25-35</p><p>&nbsp;&nbsp;&nbsp; Prison = -5</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; House = minimum 4 bedrooms</p><p>Although it is obviously made to look impressive for the drama (in real life, it would probably take several weeks to find out and gain access to a relevant database let alone work out how to cross query them), there is one thing I did learn. Since Penelope does very similar things very frequently, it is clearly in her interest to learn shortcuts, optimisations and custom utilities to simplify what might actually take a long time from scratch.</p><p>I was thinking about this while I was typing "docker node update --availability=drain nodename" for the umpteenth time. Why am I not thinking about how to make these commands much quicker and easier to type?</p><p>Enter Linux aliases. Despite using Linux for close-on 10 years, I am very much still a strong noob instead of embracing the power but today I learned something about Ubuntu (the deets might be different in other distros but this is bash rather than Ubuntu). You can very easily create aliases and functions to simplify your repetitive work.</p><p>Edit <b>~/.bash_aliases</b> (it might not exist, which is fine)</p><p>A simple alias looks like this:</p><p><span style="font-family: courier;">alias dsl='docker stack ls'</span></p><p>Whereas a command that might take arguments is implemented as a function like this:</p><p><span style="font-family: courier;">dsps()<br />{<br />&nbsp; docker stack ps -- "$1"<br />}</span></p><p>You can then reload these with <span style="font-family: courier;">source ~/.bashrc</span> and away you go. So easy, so powerful and only 10 years too late!<br /></p>

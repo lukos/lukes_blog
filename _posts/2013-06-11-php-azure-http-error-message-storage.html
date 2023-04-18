@@ -1,0 +1,16 @@
+---
+layout: post
+title: 'PHP Azure - HTTP Error Message: A storage account named something already
+  exists'
+date: '2013-06-11T03:53:00.002-07:00'
+author: Luke Briner
+tags:
+- Azure
+- Publish-AzureServiceProject
+- PHP Azure
+- Powershell
+- errors
+modified_time: '2013-06-11T04:03:03.901-07:00'
+---
+
+This PHP Azure stuff is doing my nut a bit. I need to download the source for the Powershell scripts so I can make them better but errors like the above are not helpful, because I know the storage account exists, it is what I want to use to deploy the web service I am developing.<br /><br />The problem in my case is that although I "imported my publish settings" using the powershell script GetAzurePublishSettingsFile, I am the admin of two subscriptions and this call automatically downloads both and therefore uses the first one by default. I didn't notice this at the time but it meant I was deploying using the wrong subscription and when it wanted to create the storage account I had specified, it already existed in another subscription so it couldn't create a new one.<br /><br />The answer is (unsurprisingly) to specify the correct subscription in your call to Publish-AzureServiceProject using the Select-AzureSubscription cmdlet. You can find the name in the downloaded publish settings file and copy it across. I created a simple Powershell script to avoid having to repeat this:<br /><br /><pre>Select-AzureSubscription "Windows Azure Bizspark 1111"<br />Publish-AzureServiceProject -Location "North Europe" -StorageAccountName something -Slot Production</pre>

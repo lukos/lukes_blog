@@ -1,0 +1,17 @@
+---
+layout: post
+title: What's the difference between HMAC and RSA/DSA for signing messages
+date: '2014-02-13T02:29:00.000-08:00'
+author: Luke Briner
+tags:
+- Public Key
+- DSA. Signing
+- encryption
+- Public Private Key Encryption
+- RSA
+- message authentication
+- HMAC
+modified_time: '2014-02-13T02:29:04.795-08:00'
+---
+
+I was using something called <a href="http://en.wikipedia.org/wiki/Galois/Counter_Mode" target="_blank">Galois Counter Mode</a> for my encrypted data to provide a signature which can then verify that the encrypted data has not been tampered with before it is decrypted. In many cases, tampered data would probably cause the system to crash but it might be possible to gain advantage by tampering with things like encrypted numbers (your salary in the payroll database?)<br /><br />The problem I had was that GCM is not easily accessible in PHP, which meant one of my web services had to call a SOAP/.Net web service to handle the decryption, something which is less than ideal for performance and maintenance reasons. I wanted something that could sign my data which would work in both .Net and PHP.<br /><br />I thought of <a href="http://en.wikipedia.org/wiki/Hmac" target="_blank">HMAC </a>but my security library already had a signing mechanism based on <a href="http://en.wikipedia.org/wiki/Digital_Signature_Algorithm" target="_blank">DSA</a>, so I wondered, "what's the difference?". I then realised that <a href="http://en.wikipedia.org/wiki/RSA_(algorithm)" target="_blank">RSA </a>was recommended instead of DSA, (I thought that DSA was a signature algorithm and RSA was for public/private key encryption). It seems that RSA can also sign data so perhaps my question is now, "what is the difference between using RSA or HMAC for signing encrypted data?".<br /><br />RSA signing is for cases where you cannot share a key. It uses the public/private key pair in the reverse of the way encryption is usually carried out. In other words, you sign with the PRIVATE key, send the signature and encrypted data to the recipient who then uses your PUBLIC key to verify the signature. It is relatively VERY slow and produces a signature as long as the key (e.g. 4096 bits in my case). This means it is not suited so much to stored data (who wants to store massive signatures for small encrypted data packets) but more suited to real-time messaging, perhaps across a network, where the recipient needs to check the signature and then use the data, without needing to store the signature for later. Because it is slow, it is also generally unsuited to high-bandwidth systems, in which case, you are better off exchanging a key using public/private key and then using HMAC for ongoing verification.<br /><br />HMAC signing is much faster than RSA and produces a smaller signature (the size of which depends on the hash function being used), which, although smaller than the RSA signature is more than suitable for most signing systems. The disadvantage is that the <u>same</u> key is required for signing and verifying which only works between trusted parties (or if you are storing and then re-reading data from a database at a later date). If you were using this for a public (untrusted) system, you would effectively be releasing a private key to the world which means anyone could spoof the signing process and sign anything.<br /><br />For me, my requirement is to ensure that data is not tampered with while it is stored in the database, in which case, HMAC is definitely the right choice.

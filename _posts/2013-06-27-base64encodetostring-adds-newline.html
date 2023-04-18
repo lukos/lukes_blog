@@ -1,0 +1,14 @@
+---
+layout: post
+title: Base64.encodeToString adds newline character
+date: '2013-06-27T03:47:00.002-07:00'
+author: Luke Briner
+tags:
+- Java
+- carriage-return line-feed
+- Base64.encodeToString
+- newline
+modified_time: '2013-06-27T03:47:24.461-07:00'
+---
+
+In another installment of the weird decisions that were taken when Java was written.....<br /><br />The class Base64 is useful when doing web work. As you will know, sending data in a web request, particularly in a URL or URL encoded form is fraught with problems because the text tokens used to delimit fields might actually appear in your data. Binary is particularly problematic. Enter Base64 encoding which uses alphanumeric characters and usually + and = to represent binary data. Lovely.<br /><br />Anyway, using Base64.encodeToString() in Java happens to do something strange. The method requires a flag to tell it how to encode and being naive, I decided to use Base64.DEFAULT thinking it would just do this. But no! In the infinite wisdom of someone, somewhere, the default flag adds a newline character (\n)&nbsp; to every string it encodes so you end up with something like AB65SS=\n which is almost certainly not something you want.<br /><br />You have to use the flag NO_WRAP to not include this newline. Here's an idea Java authors: Why not have DEFAULT just do what 99% of people would expect and do a vanilla encoding. If people need a newline for some application, create a flag for that instead?

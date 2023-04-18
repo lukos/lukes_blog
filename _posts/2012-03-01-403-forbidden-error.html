@@ -1,0 +1,10 @@
+---
+layout: post
+title: 403 Forbidden Error
+date: '2012-03-01T06:55:00.002-08:00'
+author: Luke Briner
+tags:
+modified_time: '2012-03-01T06:55:49.312-08:00'
+---
+
+I got this error on a web site I was testing on my network yesterday. It was one of those times that you think you didn't change anything.<br />As you can imagine, I HAD changed something so as with most of these scenarios I have to ask what I did between when it last worked and now it didn't.<br />There is a little clue in the error page which says you are not permitted to list the directory contents. I should have twigged that I was not expecting to list a directory, I had intended to hit the default page.<br />And that was the problem, I had removed and re-added the site in IIS and had not setup the default page for the site (which is not default.aspx) and therefore hitting the URL without the file name specified caused the error.<br />Idiot.

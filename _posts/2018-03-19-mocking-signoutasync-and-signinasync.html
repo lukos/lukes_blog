@@ -1,0 +1,19 @@
+---
+layout: post
+title: Mocking SignOutAsync and SignInAsync
+date: '2018-03-19T05:34:00.000-07:00'
+author: Luke Briner
+tags:
+- xunit
+- ".net"
+- Mock
+- dotnet core
+- mocks
+- web application
+- Unit Tests
+- ".net 5"
+- moq
+modified_time: '2018-03-19T05:34:01.617-07:00'
+---
+
+It seems that despite Microsoft going some great distance on Dependency Injection in DotNet Core, there is still a lot of smoke and mirrors with the horrible blob they call HttpContext.<br /><br />Mocking this in unit tests is doable but a bit of a pain. The easiest way is to set the ControllerContext.HttpContext to DefaultHttpContext, which provides some magic services out of the box, allowing things like The UrlHelperFactory and things to work as expected (or at least not to crash).<br /><br />However there is a problem! It only provides default services for things that work out of the box with safe defaults. If you try and call&nbsp;SignOutAsync and SignInAsync, your test will give you the infamous: Message: System.ArgumentNullException : Value cannot be null. Parameter name: provider and the call stack will show ServiceProviderServiceExtensions.GetRequiredService()<br /><br />There is a stack overflow answer <a href="https://stackoverflow.com/questions/34363880/how-do-i-stub-mock-authenticationmanager-in-mvc-6" target="_blank">here </a>but it uses the deprecated AuthenticationManager class which is not great.<br /><div><br /></div><div>I played around and created a mock for the auth manager:</div><div><br /></div><div><a href="https://gist.github.com/lukos/2806a72898f56795d640a5cac150a295" target="_blank">Auth Manager Mock Gist</a></div><div><br /></div><div>Then I needed to add a new RequestServices object (of type IServiceProvider), which is null by default in DefaultHttpContext (but don't be fooled because it handles things automagically!).<br /><br /><a href="https://gist.github.com/lukos/cebf66e836b8ac5f8585ef81bf6e18fa" target="_blank">Request Services Mock Gist</a><br /><br />BUT then when I ran all my tests, about 50 of them now failed, including the one I was "fixing" because now I was being told that IUrlHelperFactory and ITempDataDictionaryFactory were not being resolved! What? I hadn't touched them and the RequestServices property was null by default - what was happening?<br /><br />I remember reading that DefaultHttpContext provides you some basic services by default - although unfortunately, it doesn't do that very obviously! By setting RequestServices, this magic service is obviously removed and things you used to get by default, you don't any longer!<br /><br />Fortunately, there are default implementations which are easy enough to use for the additional 2 services, and hopefully if you are using any others, they will also have defaults or will be easy to mock:<br /><br /><a href="https://gist.github.com/lukos/4636a6c81b0f5442fb593e58a3f45622" target="_blank">Additional services to mock Gist</a><br /><br /><br /></div>

@@ -1,0 +1,12 @@
+---
+layout: post
+title: Beware the COLLATE clause
+date: '2009-04-29T06:02:00.001-07:00'
+author: Luke Briner
+tags:
+- COLLATE
+- sql
+modified_time: '2009-04-29T06:10:59.060-07:00'
+---
+
+Not sure what the details of this are exactly but I run a test system at work which is basically copies of live database running on my test server for when I test code changes. I usually copy the live backup and restore it to my machine.<br />Anyway, I notice a particular view was running really slowly on my test server compared to live (even though it should be identical!?) and we are talking 38 seconds instead of 2 here!<br />I split the view and tried the various parts of it and found a sub view taking all the time. I then opened that and found a particular other view was fine as a standalone select:<br /><pre>SELECT * from ProblemView WHERE...</pre><br />and the rest of the view was OK but when joined, it took ages. I couldn't really see why but then I noticed the join had a collate clause. Collate is related to the way in which text fields are ordered and depends on languages, sometimes you have to tell it how to collate otherwise the order might be wrong.<br />Anyway, I got rid of the collate clause and the view became 1 second again instead of 38. Oooh, I thought, a bug in the view, I went into the live site and tried to make the same change thinking it might massively speed it up and got the error: <pre>Cannot resolve the collation conflict between "SQL_Latin1_General_CP1_CI_AS" and "Latin1_General_CI_AS"</pre><br />Obviously the collation somewhere was different and obviously getting it wrong made the view MASSIVELY slow even though the data is quite small. Hopefully you might find this helpful.

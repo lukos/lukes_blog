@@ -1,0 +1,15 @@
+---
+layout: post
+title: Call to undefined function imagecreatefromjpeg()
+date: '2012-10-01T09:04:00.000-07:00'
+author: Luke Briner
+tags:
+- php5-gd
+- wordpress
+- errors
+- php5
+- php
+modified_time: '2012-10-01T09:04:53.775-07:00'
+---
+
+Lovely error in Wordpress that exhibited itself as missing images in posts. Because I had been oiking around with permissions earlier, I assumed it was something related to this but nope.<br />I ended up using <b>tail /var/logs/apache2/error.log</b> and noticed the above error. The only reason I thought to look here was by directly typing the image url (...wp-admin/admin-ajax.php?mod=img&amp;action=getProdImg&amp;pid=1235&amp;for=big&amp;imgId=58) into the browser and noticing there was a 500 (internal server error).<br />Anyway a quick search on t'interweb and it seems that the library for this function - <b>php5-gd</b> is not installed by default in my Ubuntu Lamp installation and therefore the method is missing.<br />Used apt-get to install the library, restarted apache2 and away we went....

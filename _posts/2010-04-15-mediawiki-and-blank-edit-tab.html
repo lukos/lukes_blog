@@ -1,0 +1,12 @@
+---
+layout: post
+title: MediaWiki and Blank Edit Tab
+date: '2010-04-15T09:54:00.000-07:00'
+author: Luke Briner
+tags:
+- mediawiki
+- wiki
+modified_time: '2010-04-15T09:59:14.412-07:00'
+---
+
+I installed MediaWiki at work not long ago and can't remember anything being amiss which is why I can't really remember it. Anyway, I installed it at home and the installation all appeared to be smooth, the database was created correctly and the page told me it was all successful but when I clicked on the Edit tab, the page was blank. No HTML at all, no nothing.<br />I couldn't find any specific issue on the web which surprised me but I assumed it must be my configuration options which it didn't like. I eventually found a post talking about upping the memory limit otherwise certain operations would fail.<br />It is slightly confusing because there is an entry in /etc/php5/apache/php.ini which I had already changed to 32M and which hadn't worked but there is also an entry in the LocalSettings.php of the wiki site itself and this also needs to be upped. I changed it, didn't have to restart anything, refreshed the page and voila - it worked.<br />A bit surprising that the setting in the download was not even sufficient to edit the main page which has hardly anything on it, it would have been more of an issue editing some massive page perhaps.<br />Well, never mind, the fix was easy after all that. Note that there have been issues reported about international character handling causing the same symptoms.

@@ -1,0 +1,18 @@
+---
+layout: post
+title: Chrome always redirecting http site to https
+date: '2013-05-10T04:34:00.000-07:00'
+author: Luke Briner
+tags:
+- Chrome
+- forwarding
+- strict http
+- DNS
+- rewrite
+- HTTPS
+- HTTP
+- rewriting
+modified_time: '2013-05-10T04:34:28.152-07:00'
+---
+
+I have killed off an old domain and redirected the old name to our new server and new domain name picturepin.co.uk =&gt; pixelpin.co.uk. PicturePin used to host one of our live/test sites whereas the new domain is for a marketing web site.<br /><br />After updating DNS, I was trying to check that the update had worked by typing in the old domain and expecting it to redirect to the new one (with the new web server rewriting the url to match the new one). Worked fine in FireFox, IE went to a landing page and Chrome would always insist on redirecting the URL to https://picturepin.co.uk before accessing the site (and then failing for certificate reasons). The IE issue was related to flaky/not quite updated DNS but the Chrome issues was puzzling.<br /><br />What I eventually found out was that as well as caching DNS results, Chrome also caches sites that have "strict http" set in their headers and which causes browsers to insist that all site access is carried out over https only and not http. In my case, the old site <i>used</i> to point to a server that had strict http enabled but was no longer. For some reason, the information was cached against the url and not the ip address so Chrome didn't notice it had changed to a new server without strict http.<br /><br />The solution was to go into <b>chrome://net-internals/#hsts</b> in Chrome and enter the domain name you want to remove the cache entry for in "Delete domain". This stops Chrome from automatically forwarding you!

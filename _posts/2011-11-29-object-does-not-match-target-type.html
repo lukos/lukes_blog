@@ -1,0 +1,10 @@
+---
+layout: post
+title: object does not match target type
+date: '2011-11-29T02:27:00.001-08:00'
+author: Luke Briner
+tags:
+modified_time: '2011-11-29T02:35:50.892-08:00'
+---
+
+Another of MSs suitably abstract errors which don't really tell you what is going on. They have gone to the effort of catching a problem so why not describe it better?<br />Anyway, I got this while calling onto a Rhino mock class which I had supposedly setup an expectation for. It was unusual since my understanding would be if the expectation matched, I would get a response and if it didn't then I would get null back and it would fall over elsewhere. There is obviously a middle ground.<br /><br />The code in question was this: <br /><pre>internal void EstablishDetect(DetectRequest detectRequest)<br />{<br />    mock.Expect(proxy =&gt; proxy.Detect(detectRequest)).Constraints(Property.AllPropertiesMatch(detectRequest));<br />}<br /></pre>A fairly simple use of the expectation. The problem appeared to be the fact that one of the request properties was a class, not just a number or string etc. and in the code I was using, effectively, I was using this for the expectation: <br /><pre>req = new DetectRequest { Id = Id, Stage = new ClassA() };<br /></pre>but calling this on the mock: <br /><pre>req = new DetectRequest { Id = Id, Stage = new ClassB() };<br /></pre>The different class was intentional and I would have expected if these didn't match, the AllPropertiesMatch() would fail and therefore the mock would return null. In fact, it generates the above error, "object does not match target type". All I had to do was to set-up the expectation with the same class I was passing into the actual call and it was fine.

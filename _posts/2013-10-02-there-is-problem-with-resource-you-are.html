@@ -1,0 +1,17 @@
+---
+layout: post
+title: There is a problem with the resource you are looking for, and it cannot be
+  displayed
+date: '2013-10-02T06:51:00.002-07:00'
+author: Luke Briner
+tags:
+- Internal Server Error
+- windows.
+- errors
+- '500'
+- iis
+- php
+modified_time: '2013-10-02T06:51:33.844-07:00'
+---
+
+Internal server 500 and this is the only text I could get back from PHP running on IIS.<br /><br />It was being caused by a disabled SOAP php extension and I (eventually) tracked it down firstly by ensuring the error_log was specified in PHP.ini and pointed to a directory that was accessible by PHP. I then ran the troublesome piece of code and got "SoapClient" is an unknown type in this error log.<br /><br />I don't know why this wasn't picked up at application level and sent back to the client in the form of a useful error. My try/catch blocks and everything were bypassed, I guess because this was right down in PHP.<br /><br />I added in the extension, re-started php-cgi.exe to reload the PHP.ini and it was all well again...<br /><br />(This all took me 2 hours but should have taken me 10 minutes!)

@@ -1,0 +1,14 @@
+---
+layout: post
+title: blobExists for Azure PHP SDK 0.4.0 (API 2.2)
+date: '2016-04-06T01:12:00.000-07:00'
+author: Luke Briner
+tags:
+- Microsoft
+- Azure
+- SDK
+- php
+modified_time: '2016-04-06T01:12:20.802-07:00'
+---
+
+After updating my code to use the latest version of Azure's PHP SDK, lots of things changed, including using namespaces but also including the way certain things are done. There used to be a function called blobExists() which was any easy way to, you guessed, check whether a blob exists in a given container.<br /><br />For some reason, this is not present any more, perhaps because it was previously implemented in the SDK (not the API itself) and hasn't been duplicated but either way, I wanted one and I have written my own version!<br /><br />Note that I am using it in the Yii framework so there is a yii error log call that you won't need but otherwise it should work. I have also included the namespaces in the code for completeness, although you can instead add a "use" statement to the top of your class.<br /><br /><pre>/**<br /> * Helper function to find out if the given blob exists on Azure storage<br /> * @param string $container The container name to look in<br /> * @param string $blob The blob name to look for<br /> * @return boolean True if the blob exists<br /> * @throws \yii\web\ServerErrorHttpException<br /> */<br />public static function BlobExists($container, $blob)<br />{<br />    try<br />    {<br />        $proxy = \WindowsAzure\Common\ServicesBuilder::getInstance()-&gt;createBlobService("DefaultEndpointsProtocol=https;AccountName=accountname;AccountKey=yourkey");<br />        $options = new \WindowsAzure\Blob\Models\ListBlobsOptions();<br />        $options-&gt;setPrefix(basename($blob));   // Use prefix to limit the number of results<br />        $result = $proxy-&gt;listBlobs($container, $options);<br />        $blob_array = $result-&gt;getBlobs();<br />        return count($blob_array) == 1;<br />    }<br />    catch(\WindowsAzure\Common\ServiceException $e)<br />    {<br />        Yii::error($e-&gt;getMessage());<br />        throw new \yii\web\ServerErrorHttpException();<br />    }<br />}<br /></pre><br /><b>Note that basename() is used since setPrefix() doesn't work with a full filename, only the first part. This will cause problems for files that have the same name but different extensions, in which case, you would need to do some extra checking with the results to do a full match.</b><br /><b><br /></b>There are also other preferred ways to pass the connection data to the ServicesBuilder using environment variables etc. see&nbsp;<a href="https://github.com/Azure/azure-sdk-for-php" target="_blank">https://github.com/Azure/azure-sdk-for-php</a>&nbsp;for details.

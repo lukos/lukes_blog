@@ -1,0 +1,14 @@
+---
+layout: post
+title: metadata file xyz could not be found
+date: '2011-03-03T05:32:00.000-08:00'
+author: Luke Briner
+tags:
+- visual studio errors
+- VS2008
+- visual studio projects
+- metadata not found
+modified_time: '2011-03-03T05:36:07.176-08:00'
+---
+
+I got loads of errors like this in a VS2008 project the other day. It seemed really confusing since these errors related to files I had not even touched.<br />It turned out that a dependent project had not been built - which had not stopped the solution building - which meant the project references of other projects had nothing to reference and therefore could not find the metadata.<br />Looking up the output window to the <em>first</em> error showed what actually caused the problem and fixing this, got rid of the cascaded errors.

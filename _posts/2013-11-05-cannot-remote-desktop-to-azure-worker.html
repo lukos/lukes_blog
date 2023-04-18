@@ -1,0 +1,21 @@
+---
+layout: post
+title: Cannot remote desktop to Azure Worker Role
+date: '2013-11-05T06:20:00.000-08:00'
+author: Luke Briner
+tags:
+- cannot RDP
+- authentication
+- RDP
+- Remote Desktop
+- Azure
+- Error
+- Worker Role
+- The username or password is incorrect
+- broken
+- cannot log in
+- login
+modified_time: '2013-11-05T06:20:19.280-08:00'
+---
+
+Spoiler: The certificate was missing!<br /><br />Well I couldn't before, but I can now! I have a PHP Azure Cloud Service. It is not quite as integrated into Visual Studio as .Net ones (not surprisingly) so you have to do certain operations manually in the configuration files. One of these is Remote Desktop access and this is a bit messy to do by hand but then I noticed that you can enable it on the Azure portal after deployment (which is nice).<br /><br />I enabled it, chose the certificate to use for the RDP connection and carried on. I RDP'd into the site but accidentally logged into one of the web roles, when I was intending to look into problems with the worker role. I tried instead to RDP into that but this time I got, "The user name or password is incorrect". After trying 5 times to make sure that I had typed the long random password in correctly, I was confused. I only set the credentials in one place and the RDP had correctly picked up the username I had chosen so what gives?<br /><br />It took me a while but then I remembered choosing the certificate when setting up RDP and, in my case, the worker role did not have those certificates loaded since they were used for https on the web roles. I added the certificates to the worker role, re-deployed and it all worked fine. As with many things, it makes perfect sense once you fix it, the certificate is used for encryption and if it is not present, rather than a useful error, it encrypts the data incorrectly (or not at all) and then fails authentication at the other end.

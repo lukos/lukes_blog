@@ -1,0 +1,10 @@
+---
+layout: post
+title: Don't use exception for normal program flow!
+date: '2008-08-13T01:46:00.000-07:00'
+author: Luke Briner
+tags:
+modified_time: '2008-08-13T01:51:25.451-07:00'
+---
+
+This might sound like an obvious statement since "exception" doesn't mean "normal" but in .Net, Exceptions are used for things like "Key not found" in a map.<br />In one of my programs, I was reading in a database table of projects, not all of which I was working with. I thought it was simple enough to simply try and lookup the key in my map and catch the key not found exception, ignoring it and carrying on:<br /><pre><br />foreach (DataRow row in ds.Tables[0].Rows)<br />{<br />    try<br />    {<br />        m_Jobs[Convert.ToInt32(row["projectid"])].ActualLabourDays = hours;<br />    }<br />    catch (Exception)<br />    {<br />    }<br />}<br /></pre><br />This seemed like the solution with the least code but I didn't appreciate the overhead in generating exceptions, even if they are ignored and the program continues. When I ran this block of code, over 3000 rows, it took about 20 seconds since probably 2900 exceptions would have been thrown. I modified it to check for the key in the map before setting its value and bingo: 1 second!

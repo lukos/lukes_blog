@@ -1,0 +1,11 @@
+---
+layout: post
+title: Cannot resolve scoped service 'Microsoft.AspNetCore.Http.IHttpContextAccessor'
+  from root provider
+date: '2020-01-31T06:26:00.002-08:00'
+author: Luke Briner
+tags:
+modified_time: '2020-01-31T06:26:32.975-08:00'
+---
+
+Well this was weird mostly because it was working fine in local but not when deployed (and I still don't know why it worked locally). I suspect that there is some middleware that is running in IIS that is not running in IIS express that needs to resolve this type.<br /><br />In general, if anything in middleware in the asp pipeline needs services injected, they need to be singletons. Why? Because there is no scope for the current request until much later but stuff needs to be added to these types in the pipeline. Transient won't work because the changes would be lost.<br /><br />Answer, register middleware dependencies as Singletons and I was using IHttpContextAccessor (although not in middleware so who knows).<br /><br />This is slightly weird because the content accessor <i>sounds</i> like a scoped service since the http context is scoped to the current request but the accessor itself is not the context and will take care of that.<br /><br /><span style="font-family: &quot;Courier New&quot;, Courier, monospace;">services.AddHttpContextAccessor();</span><br /><br />or<br /><br /><span style="font-family: &quot;Courier New&quot;, Courier, monospace;">services.AddSingleton<ihttpcontextaccessor ttpcontextaccessor="">();</ihttpcontextaccessor></span><br /><br />Nice!

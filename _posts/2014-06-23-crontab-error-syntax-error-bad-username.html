@@ -1,0 +1,17 @@
+---
+layout: post
+title: Crontab error - syntax error, bad username
+date: '2014-06-23T03:11:00.000-07:00'
+author: Luke Briner
+tags:
+- cron.d
+- Error
+- bad username
+- crontab
+- cron
+- syntax error
+- this crontab will be ignored
+modified_time: '2014-06-23T03:11:23.553-07:00'
+---
+
+I had what I thought was a really simple crontab file in /etc/cron.d which simply called a bash script in my home directory. I realised it wasn't running and looked into /var/log/syslog to find the following error:<br /><br />Jun 23 09:39:27 <snip> cron[19563]: Error: bad command; while reading /etc/cron.d/backup-files</snip><br />Jun 23 09:39:27 <snip> cron[19563]: (*system*backup-files) ERROR (Syntax error, this crontab file will be ignored)</snip><br /><div><br /></div><div>The file was <i>definitely</i>&nbsp;correctly written, I even ran the command line through an online checker and it passed. Since I was running a script directly, I tried to add /bin/bash as an additional argument to the script, and got a similar but different error:</div><div><br /></div><div><div>Jun 23 09:45:24 <snip> cron[19591]: Error: bad username; while reading /etc/cron.d/backup-files</snip></div><div>Jun 23 09:45:24 <snip> cron[19591]: (*system*backup-files) ERROR (Syntax error, this crontab file will be ignored)</snip></div></div><div><br /></div><div>Really annoying, I ended up trawling the net for answer, of which there were many, and...</div><h2>The Solution</h2><div>The <i>system</i>&nbsp;crontab has an additional column (the crontab that is run by root from /etc/crontab and /etc/crontab/cron.*) which specified the user to run the script as. Since I had copied the crontab comments from my user crontab, they didn't mention this!</div><div><br /></div><div>So I ended up changing:</div><div><br /></div><div><div>0 23 * * 1-5 /bin/bash /home/ubuntu/backup-files</div></div><div><br /></div><div>to</div><div><br /></div><div><div>0 23 * * 1-5 <b>root </b>/bin/bash /home/ubuntu/backup-files</div></div><div><br /></div><div>and it was all happy again!</div><div><br /></div><div><br /></div>

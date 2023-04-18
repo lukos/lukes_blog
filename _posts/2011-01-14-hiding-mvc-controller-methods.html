@@ -1,0 +1,12 @@
+---
+layout: post
+title: Hiding MVC Controller Methods
+date: '2011-01-14T07:40:00.000-08:00'
+author: Luke Briner
+tags:
+- asp.net
+- MVC
+modified_time: '2011-01-14T07:42:47.113-08:00'
+---
+
+In ASP.net MVC, all public methods are callable by default in a Controller class. This could obviously not be what you want although I would question why you have public methods that are not callable from the web! Anyway, if you want to hide the method from being treated as an Action, simply mark the method with the [NonAction] attribute (System.Web.Mvc) and a call to the method will return a resource not found error.

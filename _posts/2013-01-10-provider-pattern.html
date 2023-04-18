@@ -1,0 +1,16 @@
+---
+layout: post
+title: Provider pattern
+date: '2013-01-10T05:44:00.001-08:00'
+author: Luke Briner
+tags:
+- patterns
+- asp.net
+- examples
+- tutorial.
+- provider
+- provider pattern
+modified_time: '2013-01-10T05:44:32.452-08:00'
+---
+
+The provider pattern is a simple and useful way of enabling different implementations for the same interface and in particular for asp.net, using the built-in helper classes and web config to be able to set or change these at run time.<br /><br />There is a great (and pretty long) guide here by Microsoft:&nbsp;<a href="http://download.microsoft.com/download/d/d/b/ddb5a94d-b398-44b5-bbb9-a71808879d79/Microsoft%20ASP.NET%20Providers.pdf" target="_blank">http://download.microsoft.com/etc</a> If you are just interested in writing your own custom providers and then scroll down most of the document past the built-in providers (such as role and membership providers).<br /><br />The basics are straight-forward. You create a base class which inherits from System.Configuration.Provider.ProviderBase and define abstract methods that match the interface you want to use. Specialise this base class into the various flavours (for instance, I have providers for Azure and FileSystem).<br /><br />Each of the specialised classes must override Initialize and carry out both sanity checks on the passed-in configuration and also read/initialise local variables from the configuration (all the details of what to check are in the link). Note that when reading in configuration values, it is best-practice to remove these after reading them in and if you are left with any extras by the end of Initialize, it means there are invalid configuration values and you should throw an exception (this is in the link).<br /><br />You then add some configuration to your web config which will require a configuration section to be created for your providers (again, details in the link) and then a facade which implements a static method for each method on the interface and then lazy-loads the provider and passes the call(s) onto whichever provider is specified in the config. A simple example with only 2 concrete providers leads to 6 classes. It makes sense to create all of these in their own library rather than directly in the web application/web service.<br /><br />You need to be very careful with threading. Any methods on your providers, except for Initialize, need to be thread safe. Local variables are fine, read-only fields are fine but any other static or instance variables must be locked before being accessed. This is because a single provider will be loaded per application so all HTTP requests share these methods on multiple threads. Use lock() on an object to do this but don't lock too much since this will impact on performance.

@@ -1,0 +1,14 @@
+---
+layout: post
+title: Using variables in Powershell in Bamboo deployment project
+date: '2018-09-21T08:16:00.001-07:00'
+author: Luke Briner
+tags:
+- variables
+- Bamboo
+- Powershell
+- Atlassian
+modified_time: '2018-09-21T08:16:49.089-07:00'
+---
+
+Another case of poor documentation = time wasted, this time, courtesey of Atlassian's Bamboo.<br /><br />I need to make a deployment project that runs some powershell scripts - OK so far. They have a script task, which can run powershell - still OK.<br /><br />But..In order to make the environments different, I wanted to inject some variables. They have a variables button in Edit Environment, which I clicked and there was 1 annoying thing and 1 good thing. The good thing was that they said on <i>Windows</i>, you use %NAME% in scripts and the annoying thing was that it was unclear why the Scripts examples were capitalized and the variable names were not. I could work that out but really, they should have been consistent.<br /><br />Anyway, I could NOT get these to work. I would try things like <span style="font-family: &quot;Courier New&quot;, Courier, monospace;">&nbsp;</span><br /><br /><span style="font-family: &quot;Courier New&quot;, Courier, monospace;">az group create %bamboo_DEPLOYMENT_NAME%</span><br /><br />(using capitals just in case) and no dice. All kinds of random errors and weirdness, I eventually worked out that it must not be substituting them properly, but without any useful echoing from Bamboo, I tried all kinds of combinations. Fortunately, the log message proved that the environment variables were there and were correctly named.<br /><br />I eventually realised that the help in the variables page was incomplete, their online docs were poor and even some forum questions were not answered&nbsp; and was really only referring to command line usage, not Powershell usage. SO instead of az group create %bamboo_DEPLOYMENT_NAME%<br /><br />it should be:<br /><br /><span style="font-family: &quot;Courier New&quot;, Courier, monospace;">az group create $Env:bamboo_DEPLOYMENT_NAME</span><br /><br />And then it all worked! 

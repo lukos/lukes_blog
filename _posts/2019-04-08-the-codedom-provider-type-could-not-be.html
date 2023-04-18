@@ -1,0 +1,10 @@
+---
+layout: post
+title: The CodeDom provider type could not be located
+date: '2019-04-08T01:43:00.003-07:00'
+author: Luke Briner
+tags:
+modified_time: '2019-04-08T01:43:46.552-07:00'
+---
+
+Team City has this weird feature that certain build problems are considered warnings (might be MSBuild) but then the build continues until something serious happens later on. I then got the following message:<br /><br />error ASPPARSE: The CodeDom provider type "Microsoft.CodeDom.Providers.DotNetCompilerPlatform.VBCodeProvider, Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=2.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" could not be located. (C:\TeamCity\buildAgent\work\54cc4b00255b0695\Presentation\Admin\web.config line 148)<br />/global.asax(1): error ASPPARSE: Could not load type 'Admin.Global_asax'.<br /><br />This was very strange since we hadn't changed much since the last successful build and fortunately, I could quickly check that we DID have the nuget package installed, they WERE the latest and correct versions and web.config WAS correctly setup up.<br /><br />It was only when I dug into the build log and found out that some project references could not be resolved (we were manually modifying paths to an area outside of the project root) and therefore certain types etc. could not be found. I don't really know why broken references is not an error but hey-ho!<br /><br />Fixed the references and the random error disappeared!

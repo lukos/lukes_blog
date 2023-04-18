@@ -1,0 +1,17 @@
+---
+layout: post
+title: WSUS client download error 0x800b0109 "Some update files aren't signed correctly"
+date: '2017-01-25T04:31:00.001-08:00'
+author: Luke Briner
+tags:
+- ssl
+- Error
+- check for updates
+- windows update
+- wsus
+- certificate
+- tls
+modified_time: '2017-01-25T04:31:36.508-08:00'
+---
+
+This is another error that says what the problem is but doesn't give you any clues.<br /><br />In the case of setting up a WSUS server to serve Windows Updates over a LAN, the WSUS server creates an SSL certificate for the endpoints and chains this to a self-signed root cert that is installed on the sever only.<br /><br />When a client connects, due to the absence of a chain of trust, downloading metadata fails and the brief error above appears.<br /><br />What you need to do is find the SSL cert being used on the WSUS server in IIS (under bindings on the main site), then export this certificate without private key from mmc.exe, then distribute this to your client PCs.<br /><br />I'm sure you can automate this with GP but I just emailed it out for people to use!<br /><br />Simples.

@@ -1,0 +1,15 @@
+---
+layout: post
+title: 'Firefox and XML Parsing Error: no element found'
+date: '2015-06-10T05:42:00.000-07:00'
+author: Luke Briner
+tags:
+- client certificates
+- error 403
+- Error
+- firefox
+- xml
+modified_time: '2015-06-10T05:42:05.270-07:00'
+---
+
+I kept getting this error from a newly deployed .Net web service when trying to access the SVC file.<br /><br />The web services <i>works</i>, which is unusual but it was just the svc file and therefore the wsdl that wasn't. However, I <i>could </i>use svcutil to create the client classes so that was also weird.<br /><br />tl;dr? I use a client certificate for authentication. If this is set to negotiatessl instead of requiressl in the web configuration, Firefox WON'T ask you to choose a client certificate. Instead, you get a 403 (forbidden) error returned with no body and Firefox in it's wisdom decides that because it asked for xml, the response must also be xml but blank is obviously invalid and you get the error.<br /><br />When I ran Fiddler to check the request/response, it all worked correctly (obviously Fiddler found the correct CC and used it!) but when you use Chrome, it was clever enough to work it out and ask you to choose a client certificate. Whether this was because of a previous call which cached the client certificate need or by some other means, I don't know.<br /><br />So you can't test this on FireFox it seems (without using Fiddler) but would need to use Chrome instead. Naughty Firefox.

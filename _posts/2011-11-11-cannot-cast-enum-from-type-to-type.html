@@ -1,0 +1,10 @@
+---
+layout: post
+title: Cannot cast enum from type A to type A
+date: '2011-11-11T05:44:00.000-08:00'
+author: Luke Briner
+tags:
+modified_time: '2011-11-11T05:44:48.185-08:00'
+---
+
+This is a common error that doesn't seem to make sense. How can you not cast an enum from a type to itself? Makes more sense when we realise that types are often shared by copying libraries between projects. We might create a service contract version 1 and then add an enum entry and create version 2. We update the sender with version 2 but not the receiver and then we get the error listed above.<br />Trying to get another piece of code working was taking much longer than it should have and I thought that the change was pretty easy. Unfortunately, the fix I was making was in a shared library which then had to be copied into another project which would run the code (and fail!) and without any easy way to get the debugger to work without project changes. What I realised was that there were various combinations of things I was trying but I wasn't recording them. Use update panel or not? use declarative event handler or code one? Deploy to deployment folder or bin folder? Am I testing the code that I've changed or not?<br />All I needed to do was actually write down the combinations I had tried and then be careful to point the web site I was testing to the correct place (we effectively have two web sites in the project). Once I did this, I realised that I had missed a combination, one that worked, and that the code was correct, I just kept breaking one thing as soon as I fixed something else.<br />Be methodical people!

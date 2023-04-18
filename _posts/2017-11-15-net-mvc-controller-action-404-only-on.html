@@ -1,0 +1,16 @@
+---
+layout: post
+title: ".Net MVC Controller Action 404 only on one system!"
+date: '2017-11-15T07:38:00.001-08:00'
+author: Luke Briner
+tags:
+- controller
+- ".net"
+- MVC
+- Error
+- errors
+- '404'
+modified_time: '2017-11-15T07:38:39.563-08:00'
+---
+
+We have an existing web app that is running successfully in production. We deployed it to a new machine and any action we try and access on a certain controller returns a 404 (an IIS one, not the custom 404 page that we use in the app). The Home controller and another controller seemed to work as expected.<br /><br />Logging proved fruitless, perhaps because the underlying problem was masking the logs.<br /><br />Long story short: The controller that wasn't working had a default constructor (that was creating some services). One of these services was failing (as it happens due to the format of a connection string being incorrect), which caused the constructor to fail and rather than a 500, IIS/.Net was producing a 404 instead!<br /><br />Because of the lack of usable logs, I had to keep commenting things in and out to work out what was actually going wrong (as well as adding an empty 'test' action to remove any other possible variables).

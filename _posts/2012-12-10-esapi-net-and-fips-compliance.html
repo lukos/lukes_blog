@@ -1,0 +1,19 @@
+---
+layout: post
+title: ESAPI .Net and FIPs compliance
+date: '2012-12-10T03:33:00.000-08:00'
+author: Luke Briner
+tags:
+- ".net"
+- security
+- SHA512
+- ESAPI
+- FIPs
+- windows
+- CryptoServiceProvider
+- owasp
+- Hash
+modified_time: '2012-12-10T03:33:33.725-08:00'
+---
+
+I use the ESAPI from owasp.org .Net version but sadly, development seems to have stalled. Presumably the original for a fairly bog-standard port from the Java version but when I first downloaded it, I had to do some fairly major tidying up to make the implementation as solid as the functionality it was supposed to support. I found out that the config in one of the examples was incorrect and not actually working (therefore the system was using the defaults for everything).<br /><br />Anyway, eventually I had it basically working and solid but wanted to enabled FIPs compliancy on Windows. This is a registry switch at HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\FipsAlgorithmPolicy\Enabled which dictates to Windows that it is only allowed to use FIPs certified libraries for encryption functions. This is useful for most companies because it is a tick which says that the encryption I'm using is not only theoretically strong, but also certified strong. If this key is set to 1 and you attempt to use a non-compliant library, an exception is thrown with the details saying something like, "you have attempted to use a non FIPs compliant library". So far, so good, except that .Net provides some libraries which are not FIPs compliant and others which are. Details can be found <a href="http://support.microsoft.com/kb/811833" target="_blank">here</a>. The libraries setup as default in ESAPI are NOT the FIPs compliant libraries so I thought it would be kind of easy to change the configuration settings to use the different libraries. I changed the encryption from Rjindael to AesCryptoServiceProvider, which is the the compliant library (not sure why they both still exist!) and this seemed happy but then I had a problem with the hashing algorithm. The default is SHA512 which in itself is fine but again is not FIPs compliant. The problem we have is that ESAPI .net uses HashAlgorithm.Create(string) and you pass in the name of the algorithm, somewhat similar to the encryption. HOWEVER, this cannot use all of the hash algorithms that derive from HashAlgorithm but only a subset (for some reason). So even though there is a FIPs compliant SHA512CryptoServiceProvider, if you pass this as a value to Create, you do not get a Hasher but a null. Also, sadly, the list of available FIPs compliant libraries only seems to include MD5 and SHA1, both not to be used for new implementations because of known weaknesses and collisions. You're hoping for a happy ending but what I eventually did was to replace HashAlgorithm.Create with new SHA512CryptoServiceProvider and remove the ability to configure the hash algorithm. I assume ESAPI is trying to be as generic as possible but for most applications, I can't see any need to specify anything other than SHA512 for hashing (except perhaps for backwards compatibility) and it's easy enough to rebuild the code as required.<br /><br />ESAPI can now work in FIPs compliant mode. Sweet.

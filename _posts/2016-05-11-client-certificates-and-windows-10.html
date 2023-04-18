@@ -1,0 +1,10 @@
+---
+layout: post
+title: Client Certificates and Windows 10
+date: '2016-05-11T09:35:00.001-07:00'
+author: Luke Briner
+tags:
+modified_time: '2016-05-11T09:35:55.955-07:00'
+---
+
+I thought that my upgrade from Windows 7 to Windows 10 was all smooth and everything seemed pretty sweet but it was annoying that some things were not retained when upgrading.<br /><br />For instance, all the User Account Control was turned back on which is a real pain for a Developer, having to remember to run things as Administrator otherwise all kinds of weird things happen.<br /><br />I also found that certain of my sites had stopped working when debugging them. This was a real pain to debug.<br /><br />What had happened when I had upgraded Windows was both that I needed to run the browser as an Admin but that didn't explain why I couldn't access a web service on a test server (although I could using SvcUtil.exe!). This was because the permissions on the private key for the client certificate were reset somehow during the upgrade so although it should have been sent to the other site automatically, it wasn't permitted but without any error.<br /><br />I had to open mmc.exe, right-click the certificate and choose Tasks-&gt;Manage private keys and then add IIS_IUSRS read permission on the private key.<br /><br />I still have a problem with calling the web service from a web site, but I will have to try and fix that separately!

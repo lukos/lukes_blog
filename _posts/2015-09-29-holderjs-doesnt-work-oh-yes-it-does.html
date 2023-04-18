@@ -1,0 +1,19 @@
+---
+layout: post
+title: Holder.js doesn't work (Oh yes it does)
+date: '2015-09-29T07:18:00.000-07:00'
+author: Luke Briner
+tags:
+- carousel
+- holder.js
+- generated
+- images
+- javascript
+- bootstrap
+- IIS7
+- yii2
+- iis
+modified_time: '2015-09-29T07:18:28.985-07:00'
+---
+
+Developer error, that's what it was.<br /><br />Holder.js is a great utility for generating dynamic images of a given size (and colour etc.) that you can use for placeholders when building a web site, if you don't have the real images yet. It allows you to write that carousel code taking up the full size it should as well as fake thumbnails, shopping item images and lots more.<br /><br />You install a file called holder.js (surprise, surprise) and then you simply create images with the source (or data-src) attribute that looks something like:<br /><br /><img data-src="holder.js/1170x300?random=yes" src="" /><br /><br />The numbers are for the size and in this example, random=yes means that each time you run it, you get a different "theme" colour for the image - spice it up a bit.<br /><br />You can see all the options here:&nbsp;<a href="https://github.com/imsky/holder" target="_blank">https://github.com/imsky/holder</a><br /><br />The thing is: the "holder.js" in the data-src attribute is <b>NOT a path</b> to the javascript file (that's what I thought it was and why it didn't work) it is purely a label that holder.js will find so it knows which images to generate and which to leave alone. Obviously the selector uses "starts with holder.js", which is why it doesn't work with a full path to it.<br /><br />You have been warned!

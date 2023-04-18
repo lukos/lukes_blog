@@ -1,0 +1,18 @@
+---
+layout: post
+title: Getting Web Deploy working
+date: '2016-11-23T02:53:00.000-08:00'
+author: Luke Briner
+tags:
+- ERROR_USER_UNAUTHORIZED
+- ERROR_USER_NOT_AUTHORIZED_FOR_CONTENTPATH
+- '403'
+- errors
+- ERROR_COULD_NOT_CONNECT_TO_REMOTESVC
+- web deploy
+- '404'
+- '401'
+modified_time: '2016-11-23T02:53:32.728-08:00'
+---
+
+When web deploy works from Visual Studio, you get lazy and forget how much hassle it is to set up!<br /><br />We have a new staging server and want to be able to web deploy so here is what you need to do!<br /><br />Do these in the order given. There is at least one scenario where attempting to install Web Deploy before running the management service will not work!<br /><br /><br /><ol><li>Make sure the Web Management Service is running. If it's not installed, you have to add the feature to the server. Assuming you have IIS installed, you need to add the feature <b>Management Service</b>.</li><li>Open IIS, click on the server in the left-hand side and double-click <b>Management Service</b> under <b>Management</b>. If the page is disabled, click <b>Stop</b>&nbsp;on the right and <b>Enable remote connections </b>and then click <b>Start</b>. Optionally, you can lock down the remote IP addresses for the service. (You get a 403 if this is not setup)</li><li>Open firewall port 8172 for TCP. You can lock this down to IP addresses if required.</li><li>Install Web Deploy (current version is 3.5) by downloading direct from <a href="https://www.microsoft.com/en-gb/download/details.aspx?id=39277" target="_blank">Microsoft</a>. The web platform installer might not install the handler needed! (You get a 404 if this isn't installed)</li><li>Create a site in IIS, if it does not exist, pointing to a new folder that will be the destination for your site. This will need to match the name you specify for <b>Site name</b>&nbsp;in the web deploy dialog. You can setup https bindings at this point if required.</li><li>You have the choice of 2 ways of setting up user access. Either use an IIS user, which you create under the server tab in <b>IIS Manager Users </b>or otherwise use a windows user. If you want to use IIS users, you need to enable this under the <b>Management Service</b> page on the server. (I couldn't get the Windows user to work!)</li><li>Click on the web site you want to set permissions for and double-click <b>IIS Manager Permissions</b>. Click <b>Allow User</b>&nbsp;on the right and either choose a windows or IIS user to give permissions.</li><li>If you have used an IIS user, you need to add a delegate rule to allow the user to create an application and content. Double-click <b>Management Service Delegation</b>&nbsp;in the server tab and click Add Rule. Choose <b>Deploy Application and Content</b>&nbsp;and then once it is added, ensure the rule has contentPath, createApp, iisApp and setAcl ticked. Then add the IIS user you created to the rule.</li><li>Make sure the user you are using has full control permission to the web root folder on the server to create the directories and files (it needs full control, even for subsequent deployments, which is sad but true!). For the IIS Users, you need to add these permissions for whatever user is running the Web Management Service (Local Service by default). If using a windows user, that user needs modify permission also.</li></ol>

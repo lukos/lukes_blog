@@ -1,0 +1,14 @@
+---
+layout: post
+title: Find in Files - Linux Style
+date: '2011-11-11T12:54:00.000-08:00'
+author: Luke Briner
+tags:
+- ubuntu
+- find in files
+- linux
+- Grep
+modified_time: '2011-11-11T12:54:43.168-08:00'
+---
+
+Lots of people ask this in forums and there are various complex answers that come back - enough to make the most hardened GNU cohorts shiver. Anyway, dead easy, just use grep from the command line.<br /><br />grep -r 'search term in here' *<br /><br />-r is to recurse sub directories and the * says look in everything. The result is written to the console but you could always redirect it to a file using "> something" at the end (without the quotes of course).

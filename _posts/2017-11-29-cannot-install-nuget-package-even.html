@@ -1,0 +1,16 @@
+---
+layout: post
+title: Cannot install NuGet package even though it is listed
+date: '2017-11-29T04:14:00.000-08:00'
+author: Luke Briner
+tags:
+- nuget
+- visual studio 2015
+- visual studio 2017
+- nothing
+- blank
+- visual studio
+modified_time: '2017-11-29T04:14:14.670-08:00'
+---
+
+I had a package that I wanted to install listed in the NuGet packages list but after clicking install, it seemed to wait a bit and then do nothing.<br /><br />HOWEVER, clicking back onto the output tab in Visual Studio (since it was unhelpfully changing to the Error List tab), I noticed that there was a constraint that didn't allow the installation. In my case, the Microsoft.Net.Compilers package was too old for the NuGet package to install.<br /><br />Once I saw that, it was easy to install the NuGet package after updating the other one!

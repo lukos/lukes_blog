@@ -1,0 +1,19 @@
+---
+layout: post
+title: The provided URI scheme 'https' is invalid; expected 'http'
+date: '2012-12-21T04:17:00.000-08:00'
+author: Luke Briner
+tags:
+- transport security
+- Azure
+- ssl
+- errors
+- HTTPS
+- WCF
+- ArgumentException
+- wshttpbinding
+- bindings
+modified_time: '2012-12-21T04:17:45.814-08:00'
+---
+
+A really annoying error which is hard to understand until it is explained and then it makes perfect sense!<br />I was getting this on Azure when calling from a web application to a web service.<br />What it means is that the client endpoint you have specified (the "provided URI") has a scheme of https at the begining (the client url is https://whatever) whereas the meta-data for the endpoint that you probably added with "Add Service Reference" discovered that the protocol was http on the service binding. I got this with a client config in the web app of:<br /><br /><pre style="background-color: #eeeeee; border: 1px dashed #999999; color: black; font-family: Andale Mono, Lucida Console, Monaco, fixed, monospace; font-size: 12px; line-height: 14px; overflow: auto; padding: 5px; width: 100%;"><code>&lt;endpoint address="https://6ead981357238479hfc0beff3193e7b.cloudapp.net/WebService.svc/standard"<br />    binding="wsHttpBinding" bindingConfiguration="standard" contract="IWebService"<br />    name="standard"&gt;<br />    &lt;identity&gt;<br />      &lt;servicePrincipalName value="host/RD00443D49795E" /&gt;<br />    &lt;/identity&gt;<br />  &lt;/endpoint&gt;<br /></code></pre><br />And a service configuration of:<br /><br /><pre style="background-color: #eeeeee; border: 1px dashed #999999; color: black; font-family: Andale Mono, Lucida Console, Monaco, fixed, monospace; font-size: 12px; line-height: 14px; overflow: auto; padding: 5px; width: 100%;"><code>&lt;binding name="standardConfig" maxReceivedMessageSize="65536000"&gt;<br />  &lt;readerQuotas maxDepth="32"<br />                maxStringContentLength="65536000"<br />                maxArrayLength="65536000"<br />                maxBytesPerRead="65536000"<br />                maxNameTableCharCount="65536000" /&gt;<br />&lt;/binding&gt;<br /></code></pre><br />The fix is either to specify http on the client endpoint in the web application or to add &lt;security mode="transport"&gt; to the binding on the web service: <br /><br /><pre style="background-color: #eeeeee; border: 1px dashed #999999; color: black; font-family: Andale Mono, Lucida Console, Monaco, fixed, monospace; font-size: 12px; line-height: 14px; overflow: auto; padding: 5px; width: 100%;"><code>&lt;binding name="standardConfig" maxReceivedMessageSize="65536000"&gt;<br />  &lt;security mode="Transport"&gt;&lt;/security&gt;<br />  &lt;readerQuotas maxDepth="32"<br />                maxStringContentLength="65536000"<br />                maxArrayLength="65536000"<br />                maxBytesPerRead="65536000"<br />                maxNameTableCharCount="65536000" /&gt;<br />&lt;/binding&gt;<br /></code></pre><br />If you do modify the service binding, you will need to update the service reference on the web app to ensure it now knows that the expected scheme is https.

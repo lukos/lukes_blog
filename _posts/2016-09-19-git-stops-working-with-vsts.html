@@ -1,0 +1,17 @@
+---
+layout: post
+title: Git stops working with VSTS - Authentication failed
+date: '2016-09-19T07:05:00.000-07:00'
+author: Luke Briner
+tags:
+- authentication failed
+- Azure
+- vsts
+- tortoise
+- git
+- '401'
+- tortoisegit
+modified_time: '2016-09-19T07:05:12.615-07:00'
+---
+
+Annoying bug with no obvious cause!<br /><br />I have been using Git (via Tortoise Git) to push code to VSTS. I've been using it all day and then suddenly, "Git did not exit cleanly- Authentication failed".<br /><br />After re-entering my credentials about 5 tims, each time taking even more care that I was typing them in correctly, it wasn't making any difference.<br /><br />I fixed it in the end by changing my alternate credentials in VSTS to the <i>same</i>&nbsp;password as before but it looks like the act of saving it had refreshed the privileges and then it worked.<br /><br />You can get to that by clicking your name in the top-right of VSTS and choosing Security-&gt;Alternate Credentials.

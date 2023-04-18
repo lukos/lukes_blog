@@ -1,0 +1,12 @@
+---
+layout: post
+title: Should object A reference B or B reference A?
+date: '2009-05-06T04:36:00.000-07:00'
+author: Luke Briner
+tags:
+- Facade
+- OO Design
+modified_time: '2009-05-06T04:44:59.762-07:00'
+---
+
+A commmon problem in software design is when you have two entities, one of which describes general information about another and which is shared between sub-objects. For instance, a motorbike and the motorbikeinfo. A motorbike might have registration plate number and colour whereas a motorbikeinfo might have manufacturer, engine capacity and top speed. Should a motorbikeinfo 'have' a number of motorbikes? Should a motorbike 'have' a motorbikeinfo?<br />There are problems with both approaches. If you take the first, how can you display a list of motorbikes with their info as well? You obtain the list of motorbikes and then have to get the information from an object that is not referenced by the item. The problem with the second approach is that you then share references to an info item between different motorbikes and then what happens if you delete all motorbikes? The info should still exist but where? You then get into a whole area of hassle with weak references and sharing references all over the place or even the dreaded circular reference which causes memory leaks.<br />There is another solution, the pattern that sounded the most un-useful in the Gang of Four patterns book, the "Facade". With this pattern, we hide the structure of objects behind another object.<br />With a facade, we can create a class called e.g. MotorbikeItem and this class has a reference to a motorbike and a reference to a motorbikeinfo, it can provide access to all items in both of these as required and it allows the consumer of the object to see a single entity. It allows for restructure of the data classes but most importantly, it avoids all the tangle references, the facade can obtain the indivdual reference from anywhere such as collections, databases etc and it can handle managerial things like deleting the motorbikeinfo if no motorbikes exist any more. Have fun.

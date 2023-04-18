@@ -1,0 +1,14 @@
+---
+layout: post
+title: Tables and Repeater Controls
+date: '2008-06-17T07:10:00.001-07:00'
+author: Luke Briner
+tags:
+- asp:repeater
+- table
+- validation
+- xhtml
+modified_time: '2008-06-17T07:18:16.358-07:00'
+---
+
+Still knocking around with an asp.net 2.0 web site. Surprise, surprise it is possible to make it xhtml 1.0 strict compliant. I found one issue which was due to the way that a previous coder had implemented a table with an asp:repeater control. He had effectively written <table><asp:repeater><itemtemplate></itemtemplate></asp:repeater></table> with relevant code in between. The problem arises when the repeater has no data and the page therefore renders: <table></table> which is illegal in xhtml and during validation it complains: "end tag for "table" which is not finished".<br />The solution is easy enough. Use the <headertemplate> and <footertemplate> tags inside the repeater control to start and close the table. That way, if the repeater is empty, none of the table is rendered and no xhtml errors produced. The header template code is rendered once when there is one or more items in the repeater and likewise the footer is rendered once but after the items. As well as displayable items that you might want to display (header and total rows) you can use them to output functional markup like xhtml tags.<br />Always easy when you know how!

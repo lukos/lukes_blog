@@ -1,0 +1,13 @@
+---
+layout: post
+title: StructureMap not automatically resolving ICollection
+date: '2019-03-13T02:16:00.001-07:00'
+author: Luke Briner
+tags:
+- Cannot resolve
+- Error
+- StructureMap
+modified_time: '2019-03-13T02:16:14.958-07:00'
+---
+
+I had one of those annoying problems when you don't know enough about a library to know if you have coded it correctly or not!<br /><br />I have registered a number of IFileServerManager types in StructureMap and trying to inject them into the constructor of a FileManager as ICollection<ifileservermanager>. StructureMap says this will automatically resolve according to this: http://structuremap.github.io/the-container/working-with-enumerable-types/</ifileservermanager><br /><br />The problem is, it doesn't. At least not in my program. All the other types work but ICollection doesn't so the solution was simply to change the constructor injection to IList instead and it worked fine.<br /><br />Hmmmm

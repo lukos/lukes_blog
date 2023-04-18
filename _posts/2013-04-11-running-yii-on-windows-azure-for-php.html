@@ -1,0 +1,13 @@
+---
+layout: post
+title: Running Yii on Windows Azure for PHP
+date: '2013-04-11T08:11:00.001-07:00'
+author: Luke Briner
+tags:
+- Azure
+- Yii
+- php
+modified_time: '2013-04-11T08:11:12.219-07:00'
+---
+
+This is pretty straight-forward as it happens and most of you will probably have been successful. Basically, I copied the Yii code (protected, themes, css, index.php etc) into the root of my WebRole in the same structure as normal, leaving only the web configs and the bin directory from the default role code and that's all it really takes. It should all deploy as per normal and all work. The only thing you might have to play around with is the database connection string in Yii, especially if you are working with SQL Server Azure, I will cover this in my next post.<br /><br />As a side note, if you download netbeans and point it at the Yii code in your web role, you can edit the PHP in netbeans and then deploy your project from powershell with no file copying or anything else silly like that!

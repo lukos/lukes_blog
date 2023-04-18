@@ -1,0 +1,12 @@
+---
+layout: post
+title: Problem with Windows Path setting
+date: '2009-04-08T05:39:00.000-07:00'
+author: Luke Briner
+tags:
+- Windows XP
+- Path
+modified_time: '2009-04-08T05:43:45.101-07:00'
+---
+
+I installed some software yesterday in XP and needed to run a utility from anywhere on the PC. I put the path to it into the PATH environment variable (Control Panel, System, Advanced, Environment Settings) but yet when I tried to run it, I got, "'nmake' is not recognized as an internal or external command, operable program or batch file.". They could simply have said "nmake not found" but good old bloatmasters Windows!<br />Anyway, it didn't make any sense, I had tried all the usual, definitely got the correct path, definitely runs OK in the actual program directory and I finally found out what was wrong.<br />When I pasted the URL into the Path environment variable, I had somehow copied a space before the C: so it looked like: "Something Else; C:\Program Files..." The space doesn't bother Windows but it also breaks the path lookup for the directory after the space. Removed it and it was fine. Great!! Only about 30 year old code still has bugs in it.

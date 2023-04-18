@@ -1,0 +1,13 @@
+---
+layout: post
+title: Use generic linq extensions on non-generic collections
+date: '2012-10-16T03:37:00.003-07:00'
+author: Luke Briner
+tags:
+- Linq
+- Collections
+- IEnumerable
+modified_time: '2012-10-16T03:37:45.220-07:00'
+---
+
+I was using an old (non-generic) .net collection called ChannelEndpointElementCollection to find a specified endpoint from web.config and then to pull out the details for one of them. I only had one initially so I just used mycollection[0] but then I added another endpoint and decided I didn't want to require the correct order of elements in order for this to remain working, I needed something like collection.First(p =&gt; p.Contract == "Contract1") which is when I realised that the generic extension methods like First, Select etc. do not work on non-generic collections because they cannot infer the type from the collection.<br />Fortunately, this was known by the powers-that-be who have added another extension method OfType&lt;T&gt;() which allows you to specify the type of the collection and therefore return a typed generic collection which can then be used with the other Linq extension methods:<br /><br /><br /><pre style="background-color: #eeeeee; border: 1px dashed #999999; color: black; font-family: Andale Mono, Lucida Console, Monaco, fixed, monospace; font-size: 12px; line-height: 14px; overflow: auto; padding: 5px; width: 100%;"><code>var theAddress = endpointCollection.OfType&lt;ChannelEndpointElement&gt;().FirstOrDefault(p =&gt; p.Contract == "Contract1").Address;<br /></code></pre>

@@ -1,0 +1,19 @@
+---
+layout: post
+title: SvcUtil.exe with Client Certificates
+date: '2014-02-10T05:34:00.000-08:00'
+author: Luke Briner
+tags:
+- Windows Credential Manager
+- client certificates
+- error 403
+- '403'
+- errors
+- web services
+- SvcUtil.exe
+- forbidden
+- WCF
+modified_time: '2014-08-20T08:25:56.819-07:00'
+---
+
+Client certificates can be a real pain to use for service communication, even though they sound simple enough. Part of the problem is just the very confusing names of the WCF configuration (behaviours, configurations, transports, messages, bindings, mex, blah, blah, blah) and the other is that when they don't work, it is not easy to see why.<br /><br />I was trying to use SvcUtil.exe to download the wsdl for a couple of service endpoints. In my case, fortunately, I had already used this successfully, so I knew it <i>should</i> work. I had copied the original project and was attempting to download the new wsdl from a staged service instead of the live one but surely, all I needed to do was to change the URL passed to svcutil.exe? Nope. Didn't work.<br /><br /><i>Error: Cannot obtain Metadata from https:....&nbsp;</i><br /><i>Metadata contains a reference that cannot be resolved:....&nbsp;</i><br /><i>The remote server returned an error: (404)&nbsp;</i><br /><i>The remote server returned an error: (403) Forbidden.</i><br /><br />That kind of thing.<br />I immediately suspected that the client certificate was the problem but why does it work on my other project? Same config, same Client Certificate, same web service (but different URL).<br /><br />Theoretically, you can specify the client certificate credentials in a configuration file that SvcUtil.exe uses but this didn't work at all. I copied the config from my main project's web.config but got the same error.<br /><br />I then stumbled onto something I had forgotten but which makes it all easier. I had used the Windows Credential Manager to add a certificate-based authentication link between my machine and the target URL of the web service. This is why the original project was working since the certificate was served automatically. This was also why the new one didn't - because there was no entry.<br /><br />I added an entry for the test URL, linked it to the correct client cert and away we went....SvcUtil.exe uses the same mechanism to collect its client certificates.<br /><br />No idea why the configuration option didn't work though.

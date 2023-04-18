@@ -1,0 +1,17 @@
+---
+layout: post
+title: Bamboo Visual Studio Build Fails - Works in Visual Studio
+date: '2017-04-12T07:13:00.000-07:00'
+author: Luke Briner
+tags:
+- Error
+- Bamboo
+- ci
+- errors
+- Continuous Integration
+- Solution
+- visual studio
+modified_time: '2017-04-12T07:13:08.780-07:00'
+---
+
+Trying to create a new Plan in Bamboo, cloning an existing plan that works and the build fails no useful error except:<br /><br /><pre style="white-space: pre-wrap; word-wrap: break-word;">Failing task since return code of [C:\Users\Bamboo\bamboo-home\DotNetSupport\devenvrunner.bat E:\bamboo\xml-data\build-dir\SL-CCI-JOB1 C:\Program Files (x86)\Microsoft Visual Studio 14.0 amd64 MyProject.sln /build Debug] was 255 while expected 0</pre><pre style="white-space: pre-wrap; word-wrap: break-word;"><br /></pre><div>I opened the same code in Visual Studio and it built with no errors.</div><div><br /></div>Thanks Bamboo! I tried various comparisons of good and bad files but eventually, I compared the sln file itself between the original working plan and the new broken one and saw two things that were different:<div><br /></div><div>1) The broken build had an older solution version at the top ("2013" instead of "14")</div><div>2) The presence of SourceSafe bindings (that we weren't using any more).</div><div><br /></div><div>I removed both of these and the build works fine! Not sure which was causing the problem, maybe it was asking if I wanted to upgrade but I couldn't say yes!</div>

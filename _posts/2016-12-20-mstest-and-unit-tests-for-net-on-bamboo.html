@@ -1,0 +1,15 @@
+---
+layout: post
+title: MSTest and Unit Tests for .Net on Bamboo - setting the path to the dll
+date: '2016-12-20T07:47:00.001-08:00'
+author: Luke Briner
+tags:
+- ".net"
+- Bamboo
+- Path
+- mstest
+- Unit Tests
+modified_time: '2016-12-20T07:47:09.548-08:00'
+---
+
+We are starting to use Atlassian Bamboo, a build server that integrates really well with Bitbucket for building git repos.<br /><br />Anyway, we mostly use .Net and getting that to build was OK but now we have added Unit Tests as well. I added another stage, with another job and an MSTest task and typed in the name of the test dll but it wouldn't work (file not found). I then found out about bamboo server variables and tried adding this to the path to the dll but still didn't work.<br /><br />Basically, each job has its own build directory so although the application and test dll had been built by the previous stage/job, the unit test job then starts from an empty build directory.<br /><br />You can share artifacts across jobs using the artifacts tab but in this case, it seems to make more sense simply to put the unit test task into the same stage as the compile task so they share the directory.<br /><br />Easy peasy.

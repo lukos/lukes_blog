@@ -1,0 +1,15 @@
+---
+layout: post
+title: Text boxes and Text areas not posting back
+date: '2010-02-15T04:18:00.001-08:00'
+author: Luke Briner
+tags:
+- asp.net
+- textarea
+- datagrid
+- postbacks
+- textbox
+modified_time: '2010-02-15T06:02:23.714-08:00'
+---
+
+I have a page with some text boxes that the user can change in the rows of a datagrid. Because however there is potentially a lot of text, the datagrid row only displays a small box with about 30 characters and an edit hyperlink brings up a JQuery dialog to edit the text.<br />The problem I had was that when I updated the row, even though the text was displayed in the small textarea, it was seemingly not posted back and not updated.<br />I thought it was some funny datagrid thing or viewstate but then I noticed that the values for quantity and item (a select) were posted back so something was wrong.<br />Simply problem, because the text areas were set to enabled="false" the browser (or the standard) wrongly assume that they can't be modified and don't bother posting them back in the querystring. Instead I had to use readonly="true" which works but doesn't look the same as a disabled text box. Potentially quite a hazrd for someone who literally loads an item, sets all the fields from what he thinks the datagrid is displaying and then overwrites it all!<br />UPDATE: Setting read-only to true does NOT work. It causes the value to be passed back in the querystring but ASP still ignores the changed value. I think what i will do is leave the box enabled but handle the onclick handler to display the full-size edit dialog! Nice. I could also cover the text boxes with transparent divs but that is one of those things I don't really want to do!

@@ -1,0 +1,21 @@
+---
+layout: post
+title: Setting up linux to relay mail via gmail
+date: '2013-06-05T05:32:00.000-07:00'
+author: Luke Briner
+tags:
+- email
+- relay
+- satellite
+- mail
+- linux
+- postmap
+- gmail
+- smtp
+- postfix
+- sasl
+- tls
+modified_time: '2013-06-05T05:32:49.794-07:00'
+---
+
+We use gmail for business and have gmail accounts etc. We also run servers that need to send email out so we do it via gmail to ensure we have credibility and don't end up in SPAM filters etc. I have recently installed wordpress and that uses phpmail to send emails but which relies on an underlying mail delivery system to send it on. Below is how you get it to work with gmail.<br /><br /><ol><li><b>sudo apt-get install postfix</b> and choose "satellite system" as the system to configure. Set the relay host to smtp.gmail.com. You can optionally add port 587 to the end but I think it automatically does that anyway?</li><li>Once the install is finished, <b>sudo nano /etc/postfix/main.cf</b> scroll to the end and set the following entries:&nbsp;</li><li>Set <b>myhostname</b> = whatever you want to appear as the mail host in the email trail, this will also affect how delivery addresses are resolved if, for instance, you mail an address without an @ sign. A standard would be servername.domain.name</li><li>Add <b>mydomain</b> = the domain part of the host e.g. example.co.uk</li><li>remove the entries from mydestination, otherwise you might get addresses rejected.</li><li> Add the following new entries in the same block. Items in bold are my choice of names:<br />smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt<br />smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache<br />smtp_sasl_auth_enable = yes<br />smtp_use_tls = yes<br />smtp_sasl_password_maps = hash:<b>/etc/postfix/sasl_passwd</b><br />smtp_sasl_security_options = noanonymous<br />smtp_sasl_tls_security_options = noanonymous</li><li>You now need to create the sasl_passwd file required to authenticate with gmail.</li><li>Run <b>sudo nano sasl_passwd</b> in the postfix directory and add a single line equal to the following, items in bold need setting to relevant values: <br />smtp.gmail.com <b>something@example.com</b>:<b>password</b></li><li>Note the colon between username and password. These need to be valid login credentials for gmail (obviously?).</li><li>Run <b>sudo chown root:root sasl_passwd</b> and&nbsp; <b>sudo chmod go-rw sasl_passwd</b> </li><li>Run the command <b>sudo postmap</b> <b>saslpasswd</b> and if you get an error, you will need to install it (and run it again). It is called sasl2-bin package on ubuntu.</li><li>Ensure that both the sasl_passwd and sasl_passwd.db files are owned by root:root and are only read/writable by root.</li><li><b>sudo service postfix restart</b></li><li>To test it, create a file (called test.email for example) in your home directory and type <b>sendmail -v user@domainname &lt; test.mail</b></li></ol>

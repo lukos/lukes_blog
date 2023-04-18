@@ -1,0 +1,16 @@
+---
+layout: post
+title: Annoying trailing double slash (at end of URL)
+date: '2016-05-02T08:58:00.001-07:00'
+author: Luke Briner
+tags:
+- rewrite
+- apache2
+- rewriteengine
+- htaccess
+- apache
+- config
+modified_time: '2016-05-02T08:58:44.202-07:00'
+---
+
+So sometimes, when people visit my web site, they seem to get <b>https://fleetcamps.org.uk//</b> (note the double slash) and which returns a 404. Annoying.<br /><br />Why? The rewrite rule for Yii in .htaccess looked good and even though I have seen it myself, I cannot seem to recreate the bug.<br /><br />Another example of the browser being really helpful and hiding what is really happening. Nice for the user (usually) but not for the developer.<br /><br />The issue? I had a redirect all http to https in my Apache config. This was the problem. I had the line<br /><br /><b>RewriteRule .+ https://fleetcamps.org.uk/$0 [R=301,QSA,L]</b><br /><br />But note that it appends the request to the end of the domain that already has a trailing slash - silly boy. The browser remembers the 301 and so you never see the problem again.<br /><br />The problem is that there are soooo many examples of how to do everything in rewrite/htaccess and some examples are even 20 lines long and people like me who are not very expert on the matter don't know which example to copy in our own sites.<br /><div><br /></div>

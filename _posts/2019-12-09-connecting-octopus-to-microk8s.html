@@ -1,0 +1,16 @@
+---
+layout: post
+title: Connecting Octopus to MicroK8s
+date: '2019-12-09T09:50:00.002-08:00'
+author: Luke Briner
+tags:
+- microk8s
+- kubernetes
+- HTTPS
+- octopus deploy
+- certificate
+- tls
+modified_time: '2019-12-10T07:36:15.844-08:00'
+---
+
+We have a production Kubernetes cluster running on Azure and it works great with minimal operations effort. We then decided that we needed another cluster for Dev but without the expense of another entire cluster for what would be relatively small usage.<br /><br />Enter <a href="https://microk8s.io/" target="_blank">MicroK8s</a>, a small cluster, easy to install and run that by default will have a single node. Rather than using VMs as such, it will install as a package in Ubuntu and give you a relatively small and easy cluster. Great.<br /><br />However, getting it connected up to Octopus Deploy wasn't quite so straight-forward and that was partly due to the initial workload to get the networking going. Router rules, firewalls etc. but I finally got the Octopus server to be able to establish a connection to the MicroK8s cluster, which was nice.<br /><br />The next problem was that when connecting, you can get Octopus to verify the TLS connection, even if it uses a self-signed certificate, by uploading the expected cert from the K8s cluster to Octopus and referencing it there. When I tried to connect and test, however, I received the following error:<br /><br /><pre><code>Unable to connect to the server: x509: certificate is valid for 127.0.0.1, 10.152.183.1, 192.168.1.123, not <my-external-ip></my-external-ip></code></pre><pre><code>&nbsp;</code></pre>I sort of understood what was happening in that the certificate had been issues by the cluster for the IPs it knew about (not sure where the 10... comes from, perhaps the node ip range) and it would not know about the external IP I was accessing it from.<br /><br />This was confusing however since the MicroK8s docs are pretty slim and it was unclear whether this was related to Kubernetes itself (kubeadm etc) or whether it was a MicroK8s issue.<br /><br />Well it turns out that a <a href="https://github.com/ubuntu/microk8s/issues/421" target="_blank">recently fixed issue</a> allows us to modify the certificate issuance to include the correct IP addresses. All you have to do is edit <b>/var/snap/microk8s/current/certs/csr.conf.template</b> to include the additional IPs/names and then reboot and the certificate is re-issued. Octopus then connected and the world was good!<br /><br />EDIT 10th December 2019<br /><br />It appears that the current version of Octopus uses a version of the api for deployments which is deprecated and NOT supported on the latest version of microk8s. There is <a href="https://github.com/OctopusDeploy/Issues/issues/5941" target="_blank">an issue to fix it</a> but it appears to be marked for March's release of Octopus deploy so for now, I had to grab the script from the deployment log and paste it directly into the cluster and used kubectl to apply it. Not great because the automation bit doesn't work. I'm going to see if I can find a more manual way of specifying the deployment in Octopus to work around it.

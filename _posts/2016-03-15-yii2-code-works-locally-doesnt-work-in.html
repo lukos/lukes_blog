@@ -1,0 +1,18 @@
+---
+layout: post
+title: Yii2 code works locally, doesn't work in production
+date: '2016-03-15T02:39:00.002-07:00'
+author: Luke Briner
+tags:
+- Yii
+- Error
+- Class not found
+- errors
+- yii2
+- production
+- live server
+- yii 2.0
+modified_time: '2016-03-15T02:39:48.351-07:00'
+---
+
+Another annoying experience, which fortunately didn't take forever to fix (although out of luck probably rather than skill).<br /><br />There were in fact two problems: 1) Captcha didn't work and 2) An email utility class didn't work. They were different issues but both worked locally and not in production.<br /><br />Firstly, the captcha didn't display and there was an internal server error. I didn't think to look in the application log, which might have shown something useful, but fortunately I found the same issue on the Yii forums and realised that the problem was uploading the font for captcha in Text mode rather than Binary. I think text mode changes line-endings automatically but if the file is binary, something that looks like a line ending will be changed and in this case, broke the font! Reuploaded in binary and it was fine.<br /><br />The second problem was really confusing. The email utility class worked fine locally and I got the error&nbsp;'Class 'common\utils\EmailUtils' not found' in SiteController. What? The class was definitely there, definitely uploaded in text mode and it worked locally! I check the bootstrap.php in common\config and that was present (that's how the frontend and backend can find the common classes).<br /><br />Eventually, I twigged, the class is EmailUtils and so it would be expected to be found in EmailUtils.php rather than emailutils.php, which is what I had uploaded. Renamed it - worked! Why did it work locally? I develop on Windows and it doesn't care about the case of file names! I understand why case is the way it is in Linux - A is not the same as a - but I still prefer Windows way. Why would you want to allow File.php and file.php to exist in the same folder?<br /><br />Now I'm getting a SQL error - but that is another story....

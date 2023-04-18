@@ -1,0 +1,19 @@
+---
+layout: post
+title: Thanks everyone for breaking my site!
+date: '2016-05-11T10:34:00.000-07:00'
+author: Luke Briner
+tags:
+- browser
+- fiddler4
+- fiddler
+- HTTPS
+- fiddler2
+- http2
+- broken
+- iis
+- spdy
+modified_time: '2016-05-11T10:34:20.067-07:00'
+---
+
+So the pains of Windows 10 continue although to be fair, this is a combination of Windows 10, SPDY/HTTP2 and the latest browsers trying to be nice and secure!<br /><br />The problem is related to the selection of SSL cipher suites and if you have ever looked into it, there are LOADS of combinations but HTTP2 have decided in their wisdom that certain suites MAY be blacklisted by browsers. The list is <a href="http://http2.github.io/http2-spec/index.html#BadCipherSuites" target="_blank">here</a><br /><br />Unfortunately, most browsers seem to do nothing except show a blank screen, Chrome at least gives a clue with&nbsp;<span style="background-color: #f7f7f7; color: dimgrey; font-family: 'Segoe UI', Tahoma, sans-serif; font-size: 12px; line-height: 24px; text-transform: uppercase;">ERR_SPDY_INADEQUATE_TRANSPORT_SECURITY&nbsp;</span>but Opera does nothing and Edge says that it can't reach the site.<br /><br />FFS<br /><br />I have tried quite religiously to keep my cipher suite a good mix of secure with a little backwards compatibility but this has broken all of my sites.<br /><br />My choices include disabling SPDY/HTTP2 on Windows 10, which seems a bit backwards, or otherwise going through the 100 or so cipher suites on the list and attempting to check them against the suites that I have configured locally to try and get some that work properly.<br /><br />This has taken AGES to debug thanks to crappy browsers that couldn't at least do something like Chrome does and show the error and it was even weirder that when running Fiddler, the sites run absolutely fine because Fiddler uses its own SSL handshake using some other kind of HTTP version or SSL version.

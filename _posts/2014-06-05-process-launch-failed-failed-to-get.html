@@ -1,0 +1,18 @@
+---
+layout: post
+title: 'process launch failed: failed to get the task for process'
+date: '2014-06-05T02:23:00.001-07:00'
+author: Luke Briner
+tags:
+- ios
+- Error
+- debugging
+- local
+- xcode
+- provisioning profile
+- Debug
+- iPhone
+modified_time: '2014-06-05T02:23:46.709-07:00'
+---
+
+I'm starting to wonder if there is an increased chance of depression for those writing iOS apps (and possibly MaxOS). XCode is very old-fashioned and even where it attempts to automate things, it still does so in a way that is not entirely obvious.<br /><br />The whole area of provisioning profiles and code-signing is incredibly frustrating, especially when it doesn't work but many of you have probably seen the above error at one point or another, probably when trying to debug on a local device.<br /><br />In my case, I had mucked up a project file while trying to get everything into source control (the irony of breaking code while using source-control) and I thought I had repaired everything and got it building again until I got this error.<br /><br />The project had run before on this device so I assumed I had changed something by mistake but all the help on the web seemed to imply a wrong selection of provisioning profile so I deleted the current ones from ~/Library/MobileDevice/Provisioning Profiles and then re-built in XCode whieh should have re-downloaded them (although one of them didn't) but it STILL didn't work (same error).<br /><br />After reading the Stack Overflow posts again several times, I eventually twigged that although I had chosen "none" for the provisioning profile for debug, I had a deployment one selected for release BUT the scheme was setup to "Run" on the device and not "Debug", in other words, the scheme was telling XCode to run the signed release version instead of debugging it.<br /><br />WHAT? In Visual Studio, you can change a drop-down between debug and release and then either "Run" the project or "Debug" the project. Nice and clear. XCode only seems to have one go button and it is not at all obvious what this will do. Even the debug menu does not have a "Debug" command. You have to go into Product -&gt; Scheme -&gt; Edit Scheme, choose "Run" in the left-hand-side, choose the iOS device in the Destination at the top and select for it to be debug rather than release. As long as Archive is set to Release, then it will deploy fine to the app store.<br /><br />People like Macs and iPhones and in some ways, the toughness of using these tools to develop is just how it is. Sadly though, I can imagine many developers ditching iOS for Android and Windows phone development which, for me anyway, seems MUCH easier to do and which will just push up the cost of those iOS developers that stay with it - nobody wins. Apple really need to sort these tools out. They already show their cracks with only two sizes of iPhones and a handful of iOS versions, this will only get worse.<br /><br />We actually paid a company to produce an iPhone app for us initially. What they produced was generally substandard and they really struggled with any of the functionality that was not just buttons and pages. I am starting to see why they struggled with so many things and understand some of their decisions, even if I would still have done it differently myself.

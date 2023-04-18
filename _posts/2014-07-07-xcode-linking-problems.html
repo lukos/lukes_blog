@@ -1,0 +1,16 @@
+---
+layout: post
+title: XCode linking problems
+date: '2014-07-07T13:25:00.002-07:00'
+author: Luke Briner
+tags:
+- link error
+- ios
+- obj-c
+- xcode
+- linker
+- objective-c
+modified_time: '2014-07-07T13:25:59.263-07:00'
+---
+
+XCode, the more I know, the more I dislike.<br /><br />It seems that even easy to understand problems take ages to fix!<br /><br />I wanted to create Universal static libraries, for some reason, this is not automatic and it means you would otherwise need to link different libraries to run in the simulator as you would to run on a phone. I don't know why the simulator doesn't support all architectures but that is another story...Anyway, using universal libraries (or fat libraries) it means you can effectively bundle both into the same library and have the compiler of the application choose the correct part of it to link with. That's great and the article about how to do it is here:<br /><br /><a href="http://www.raywenderlich.com/41377/creating-a-static-library-in-ios-tutorial" target="_blank">http://www.raywenderlich.com/41377/creating-a-static-library-in-ios-tutorial</a><br /><br />So, that was all done. I then deleted the libraries that my app was linking to (the arm versions) and then chose to link to the universal binaries. I expected it to work. Imagine my anger and confusion when the linker then said:<br /><br />        <br /><div class="p1">ignoring file /Users/luke/Library/Developer/Xcode/DerivedData/XrLib-awcaejkcuywzxtdcadbvidrfnbgt/Build/Products/<b>Debug-iphoneos</b>/libXrLib.a, missing required architecture i386 in file.....</div><div class="p1"><br /></div><div class="p1">So the universal library that I linked is not being used but the iphoneos version (the original), which quite rightly doesn't include the i386 architecture. I went into the "Link binary with libraries" section and sure enough, it WAS linked to the universal one so why on earth was the linker using the wrong one? I tried cleaning, restarting and everything but nope.</div><div class="p1"><br /></div><div class="p1">Well it turns out that when you add a library to the "Link binary with libraries", it adds the path to the "Library search paths" in Build Settings. More importantly, it does NOT remove this path if you remove the link. The linker then looks for the library you linked to but doesn't use its path, it uses the library search paths and finds the wrong one first!</div><div class="p1"><br /></div><div class="p1">What I had to do was remove the old paths from the "library search paths" and it all worked as expected.</div><div class="p1"><br /></div><div class="p1">XCode is so old-fashioned and it seems that ever error is caused by at 10 different things and has 100 different solutions, many of which are nasty and manual and some even (shock horror) suggest that you manually edit the XML project file. I mean really Apple? Can you not actually rewrite this shocking piece of software and make it work as expected?</div>

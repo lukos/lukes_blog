@@ -1,0 +1,18 @@
+---
+layout: post
+title: 'Android SSL/TLS/HTTPS - IOException: No peer certificate'
+date: '2014-10-27T04:03:00.000-07:00'
+author: Luke Briner
+tags:
+- ssl
+- Error
+- HTTPS
+- Certificates
+- IOException
+- Android
+- certificate
+- tls
+modified_time: '2014-10-27T04:03:12.818-07:00'
+---
+
+I love it when I think I have deployed my app and it is all ready to test and the first thing that happens when someone tests it is a nice big fat error!<br /><br />I got the device, put some logging in and found that an IOException was occurring when it was contacting a web service over SSL and the message was, "No peer certificate".<br /><br />This is one of those errors that can be related to a whole number of problems with SSL certificate types and chains but fortunately, I knew it was basically working because my phone worked fine.<br /><br />The problem was that the phone that was failing was not on a phone network so the "automatic date and time" was not working and the date was therefore set to January 1980. What this means is that phone date is not within the validity of the certificate being obtained from the web service. This effectively makes the certificate invalid and causes the error!<br /><br />I guess I need either some kind of date/time check performed over non-ssl before attempting the SSL handshake or I need to modify the error message to prompt the user to check their date/time....

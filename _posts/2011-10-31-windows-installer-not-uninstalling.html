@@ -1,0 +1,10 @@
+---
+layout: post
+title: Windows Installer not uninstalling files
+date: '2011-10-31T04:46:00.000-07:00'
+author: Luke Briner
+tags:
+modified_time: '2011-10-31T04:46:51.214-07:00'
+---
+
+I was testing a windows installer change on a box and found that uninstalling did not remove all the files, even if I manually deleted the folder and installed from clean. In reality there is no such thing as a clean box! I had assumed that there was no reason this service had been installed on the box before so how could it all have been screwed up? I searched for various guids in the registry and didn't find them until I had the genius idea of searching for the filenames that weren't being uninstalled (some were uninstalled but most weren't). I found them under HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\UserData where the paths are linked to product ids so that files that are shared are not uninstalled if only one of the products is uninstalled. I manually removed all of these that pointed to my files (don't bother with MSs windows installer cleanup - does bugger all useful stuff) and worked out it was all fine and then had to go and look at what had happened.<br /><br />Firstly, I had made an assumption that this box was clean but actually it had been cloned from another virtual machine and had remnants of a failed install/uninstall of this service in the registry. What I thought was a problem with my changes was a registry problem. Secondly, we need to understand how this can come about. Well, Windows installer adds the stuff correctly to the registry (I assume this is hard to muck up!) but there are two ways in which this can be corrupted. Firstly you can have problems with the uninstall process which leaves stuff in the registry or more commonly, people manually delete program folders leaving orphaned registry keys.

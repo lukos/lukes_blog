@@ -1,0 +1,22 @@
+---
+layout: post
+title: Error 403 when calling Soap web service with client certificate from PHP
+date: '2014-12-16T04:58:00.000-08:00'
+author: Luke Briner
+tags:
+- SOAP
+- chaining
+- ssl
+- permission
+- HTTPS
+- SoapClient
+- web services
+- client certificates
+- error 403
+- Trust
+- web service
+- php
+modified_time: '2014-12-16T04:58:25.405-08:00'
+---
+
+The SoapClient in PHP is theoretically useful and I have used it to call onto a .Net web service for a year or so. I don't like chaining web services but in this case, .Net does something that PHP cannot so I have to do it for now.<br /><br />Anyway, my setup uses a client certificate to provide authentication to the soap web service and after moving my PHP web service from an Azure Cloud Service to a pair of Virtual Machines (after someone cocked up the PHP Azure tools!), I realised that the web services were not talking any more. All I could easily ascertain was that I was getting a 403 (forbidden) at some point.<br /><br />SoapClient provides very poor tracing capability so it was virtually impossible to find out why it wasn't working any more. I could access the web service fine from the PHP VM in Internet Explorer so the IP address/route was available.<br /><br />I tried Fiddler but it doesn't work too well on Server 2012/Windows 8 and the utility that was supposed to work around this didn't work either so every time I visited my web service in IE to see what should happen, all I could trace were calls to microsoft.com! No help.<br /><br />What can you do when you have very little data and something that used to work fine? You have to ask what has changed. In my case the PHP version had been increased from 5.3 to 5.5 but nothing in the docs for soap client seemed to say this had changed anything. I re-exported my client certificate but no difference. It was only by chance I saw something on an MS article that made me remember, I had also made some changes to the Soap Web Service, which meant that although it seemed to be working fine from our web application and via the browser, it might have broken something.<br /><br />THE CERTIFICATE CHAIN!<br /><br />What I had removed from the Soap Web Service in Azure was a reference to the intermediate certificate for the client certificate. It turns out that the web service checks this by default and in most cases, a browser or the web application, which does have the intermediate certificate available, can send this on request. However, the PHP SoapClient does not use Windows to provide the certificates but simply grabs it from a PEM file and attaches it to the SoapClient constructor. The intermediate certificate is not in the pem file and since it was not on the Soap web service either, the chain was not there.<br /><br />Solution tl:dr<br />I could have added the intermediate certificate to the PEM file that is attached to the SoapClient but it was more desirable to simply include it on the Soap web service so it could find the intermediate certificate locally rather than asking for it from the client.<br /><br />I breathed a large sigh of relief once it was working!

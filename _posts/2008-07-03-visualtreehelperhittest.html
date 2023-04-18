@@ -1,0 +1,10 @@
+---
+layout: post
+title: VisualTreeHelper.HitTest
+date: '2008-07-03T02:14:00.000-07:00'
+author: Luke Briner
+tags:
+modified_time: '2008-07-03T02:24:37.583-07:00'
+---
+
+VisualTreeHelper.HitTest is a cunning function available in Windows Presentation Foundation (WPF) classes that provides mouse hit testing for the given panel and point. It returns a result if the given point is inside a control in the given panel (grid, stack panel etc).<br />The basic form takes a panel and a point and returns a result, which if not null contains a VisualHit object which can be casted to whatever control was hit.<br />The reason I am telling you what you could find out on msdn is that when you pass a point and a panel into the function, it will assume the point is relative to the child coordinates of the panel and it will NOT take into account the fact that the panel is not necessarily located at 0,0 on its own parent panel. To ensure the point is passed in as child coordinates, inside your mouse function use the function:<pre>MouseEventArgs.GetPosition()</pre>and pass a reference to the panel on which you will be hit-testing rather than null or the parent panel which will give you the wrong child coordinates. For example:<br /><pre>&lt;StackPanel MaxWidth="5000"&gt;<br />    &lt;Grid Name="JobsGrid" Canvas.Bottom="0" MaxWidth="5000"&gt;<br />    &lt;/Grid&gt;<br />    &lt;Grid Name="PeopleGrid" Canvas.Top="0" MaxWidth="5000"&gt;<br />    &lt;/Grid&gt;<br />&lt;/StackPanel&gt;<br /><br />protected void CanvasMouseMove(object sender, MouseEventArgs e)<br />{<br />    HitTestResult Result = VisualTreeHelper.HitTest( JobsGrid, e.GetPosition(JobsGrid));<br />    // etc<br />}<br /></pre>

@@ -1,0 +1,15 @@
+---
+layout: post
+title: Project  could not be opened because the Microsoft Visual C# 2010 compiler
+  could not be created. An item with the same key....
+date: '2016-05-09T03:35:00.003-07:00'
+author: Luke Briner
+tags:
+- vs2015
+- upgrade
+- visual studio
+- windows 10
+modified_time: '2016-05-09T03:35:47.203-07:00'
+---
+
+I got this error after opening an existing VS2015 project after upgrading to Windows 10. I had definitely used this successfully before the upgrade and as usual, it's a very unhelpful message.<br /><br />All the projects loaded apart from one and clicking "reload project" made the error display.<br /><br />The issue is that User Account Control, which was previously disabled in Windows 7 was re-enabled. This meant that Visual Studio was not being opened as Administrator and rather than having a useful error, it shows this instead. I looked in the window at the bottom and something else was displayed about IIS that was more specific to the access permission problem.<br /><br />I need to disable UAC again since giving permission every time you open VS is a pain!

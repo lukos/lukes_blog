@@ -1,0 +1,16 @@
+---
+layout: post
+title: Reporting Services, shared datasets and Parameters
+date: '2014-07-31T08:51:00.002-07:00'
+author: Luke Briner
+tags:
+- SQL Server 2012
+- Microsoft Reporting Services
+- ssrs
+- Error
+- errors
+- Reporting Services
+modified_time: '2014-07-31T08:51:56.354-07:00'
+---
+
+I had a couple of reports in SSRS that I realised shared basically the same dataset with one parameter different. I created a shared dataset, pointed one of the reports at it and starting getting a load of errors. Clearly, I had done something wrong but I wasn't quite sure what. I got errors like "object reference not set to an instance" as well as something about forward references and another about un-passed parameters. Here is what I should have done:<br /><br /><br /><ol><li>Create your shared dataset. You probably don't want default values specified here but you can if you want to share these defaults across the reports.&nbsp;</li><li>Use the syntax&nbsp;@name to put a parameter into your SQL as you would do in the normal dataset.</li><li>If your dataset allows null parameters, these need to be declared in the shared dataset, not just in the report parameters. You can do this in the parameters tab for the shared dataset.</li><li>Modify your report dataset and click the radio button, "use a shared dataset" and select your shared dataset. The fields for the shared dataset will appear in the Report Data window in just the same way as if the dataset was local to the report. If you cannot see the Report Data window, it is under the View menu (right at the bottom of my menu) and is also hot key Ctrl-Alt-D by default.</li><li>For your parameters, double-click the dataset in the Report Data window and clicking the Parameters tab, assign your report parameters to the dataset parameters. Mine tend to have the same name so&nbsp;@EventId is mapped to [@EventId]</li><li>If you need to, change the report parameters (under the Parameters section of the Report Data window) to set defaults, selection sets, nulls etc. It is these that will define what the user can see/set when they run the report.</li></ol><div>I think that's it.</div>

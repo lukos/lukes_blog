@@ -1,0 +1,14 @@
+---
+layout: post
+title: Checking for duplicate when creating new object from MVC
+date: '2013-04-17T05:39:00.004-07:00'
+author: Luke Briner
+tags:
+- database
+- create object
+- MVC4
+- check for duplicates
+modified_time: '2013-04-17T05:39:55.694-07:00'
+---
+
+I am creating new objects using the wonderful MVC4 scaffolding from my models and one issue I noticed is where I don't have a primary key or unique constraint on a table column but where I still want that column to be unique. Of course, the logic could be more complex, such as you are only allowed to duplicate the "name" if the previous object of the same name has expired. This might be kind of easy to code but here is an example anyway. In my controller method for Create(model), you can add additional logic to check before the item is added to the entity list and saved. There are loads of linq expressions at your disposal but .Any&lt;&gt; is probably the one most useful for this:<br /><br /><pre style="background-color: #eeeeee; border: 1px dashed #999999; color: black; font-family: Andale Mono, Lucida Console, Monaco, fixed, monospace; font-size: 12px; line-height: 14px; overflow: auto; padding: 5px; width: 100%;"><code>[HttpPost]<br />        public ActionResult Create(DiscountCodeModel discountcodemodel)<br />        {<br />            if (ModelState.IsValid &amp;&amp; !db.DiscountCodeModels.Any( m =&gt; m.CodeHash == discountcodemodel.CodeHash))<br />            {<br />                db.DiscountCodeModels.Add(discountcodemodel);<br />                db.SaveChanges();<br />                return RedirectToAction("Index");<br />            }<br />            if (db.DiscountCodeModels.Any(m =&gt; m.CodeHash == discountcodemodel.CodeHash))<br />            {<br />                ViewBag.ErrorMessage = "Code already exists";<br />            }<br /><br />            return View(discountcodemodel);<br />        }<br /></code></pre><br />This (not very tidy modification) will not save the entity if the hash of the entered code matches the hash of any existing item and if so, it sets a viewbag message and returns the current view again. The same code is used if there are validation errors therefore I guard the error message with another of the same if statements. I'm sure you could all re-factor this to make it tidier!

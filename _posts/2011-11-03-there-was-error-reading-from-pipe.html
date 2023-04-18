@@ -1,0 +1,10 @@
+---
+layout: post
+title: 'There was an error reading from the pipe: Unrecognized error 109 (0x6d).'
+date: '2011-11-03T03:23:00.000-07:00'
+author: Luke Briner
+tags:
+modified_time: '2011-11-03T03:23:05.598-07:00'
+---
+
+It's annoying when you see an error that lots of people report but you can't find out any useful answers! I had this today when calling a Mock via a named pipe. It was a case of having changed so little and not seeing what might have caused something that looked so serious.<br />Anyway, after following advice from another post and enabling WCF logging in the app config for the unit tests, the log DOES include the error and its in red so nice and easy to find. The problem? I was returning an object from my mock expectation which had about 20 properties, only 5 of which I wanted to consume and therefore which I set. It turned out that one of the properties I hadn't set was an enum that defaulted to 0 although 0 was not a valid enum entry so the serializer was throwing the error.

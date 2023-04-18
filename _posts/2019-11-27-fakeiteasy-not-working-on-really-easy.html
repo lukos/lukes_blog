@@ -1,0 +1,13 @@
+---
+layout: post
+title: FakeItEasy "not working" on a really easy setup
+date: '2019-11-27T04:22:00.003-08:00'
+author: Luke Briner
+tags:
+- testing
+- fakeiteasy
+- errors
+modified_time: '2019-11-27T04:22:50.560-08:00'
+---
+
+We have used <a href="https://fakeiteasy.github.io/" target="_blank">FakeItEasy</a> for a while and it basically works pretty well and reads fluently but recently someone asked me to help them work out why setting their fakes to strict was breaking their tests.<br /><br />The code was along the lines of this:<br /><pre>public void TestMethod()<br />{<br />  A.CallTo(() =&gt; testMock.FetchBody(bodyId)).Returns(new MessageBody());<br />  A.CallTo(() =&gt; testMock.UpdateStatus(bodyId, Status.Failed));<br /><br />  TestTarget.CallMethod();<br /><br />  A.CallTo(() =&gt; testMock.UpdateStatus(bodyId, Status.Failed)).MustHaveHappened();<br />}</pre><br />but...<br /><br />When set to non-strict, it was all fine. Set to strict, we got the error: FakeItEasy.ExpectationException: Call to non configured method "UpdateStatus(123,Failed)" of strict fake...<br /><br />Hmm...<br /><br />FetchBody worked and if I made the fake non-strict, not only did it work but the call to MustHaveHappened() also worked so the setup was definitely correct!<br /><br />It was a subtle error (have you seen it yet?) but if a method does not return anything, you need to pass DoesNothing() to the setup to enact the setup in the fake, otherwise it's a bit like not finishing your sentence.<br /><br />Since you cannot have a compiler error to signal that you have called a method but not used its return value, we saw nothing but the assertion error.<br /><br />Thankfully, you can catch these using the very helpful <b>FakeItEasy.Analyzer.CSharp</b> nuget package, which uses the Visual Studio analyzer functionality to highlight issues including the one we created wrongly above!

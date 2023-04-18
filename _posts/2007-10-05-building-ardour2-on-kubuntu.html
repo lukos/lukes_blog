@@ -1,0 +1,10 @@
+---
+layout: post
+title: Building Ardour2 on Kubuntu
+date: '2007-10-05T14:39:00.000-07:00'
+author: Luke Briner
+tags:
+modified_time: '2007-10-05T14:51:48.574-07:00'
+---
+
+Well, I have been trying to build ardour2 on Kubuntu since it hasn't been added to the Ubuntu repositories and have followed the instructions on ardour.org. They are basically OK but I did come across a problem I thought I would share.<br />Trying to install one of the libraries required (libasound2-dev) Adept Package Manager told me it couldn't be installed - that classic "INSTALL (break)" message! It wasn't immediately obvious what had happened but basically I had used some newer repositories to get a newer kernel - this kernel was needed for my wifi driver. The new repositories had offered me an upgrade to libasound2 (from 1.0.13 to 1.0.14) which I had obviously selected to upgrade. After removing the new repositories from sources.list I was left with a new library installed which the dev package didn't want (fair enough!).<br />The complication was that trying to uninstall the new library (to reinstall the right version) would remove every package on the PC that relies on it. That happened to be about 50 applications so this wasn't an option. Fortunately there was an option to install a named release using the command-line:<br /><br /><code>sudo apt-get install libasound2='1.0.13-1ubuntu5'</code><br /><br />This effectively replaced the currently installed one with the version I specified which made adept happy again.

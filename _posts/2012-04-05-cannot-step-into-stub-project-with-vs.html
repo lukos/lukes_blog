@@ -1,0 +1,13 @@
+---
+layout: post
+title: Cannot step into stub project with VS Debugger
+date: '2012-04-05T04:03:00.001-07:00'
+author: Luke Briner
+tags:
+- debugging
+- visual studio
+- visual studio projects
+modified_time: '2012-04-05T04:03:11.587-07:00'
+---
+
+I had a really annoying problem where I was trying to debug a stub project (which was an asmx) and even though I was building the debug build and attached to w3wp.exe, every time I tried to step into the stub code or break-point it, I could never break in the code.<br />Often this is caused by trying to breakpoint in code that is not the code that was used to compile the service but in my case it definitely was. The project was pointing to the IIS web site which was pointing at the correct location on the disk and my build configuration was all set to debug.<br />Eventually, I noticed that the web.config for the stub had <configuration debug="false"> which apparently overrides all other settings and meant that the debug information was not compiled with the stub meaning it couldn't be debugged. Set this to true and we were all good again!</configuration>

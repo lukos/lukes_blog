@@ -1,0 +1,17 @@
+---
+layout: post
+title: MongoDB Insert from Mongo Shell but not from C# API
+date: '2017-12-06T04:11:00.000-08:00'
+author: Luke Briner
+tags:
+- ".net"
+- permissions
+- Shell
+- mongodb
+- Error
+- c#
+- API
+modified_time: '2017-12-06T04:11:07.346-08:00'
+---
+
+Another annoying one that makes sense after you work it out!<br /><br />I tried to run a console app which was inserting documents into a MongoDB database via a tunnel. The app had previously been used successfully on another DB that wasn't on a tunnel and didn't have any auth so I assumed it was related.<br /><br />When I inserted, I got the following error:<br /><br /><b>Command insert failed: not authorized on resources to execute command</b><br /><br />(resources is the name of the database I was using)<br /><br />But when I ran an insert directly in Mongo Shell with the same creds, it was fine.<br /><br />The problem? I was not specifying the database in the connection string, which means that even though the insert command <i>was</i>&nbsp;specifying the database, the connection wouldn't have authenticated the user from the resources database (I guess it would have tried to authenticate against admin or something).<br /><br />Basically, instead of this:<br /><br />mongodb://MongoUser:thepassword@127.0.0.1:27017/<br /><br />it should have been this:<br /><br />mongodb://MongoUser:thepassword@127.0.0.1:27017/resources<br /><br />You can also use the MongoUrlBuilder, which allows you to set all the options you might need and allow it to create you the URL e.g.<br /><br />var builder = new MongoUrlBuilder();<br />builder.Server = new MongoServerAddress("127.0.0.1:27017");<br />builder.Password = "thepassword";<br />builder.Username = "MongoUser";<br />builder.DatabaseName = "resources";<br />var url = builder.ToMongoUrl();<br />var client = new MongoClient(url);

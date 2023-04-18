@@ -1,0 +1,14 @@
+---
+layout: post
+title: Unable to cast object of type 'Data' to type 'System.IConvertible' HandleBars
+  DotNet
+date: '2019-05-01T04:14:00.002-07:00'
+author: Luke Briner
+tags:
+- ".net"
+- dotnet
+- Handlebars
+modified_time: '2019-05-01T04:14:33.963-07:00'
+---
+
+I really like the idea of using handle bars to create HTML templated content for emails etc as a much neater way of separating presentation from logic and enabling us to store the templates in a simple database and inject data as a separate process.<br /><br />Anyway, I am starting to use the more advanced features like each and helpers and I got the error above when trying to run my template.<br /><br />It turns out that it wasn't a HandleBars error as such, I had a helper like this:<br /><br /><pre>Handlebars.RegisterHelper("FormatNumber", (writer, context, parameters) =&gt; {<br />&nbsp;&nbsp;writer.WriteSafeString(Convert.ToDecimal(parameters[0]).ToString("F2"));<br />});<br /></pre><br />and this was called from a template like this:<br /><br /><pre>"{{ "{{" }}FormatNumber AverageScore}}"</pre><br /><br />and on first inspection, I didn't understand what I was soing wrong and why I got such a weird error (rather than simply missing or malformed content. Of course, after looking carefully, the line of code that was actually erroring was:<br /><br /><pre>Convert.ToDecimal(parameters[0])</pre><br />And it turns out that since parameters are dynamic, I realised that AverageScore was not the correct name of the data parameter but it should have been Average.Without it being a valid piece of data, the helper simply injected the string "AverageScore" which, naturally, would not covert to a decimal.<br /><br />Fun times!

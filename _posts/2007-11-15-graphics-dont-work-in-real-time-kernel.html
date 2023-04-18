@@ -1,0 +1,10 @@
+---
+layout: post
+title: Graphics don't work in real-time kernel
+date: '2007-11-15T06:45:00.000-08:00'
+author: Luke Briner
+tags:
+modified_time: '2007-11-15T06:49:06.379-08:00'
+---
+
+I'm now running Kubuntu Linux version 7.10 - Gutsy Gibbon and when I rebooted into the real time kernel to do some music recording, the graphics didn't work and I got a terminal window instead of an X login screen. I looked into the whole building specific NVidia drivers like I had to in 7.04 Feisty Fawn but stopped when it seemed like a messy fix. I surfed the web and found that I should have installed the linux-restricted-modules-rt package. For some reason, the normal one is installed by default but the real time kernel doesn't seem to pull in the real time flavour. Have installed it now and expect it to work sweet!! The package says what drivers it includes.

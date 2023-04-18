@@ -1,0 +1,17 @@
+---
+layout: post
+title: Yii 2 not serving css files
+date: '2015-01-04T05:28:00.000-08:00'
+author: Luke Briner
+tags:
+- CSS
+- blank stylesheet
+- static content
+- Yii
+- not serving
+- no css
+- yii 2.0
+modified_time: '2015-01-04T05:28:08.232-08:00'
+---
+
+I recently copied a Yii 2 site from an old hard disk to a new installation of Windows 7. You forget about all the things you had to set up the first time and the hacks and permission settings etc.<br /><br />Anyway, I installed PHP and ran up index.php and although it displayed in the browser, it was obvious that the stylesheet(s) weren't being loaded so the page was laid out wrong. Seemed weird and Yii does have an asset bundling system but one of the files that didn't load was just a static CSS file.<br /><br />The issue was nothing to do with Yii but my IIS installation. For some unknown reason, when you install IIS, there is an optional feature called "Static Content". Guess what? If you don't install that feature, IIS will not serve static content. Why would you ever want that? Maybe if you were just running a web service, it might offer some hacking protection but anyway, just had to install it - no reboot or anything required - reloaded the page and boom - it worked.

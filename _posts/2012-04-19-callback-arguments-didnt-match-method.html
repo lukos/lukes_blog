@@ -1,0 +1,10 @@
+---
+layout: post
+title: Callback arguments didn't match the method arguments
+date: '2012-04-19T03:59:00.000-07:00'
+author: Luke Briner
+tags:
+modified_time: '2012-04-19T03:59:07.007-07:00'
+---
+
+One of those, "it sounds obvious but I can't work it out" errors. This one in Rhino mocks, made more confusing by profuse use of generics, anonymous types and lambda stuff.<br />I had a mock expectation that was set up like this:<br /><br /><br /><span style="font-family: 'Courier New', Courier, monospace;">&nbsp;_DataService.Mock.Expect(r =&gt; r.UpdateData(Arg<guid>.Is.Equal(Id), Arg</guid></span><br /><summary><span style="font-family: 'Courier New', Courier, monospace;">.Is.Anything))</span><br /><span style="font-family: 'Courier New', Courier, monospace;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; .Callback((Guid c,Summary m) =&gt; // etc</span><br /><br />which caused the above error during the mock setup. I tried lots of various implicit and explicit changes to infer arguments etc. They always built but always crashed. The reason in my case was simply that UpdateData is not a generic method (despite all the GetData methods being generic) but which takes an OBJECT as the second argument. This fact was masked by the way I was calling it with a Summary object and I couldn't understand why it fell over. The code should have been like this:<br /><br /><br /><span style="font-family: 'Courier New', Courier, monospace;">&nbsp;_DataService.Mock.Expect(r =&gt; r.UpdateData(Arg<guid>.Is.Equal(Id), Arg</guid></span><br /><summary><span style="font-family: 'Courier New', Courier, monospace;">.Is.Anything))</span><br /><span style="font-family: 'Courier New', Courier, monospace;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; .Callback((Guid c,<b>object</b> m) =&gt; // etc</span><br /><br class="Apple-interchange-newline" /><br />Which I could then cast to the correct type inside my callback.<br /></summary></summary>

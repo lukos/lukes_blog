@@ -1,0 +1,15 @@
+---
+layout: post
+title: ".htaccess: Invalid command 'RewriteEngine'"
+date: '2014-05-21T02:53:00.002-07:00'
+author: Luke Briner
+tags:
+- rewrite
+- apache2
+- Error
+- rewriteengine
+- apache
+modified_time: '2014-05-21T02:53:43.376-07:00'
+---
+
+Nice Apache error here found in /var/log/apache2/error.log on a wordpress site.<br /><br />Rewriting is used quite frequently in frameworks to make the URL that the user can see look nice and friendly even though under the covers they do not actually point to separate pages. This was a new server and clearly this module was not enabled by default. Simply run:<br /><br /><pre>sudo a2enmod rewrite</pre><br />and then<br /><br /><pre>sudo service apache2 restart</pre><br />And you should be away again....

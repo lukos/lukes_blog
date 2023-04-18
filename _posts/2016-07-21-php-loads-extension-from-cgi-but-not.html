@@ -1,0 +1,13 @@
+---
+layout: post
+title: PHP loads extension from CGI but NOT from CLI
+date: '2016-07-21T07:57:00.000-07:00'
+author: Luke Briner
+tags:
+- php_pdo_sqlsrv
+- php5.6
+- php
+modified_time: '2016-07-21T07:57:05.524-07:00'
+---
+
+So this is a weird one and one I had to workaround instead of fixing.<br /><br />I've had PHP5.5 working fine but Magento requires 5.6 so I downloaded it along with all the extensions I have been using like pdo_sqlsrv, xcache and memcache.<br /><br />I then loaded a local PHP web app to confirm it was setup correctly and that worked fine.<br /><br />I then ran composer from the command line to download Magento and it errors saying PHP Startup: Unable to load dynamic library php_pdo_sqlsrv_56_nts.dll %1 is not a valid Win32 application.<br /><br />There are all kinds of pitfalls when using PHP on windows and I tried/checked this:<br /><br /><br /><ol><li>CLI pointing to the correct php.ini? Yes</li><li>PHP build is 32 bit? Yes</li><li>extension is 32 bit? Yes</li><li>Extension path correct? Yes</li><li>Anything useful in event viewer? No, only the same as the CLI prints (no error for web app)</li><li>Everything else pointing to the right place? Yes</li></ol><div>The biggest annoyance is that it was definately working OK in the web app whereas it would just error for the CLI (bearing in mind the local web app was not using the sqlsrv driver). It also only seemed to be that one specific extension it was complaining about (and I have had problems in an earlier life with the same thing).</div><div><br /></div><div>The only thing I could do was to comment out the offending line in php.ini before running composer update and then put it back in when I next need it. Maybe it's something as simple as the web version not failing on warnings and the CLI one doing the opposite?</div>

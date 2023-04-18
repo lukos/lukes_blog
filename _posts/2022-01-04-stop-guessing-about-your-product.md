@@ -1,0 +1,27 @@
+---
+layout: post
+title: Stop guessing about your product design
+date: '2022-01-04T15:43:00.000+01:00'
+author: Luke Briner
+tags: 
+  - Product design
+---
+
+When we build out products, most of us fall into the trap of guessing what customers want or need. What do I mean? Well imagine you create a system that allows people to order their favourite foods from multiple
+supermarkets. You build the MVP and it is received really well. Now you are worried because you start to realise that some features are missing since your customers are being very free with their advice. You might also get loads of free and unwanted advice from non-customers. After you start processing this, you decide that you are uniquely placed to take these individual requests and build out whole new areas of the app and without realising it, you have replaced a customer-driven product with a company-driven product and you will start becoming more and more unproductive.
+
+Why unproductive? Anyone who has ever done serious product design knows that it is very slow and complicated and takes into account many competing demands, the development time can adds 1000s very easily and before you know it, not only have you spent $10K on a new piece of unwanted functionality but more importantly, that time you spent could have been used to create something that either keeps your existing customers or attracts new ones.
+
+What is happening here is that you have allowed your own wisdom, skills and opinions (whether valid or not) to passively become the most important thing. If I like design, maybe the new features are very design heavy. If I am really into dev or modern frameworks, perhaps I make something much more complicated than it needs to be. Perhaps I only remember the most recent sale that I lost because of a lack of a feature so I will really push to get that even if only one customer wants it. Maybe I pine for the good old days or the unrealised future. Maybe I can see a really great way to revolutionise something that my customers might not understand. Maybe I am a bit too OCD and cannot simply release a part of a feature that is needed now, I then feel the need to "complete it", to add all of the bells and whistles that might conceivably be needed in the future. That simple search has become an advanced search with fuzzy logic and logical operators. That listing has now become 3-state sorting by every column. That custom feature that not all customers have has dictated how the "simple" listing works so it looks complicated for all the basic users who only liked your system beause it was really simple.
+
+You started guessing and you need to stop.
+
+We are all aware that our competitors can eat away at our market and sometimes we need to be ahead of the curve, not catching up, but there is only one way to pure success and that is having great relationships with your customers. Business is, after all, about keeping your customers and gaining new ones. The idea of "Measure what matters" in the forms of OKRs (Love them or hate them) has distilled this concept into a ruthless way to run a company. "I don't care about your designs unless it has a measurable difference to a key performance indicator/result".
+
+Product Management in the old days was perhaps a non-technical role including getting a gut feel for what is or isn't important. It should be a technical role where numbers are attached to anything that might dictate what we should prioritise. New admin page needed? Great, what needs to be on it? A list of all your users. Why? Because we want to see how many widgets each user has ordered. OK so MVP is a listing with username and widget count. Some of us might be able to start here but quickly it becomes, "well if we are in here, why not add some other data like last login date or created date. I mean, we have the data anyway and someone is bound to ask for it". No! For a start, there is a significant cost to the extra work. Ever worked with dates on a global application? You've probably created a few bugs for something but even *if* certain customers might like having that data, how many customers need it and how badly do they need it? Will they pay more for it? Do they need it as much as the other new page that contains e.g. a list of the most popular widgets or a bulk delete screen?
+
+If you are struggling with being agile, it is very likely it is because you are guessing what your customers want and in doing do, you are allowing small functional changes to become epics that can take many weeks or months to deliver. Instead, every story needs to be separate. Don't group things under the same screen just because it seems correct, all that does is imply that you need to do a tonne of stuff before you can release anything rather than counting each feature/story on its own merits. If you are releasing things that are useful to the most people very frequently, then they are likely to stay. If you release things that only please a small handful of (or one) customer even for a nice payday or worse, if you release things that no-one asked for and no-one uses, then most of your customer won't be happy.
+
+The ultimate way to enforce this is that nothing is added to the product from a member of staff. All changes must be customer-originated. Good luck with that but anyway...
+
+...stop guessing and ask!

@@ -1,0 +1,10 @@
+---
+layout: post
+title: Simple midi interface from Linux
+date: '2008-03-05T13:13:00.000-08:00'
+author: Luke Briner
+tags:
+modified_time: '2008-03-05T13:19:24.424-08:00'
+---
+
+I wanted to connect my electric piano (a Roland RD700) to my laptop so that when playing live, I can quickly and simply change sound settings to my favourite sounds without having to click lots of pluses and minuses on the piano itself.<br />I found an M-Audio Midisport Uno interface which is USB on one end and 2 midi connectors on the other - one in, one out.<br />I rather foolishly didn't check out the linux driver issue beforehand but was pleased to find out that the interface was theoretically supported on Linux with a third-party sound driver in OSS. I rather impulsively installed OSS and needless to say, it totally shafted my working alsa system and stopped other things working. Eventually for this and other reasons, I reinstalled Kubuntu 7.10 and read an article about installing midi support.<br />It seems that all I needed to do was "sudo apt-get install midisport-firmware" which brought in the drivers and fxload which is a USB firmware loader and then simply plugged in my interface. It now appears in my midi hardware list so although I haven't tried it yet, it appears to have worked fine.<br />On another note, check out Rosegarden. It is a sequencer and has incredible midi and notation support. It enables banks of sounds to be set up in profiles so that you can choose exactly what sound on your sound module (or keyboard) to use for each track. There are lots built in but it probably won't take much to tailor one for your keyboard if it isn't present.<br />Peace!

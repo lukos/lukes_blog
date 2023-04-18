@@ -1,0 +1,13 @@
+---
+layout: post
+title: Event Handlers with Dynamic Controls
+date: '2009-03-23T08:16:00.000-07:00'
+author: Luke Briner
+tags:
+- asp.net
+- controls
+- events
+modified_time: '2009-03-23T08:20:27.978-07:00'
+---
+
+Have you ever had to create a page dynamically? You can use datagrids and such-like and bind directly to datasets of some description but what if you are doing it manually and still want your dynamic controls to call event handlers? You might have found that when you press your button or whatever, the event handler is not called.<br />What you need to know is that the server will map a control id to the event handler after the page is loaded. If you are generating dynamic controls, you need to re-create them with the same IDs in the Page_Load before the event handler is called. This way, although you have effectively garbage-collected the old controls with their event handlers, because of the mapping of name to event, it will behave correctly using the link from the new control that you need to set up. <br />This means that even if you need to change the layout of dynamic controls after the event handler is called, you will firstly need to create them the same as before in Page_Load and then after the event handler is called, you could then modify them accordingly.

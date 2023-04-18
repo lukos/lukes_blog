@@ -1,0 +1,16 @@
+---
+layout: post
+title: MVC4 Decouple View Data from Database (e.g. for encryption)
+date: '2013-04-17T05:28:00.001-07:00'
+author: Luke Briner
+tags:
+- ".net"
+- decouple
+- encryption
+- MVC4
+- Razor
+- Separate view and database
+modified_time: '2013-04-17T05:28:12.909-07:00'
+---
+
+The problem: I want to display human-readable data to my MVC View but I want the database to save the encrypted version and likewise when reading from the database. I need to have 2 pairs of getters and setters!<br /><br />The solution is pretty easy. Create two properties. Mark one as NotMapped and use this for display, including encrypting/decrypting the human-readable data into a member variable and then have another property which is mapped to a column in the database but which is not displayed in the view. Something like this:<br /><br /><pre style="background-color: #eeeeee; border: 1px dashed #999999; color: black; font-family: Andale Mono, Lucida Console, Monaco, fixed, monospace; font-size: 12px; line-height: 14px; overflow: auto; padding: 5px; width: 100%;"><code>private string _code;   // Encrypted version of the code<br /><br />        [NotMapped]<br />        [Display(Name = "Product Code")]<br />        [MaxLength(12)]<br />        [Required]<br />        public string Code <br />        {<br />            get <br />            { <br />                if (_code == null) <br />                    return null; <br />                else return Owasp.Esapi.Esapi.Encryptor.Decrypt(_code); <br />            }<br />            set <br />            { <br />                _code = Owasp.Esapi.Esapi.Encryptor.Encrypt(value.ToLower().Trim());<br />            }<br />        }<br /><br />        [Column("code")]<br />        public string EncryptedCode<br />        {<br />            get { return _code; }<br />            set { _code = value; }<br />        }<br /></code></pre><br />

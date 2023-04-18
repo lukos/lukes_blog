@@ -1,0 +1,13 @@
+---
+layout: post
+title: More Eclipse/Java and XCode/iOS woes
+date: '2014-07-07T13:13:00.002-07:00'
+author: Luke Briner
+tags:
+- ios
+- painful
+- Android
+modified_time: '2014-07-07T13:13:50.162-07:00'
+---
+
+I am at the Zapp Attack hackathon in London's Hoxton. Although I came in with a good idea of what I was going to hack, one of the pre-requisites was having the mobile code to change. I write Android and iOS but am more comfortable with Android so asked for the code, which was given to me.<br /><br />The thing was, it used some called gradle to build (because the world needs another tool for development) and it uses maven to pull in dependencies. Naturally, the people who own the code had not really designed it to be copied onto other computers so when I did so, I then realised that some of the dependencies were not available online and were pulled in locally. I didn't have a local repository so I thought I'd create one. I downloaded maven (another tool) and although it installed easily enough, it wasn't obvious how to actually use it. I then found what looked like a promising github project that promised to get all the Android dependencies and install into my local repo, another tool, another waste of time. It required everything in the Android SDK to be downloaded, otherwise it would error (rather than ignore the stuff it couldn't install) so I did that but it was still really confusing about how to get the support and appcompat libraries, not helped by the lack of documentation and the way in which Google have changed it over the years. Also, you see promises of "you can get this direct from Google" but how? All I have is a dependency in some text file.<br /><br />I eventually got it to run but after all that time, it didn't even seem to do anything. No APKs no nothing really. The guy suggested I tried the gradle plugin for Eclipse which I did and although that didn't take too long to install, that didn't do anything either.<br /><br />I decided to opt for the iOS code. Even though I am less skilled with iOS, the support guy said he could help and it would be easier since it was just an XCOde project. Well, it was just another 3 hours of pain trying to get it all to work. It's fine when it's all set up on a working machine somewhere but copy it across and then try and get all the dependencies working! Which projects to open and build? What to re-link?<br /><br />I ended up with another whole world of pain with their infamous linker errors but that is for another post....<br /><br />Moral? Become a green grocer or something!

@@ -1,0 +1,10 @@
+---
+layout: post
+title: Using git with putty and pageant not working!
+date: '2019-07-17T02:48:00.000-07:00'
+author: Luke Briner
+tags:
+modified_time: '2019-07-17T02:48:23.617-07:00'
+---
+
+I had git running OK but it was using openssh, which is OK but provides a pain barrier when using putty to generate keys (they all need to be exported to ssh format and put into the .ssh folder). I tried switching to Pageant and plink but it wasn't working. It said I needed to add the server key to the cache but typing "y" didn't do anything and ctrl-C then revealed the error: "Could not read from remote repository".<br /><br />Unfortuntely, this was the first time I had connected to bitbucket so wasn't 100% sure I had done everything correctly but thanks to this post: <a href="https://blog.craigtp.co.uk/Post/2015/07/28/SSH_with_PuTTY,_Pageant_and_Plink_from_the_Windows_Command_Line" target="_blank">https://blog.craigtp.co.uk/Post/2015/07/28/SSH_with_PuTTY,_Pageant_and_Plink_from_the_Windows_Command_Line</a> I realised that I had to run plink directly the first time for the server key to be cached correctly.<br /><br />A bit poor, for sure, if plink shows the message, it should be able to accept the answer but at least it works now!

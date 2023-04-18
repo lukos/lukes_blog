@@ -1,0 +1,21 @@
+---
+layout: post
+title: How to animate an HTML image to make it "glow"
+date: '2013-09-20T08:21:00.002-07:00'
+author: Luke Briner
+tags:
+- CSS
+- photoshop
+- animation
+- HTML
+- box shadow
+- javascript
+- box-shadow
+- glow
+- animate
+- HTML5
+- jQuery
+modified_time: '2013-09-20T08:21:33.879-07:00'
+---
+
+We have a system where people click on an image in certain places and our designer wanted these "click points" to glow as they are clicked in order to make them both look good but also to make them look more obvious, otherwise it is hard choosing colours for images that work on top all kinds of coloured images without making them too obvious.<br /><br />Anyway, she had designed them in Photoshop using an animation effect on the layer so my question was how to mimic this in HTML using (probably) jQuery animate() and some set of CSS values to make it glow.<br /><br />A bit of searching and I found this article that shows how to make a very basic but very effective glow: <a href="http://www.onlywebpro.com/2010/09/19/" target="_blank">http://www.onlywebpro.com/2010/09/19/</a><br /><br />So this was easy enough to use as a starting point but there was more. By default, jQuery cannot animate the box shadow used in this "glow" so I needed an extension in the form of the box shadow animation plugin found here: <a href="http://www.bitstorm.org/jquery/shadow-animation/" target="_blank">http://www.bitstorm.org/jquery/shadow-animation/</a><br /><br />Then it was a case of trial and error. Note that my images are circular but the default box shape is obviously square so I also had to add 50% border radius to make sure the box shadow was circular and not square. Also note that I am creating my images in Javascript but the same thing could be applied to an existing image(s).<br /><br />CSS:<br /><br /><pre style="background-color: #eeeeee; border: 1px dashed #999999; color: black; font-family: Andale Mono, Lucida Console, Monaco, fixed, monospace; font-size: 12px; line-height: 14px; overflow: auto; padding: 5px; width: 100%;"><code>.fingerprint<br />{<br />    border-radius: 50%;<br />    -moz-box-shadow: 0px 0px 0px 0px #ffffff;<br />    -webkit-box-shadow: 0px 0px 0px 0px #ffffff;<br />    box-shadow: 0px 0px 0px 0px #ffffff;<br />}<br /></code></pre><br />JavaScript:<br /><br /><pre style="background-color: #eeeeee; border: 1px dashed #999999; color: black; font-family: Andale Mono, Lucida Console, Monaco, fixed, monospace; font-size: 12px; line-height: 14px; overflow: auto; padding: 5px; width: 100%;"><code>$("&lt;img src='../Images/orange1.png' class='fingerprint' /&gt;")<br />    .appendTo("#clickTarget")<br />    .show()<br />    .animate({ boxShadow: "0px 0px 10px 7px rgb(255,255,255)" }, 300, function ()<br />    {<br />       $(this).animate({ boxShadow: "0px 0px 0px 0px rgb(255,255,255)" }, 300);<br />    });<br /></code></pre><br />Using the animation plugin, I can simply animate the box shadow from the default css to the values in the first animate call in 300 milliseconds and then when this is finished, it will call the inner function which will call animate again to take the values back to their defaults. Naturally you can modify the way these work and the timings. Also, you could use a Javascript timer if you want to keep triggering the animation. You must have a value in your CSS by default in order to animate it, you cannot animate from "null" to some value!<br /><br />Have a play and see what you can do with it, it's pretty straightforward thanks to jQuery!

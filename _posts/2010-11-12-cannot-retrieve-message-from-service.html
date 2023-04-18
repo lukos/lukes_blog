@@ -1,0 +1,14 @@
+---
+layout: post
+title: Cannot retrieve message from Service Broker Queue
+date: '2010-11-12T03:22:00.001-08:00'
+author: Luke Briner
+tags:
+- security
+- sql server
+- queues
+- Service Broker
+modified_time: '2010-11-12T03:29:49.990-08:00'
+---
+
+I thought I had followed the examples to the letter and yet when I tried to pass a simple message, it seemed to send it but wasn't received by the queue. Eventually I found a view called sys.transmission_queue which holds all messages until they are posted onto a queue (I thought it was just a log so wasn't suspicious that it was still full of messages!). In the transmission_status column for all my messages was "Error 15517 State 1: Cannot execute as the database principal because the principal 'dbo' does not exist, this type of principal cannot be impersonated, or you do not have permission."<br />It was caused because I was working on a database backup where the security doesn't really map back up properly since I am sysadmin on the server. Anyway, thanks to http://btburnett.com/2008/05/sql-server-2005-service-broker-error-15517.html I realised that all I had to do was call <pre>ALTER AUTHORIZATION ON DATABASE::[dbname] TO [SA]</pre> which I presume sets the database owner to sa and then I was able to make it work. All the previous messages were re-serviced and all ended up on my receiving queue.

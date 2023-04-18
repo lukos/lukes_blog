@@ -1,0 +1,16 @@
+---
+layout: post
+title: Beware converting BINARY to VARBINARY in SQL Server
+date: '2014-02-13T09:26:00.000-08:00'
+author: Luke Briner
+tags:
+- BINARY
+- sql server
+- Azure
+- t-sql
+- VARBINARY
+- sql
+modified_time: '2014-02-13T09:26:39.404-08:00'
+---
+
+I nearly made a massive cock up. I rather naively changed a column type on a live database from BINARY(16) to VARBINARY(20), the reason being that I was adding a new type of data which would require 20 bytes rather than the 16 that all the existing rows have in them.<br /><br />What happened? All of the existing data was changed from, e.g. ABCDEFGHIJKLMNOP to ABCDEFGHIJKLMNOP<b>0000</b><br /><br />Note that the data is left justified which means my code, which is expecting 16 bytes in an array and which needs it for decryption purposes, now has an array of 20 bytes where the last 4 bytes are zero - it broke!<br /><br />This seemed weird since I know VARBINARY is supposed to return the correct length for the data.<br /><br />Well, what I managed to do instead was perform the same operation in two steps:<br /><br />BINARY(16) =&gt; VARBINARY(16)<br />VARBINARY(16) =&gt; VARBINARY(20)<br /><br />Which worked exactly as expected and didn't pad the data with zeros. I'm sure there is a reason for this in the T-SQL conversion rules but it certainly didn't do what I expected and nearly caused the accounts for all existing users to become inaccessible.<br /><br />Moral: Assume nothing and always make a backup before you make a change <b>however simple the change seems</b>

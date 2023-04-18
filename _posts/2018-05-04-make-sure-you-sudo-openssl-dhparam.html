@@ -1,0 +1,10 @@
+---
+layout: post
+title: Make sure you sudo openssl dhparam!
+date: '2018-05-04T12:15:00.000-07:00'
+author: Luke Briner
+tags:
+modified_time: '2018-05-04T12:15:08.096-07:00'
+---
+
+This was probably the slowest thing I have ever run on Linux (Raspbian on a Rasp-pi to be exact) and to be fair, it does say, "This is going to take a long time".<br /><br />I think it took something 20 minutes and then.....<br /><br />Can't open dhparams.pem for writing, Permission denied!<br /><br />AAAAAAAAAAAAAAAAAAAAAAHHHHHHHHHHHHHHHHHHHHHHHH<br /><br />Remember Luke, it can't write it into /etc/nginx unless you use sudo!<br /><br />Security is so slow, wouldn't it be nice to buy ready-made ones from the internet ;-)

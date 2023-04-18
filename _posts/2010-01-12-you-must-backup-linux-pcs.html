@@ -1,0 +1,14 @@
+---
+layout: post
+title: You MUST backup Linux PCs
+date: '2010-01-12T03:41:00.001-08:00'
+author: Luke Briner
+tags:
+- backup
+- ext4
+- linux
+- ext3
+modified_time: '2010-01-12T03:50:30.319-08:00'
+---
+
+Lots of people know that when you delete a file on a computer, you do not remove the contents of a file, you simply remove its "index" entry. Certain programs can forensically scan a disk and recover this data. However, as I found out the other day, this process is VERY slow and mostly not 100% effective. There are a few chances with the journalling system but that is hit and miss.<br />Why? Well for a few reasons. Firstly and most obviously, the file data on the disk might now be overwritten by a new file - one reason to shutdown as soon as you cock something up. You might want to kill the power since shutting down can cause log writing etc to overwrite the disk. Onto more details however, small files are often stored in adjacent areas on the disk, in addition to this, certain files have known markers (i.e. a jpeg starts with a specific byte and finishes with another) so small images can often be recovered easily. Large files however are often broken into chunks and put anywhere on disk, although within a certain boundary. When you delete a file in ext3 or 4, the information about where these chunks are is lost (unless you are fortunate enough to have updated the file recently and you can find the info in the journal).<br />At best you know that the file exists somewhere in un-allocated disk space so you can dump all this to a single file. You can then hope that the blocks are contiguous which to be honest is likely for small files and unlikely for large ones. You can then scrape this data to find beginning and end markers which again only works for certain documents (although if you know some of the contents of your file, you can use this to find it). If the blocks are broken up then best case is you get other parts of files inside your recovered file which might or might not be fixable and worst case, you cannot put your file back together (i.e. you will not be able to manually scrape binary files with unreadable content).<br />Another issue is that the scraping can lead to hundreds of thousands of recovered files (anything you have ever deleted, you might even have moved something and end up with several copies).<br />The Police might find this useful because they would only need to recover several images or documents to incriminate someone but for specific files, it is more of a miss than a hit.<br />The moral, make sure you back up all your important files. I don't know how mine were deleted (not exactly anyway) so it can and does happen!

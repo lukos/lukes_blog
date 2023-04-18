@@ -1,0 +1,14 @@
+---
+layout: post
+title: Mixing Forms and Windows Authentication
+date: '2009-05-22T07:28:00.000-07:00'
+author: Luke Briner
+tags:
+- asp.net
+- authentication
+- windows integrated
+- forms
+modified_time: '2009-05-22T07:36:00.782-07:00'
+---
+
+My friend works on an ASP.net web application at work and uses windows authentication to access the various pages with database backed roles to provide authorisation. He then asked me how to further lock down certain parts of it to require a password. This would be so that certain orders could only be viewed by people who knew the password even if they were generally allowed access to the page.<br />Of course, the general authentication schemes are designed for a per-page basis and it seemed like rolling your own flavour was quite involved as well as using something like ESAPI from OWASP. He didn't want to spend weeks developing it so I had a play around.<br />I initially investigated mixing windows and forms authentication so that for the most part you would use windows but for a more protected page, it would re-direct you to a login. I thought this would be best because a lot of authentication stuff is already built in to the ASP libraries. However I shortly realised my mistake. The problem is that the authentication is the first thing to occur when the page request is made. At this point, you do not know whether the page is one that needs a password or not so you have to allow it to authenticate. If you then read the database and know you need a login, you can then force a redirect to the login page but it gets really messy because then you have to keep track of authentication state so it allows the user in the first part but then blocks and then if a correct password is entered, it needs to allow you in until you close the browser. After many hours, I opted for a simple redirect to a login page which gets passed the return url in the querystring and a logout button in the order that flushes the cache and then goes to a neutral page instead. Simple is good.

@@ -1,0 +1,20 @@
+---
+layout: post
+title: java.io.FileNotFoundException with 4XX responses
+date: '2013-06-25T07:29:00.000-07:00'
+author: Luke Briner
+tags:
+- '400'
+- 4XX
+- Java
+- FileNotFoundException
+- '403'
+- HTTP
+- HttpsURLConnection
+- '401'
+- java.io.FileNotFoundException
+- HttpURLConnection
+modified_time: '2013-06-25T07:29:24.030-07:00'
+---
+
+Did you know, if you connect to a web service from the Java HttpURLConnection and the method returns a 4XX error code, then getInputStream throws a FileNotFoundException? Well I just found out after scrambling around and fortunately, found a helpful forum post on Stack Overflow. A 400 is surely an error but in many cases might not be considered exceptional. 401 means authentication required, which is very likely to be a normal operation and various other 400 errors might simply mean that the particular user is not authorised to access a resource, again, not exactly exceptional.<br /><br />There is a workaround. You can call getResponseCode first and avoid getInputStream if you have an error situation but this seems heavy handed, especially since my web service responses contain information in the body that my Android app is supposed to use to determine the situation.<br /><br />I think Java has misunderstood what "Exception" means. These scenarios are supposed to indicate something majorly broken, not just something that is an error but is an expected error. What's the difference? Looking for a user in a database might fail, this is an error but it is (probably) not exceptional because presumably, someone might have searched for the wrong thing. Trying to connect to a database and failing is (probably) exceptional since in most cases, a missing database is a major issue since we would always expect to be able to connect.<br /><br />Exceptions incur a large overhead in loading the call stack and any symbols that are present to provide to the error handler. It should be possible to design a system that does not throw any exceptions in normal/expected operations.

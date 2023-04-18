@@ -1,0 +1,13 @@
+---
+layout: post
+title: Error 1603 in wxs installer
+date: '2012-03-27T03:18:00.000-07:00'
+author: Luke Briner
+tags:
+- wxs
+- '1603'
+- errors
+modified_time: '2012-03-27T03:19:10.215-07:00'
+---
+
+This is a common error and means lots of different things if you Google it. In my case, I looked into the wxs install log and found the following:<br /><br />WriteIIS7ConfigChanges: &nbsp;Error 0x800700b7: Failed to add appPool element<br />WriteIIS7ConfigChanges: &nbsp;Error 0x800700b7: Failed to configure IIS appPool.<br />WriteIIS7ConfigChanges: &nbsp;Error 0x800700b7: WriteIIS7ConfigChanges Failed.<br />Which was a bit strange since I hadn't changed anything in the particular service being installed and the deployment was destructive, removing everything installed first before installing about 50 programs.<br />Well, in my case, the build wasn't completely destructive! What had happened was that I had installed a couple of related programs manually and used a name for the App Pool, one which the installer was trying to use. Because it existed, it didn't simply join the existing one, it returned an error.<br />To fix, I simply created a new app pool for the existing services and moved them over. I then deleted the old app pool and ran the installer again.<br />Lovely.

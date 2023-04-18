@@ -1,0 +1,19 @@
+---
+layout: post
+title: Chrome not displaying date in html 5 "date" input
+date: '2014-08-20T08:30:00.000-07:00'
+author: Luke Briner
+tags:
+- Chrome
+- not working
+- not displaying
+- MVC4
+- date
+- HTML
+- not displayed
+- input
+- HTML5
+modified_time: '2014-08-20T08:30:04.924-07:00'
+---
+
+While stumbling through another MVC 4 app with Visual Studio, I noticed that despite all things appearing correct with my data binding, when clicking edit on a model with date fields, the dates were not displayed by Chrome although they were displayed by FireFox and the values were correctly set in the input control.<br /><br />It turns out that Chrome only likes ISO style dates (e.g. 2014-08-19) and if they are not in that format, they are both not displayed and the original values are not even posted back so you get validation errors!<br /><br />By adding the DisplayFormat attribute to the date fields and setting it in ISO format, it all worked again.<br /><br />Note that the DisplayFormat is a generic attribute, it is not just for dates. This means the format has to match String.Format and include curly brackets like this:<br /><br />[DisplayFormat(DataFormatString="{0:yyyy-MM-dd}", ApplyFormatInEditMode=true)]

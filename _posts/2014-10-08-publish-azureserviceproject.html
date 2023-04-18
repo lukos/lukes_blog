@@ -1,0 +1,18 @@
+---
+layout: post
+title: 'Publish-AzureServiceProject - ConflictError: The specified DNS name is already
+  taken'
+date: '2014-10-08T02:21:00.001-07:00'
+author: Luke Briner
+tags:
+- Azure
+- Publish-AzureServiceProject
+- PHP Azure
+- Powershell
+- Add-AzurePHPWorkerRole
+- azure powershell
+- php
+modified_time: '2014-10-08T02:21:22.898-07:00'
+---
+
+I think I might have posted this before but when using the Azure Powershell Cmdlets, when deploying a new project, you might see this error.<br /><br />It occurs because every cloud service on Azure is given the DNS name <project name="">.cloudapp.net and since this is the same for all users, your cloud service name must be globally unique on Azure.</project><br /><br />In my case, a test project was simply called PHPAzureTest, clearly something that someone else has used. You will need to rename the project in the ServiceDefinition.csdef and ServiceConfiguration.Cloud.cscfg (but you don't need to rename the directory that the project is in) and then try again....

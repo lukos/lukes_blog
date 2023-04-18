@@ -1,0 +1,14 @@
+---
+layout: post
+title: Visual Studio designer files and The name does not exist in the current context
+date: '2016-04-13T04:29:00.001-07:00'
+author: Luke Briner
+tags:
+- compiler error
+- CS0103
+- server controls
+- does not exist
+modified_time: '2016-04-13T04:31:42.036-07:00'
+---
+
+Some things are so unbelievably annoying that I can't believe they are not already fixed. Most of you have probably had the problem where your code behind cannot "see" the controls on the ASPX/ASCX page and you get loads of compiler errors. You might have worked out that the .designer.cs file is not being updated and in some cases you are told to try various trickery to make it all work again.<br /><br />I have heard about "Convert to web application" (even though I have already been using it as a web application) or even attempting to either delete the designer file or modify the ASPX to force a regenerate but none of these worked for me today.<br /><br />The only thing I knew, is that I had copied the files from another project into this new one, which I am doing to reduce the massive number of dependent assemblies in the solution. I wanted to keep the namespaces and everything the same but was getting these errors.<br /><br />Fortunately, I realised in VS2015, which makes it slightly clearer, that although the designer files were visible in Solution Explorer, they were not "included in the project", which makes it understandable that they are not generated and compiled to make it work. Goodness knows why they are not copied as a group, especially since the ASPX and code behind are both copied automatically. Maybe it assumes they will be regenerated but they can't be because it has copied the file but not included it!<br /><br />Anyway, I had to right-click every single designer file and choose "Include In Project" and surprise, surprise, it all started working again!<br /><br />Maybe this was also true in previous versions of VS when I have had the problem but Solution Explorer simply didn't make it as clear that the files were present but somehow excluded?<br /><br /><b>Footnote</b>: It seems that it worked OK when the files themselves were copied across, it was only when they were copied as part of a folder that the designer files were not included into the project!

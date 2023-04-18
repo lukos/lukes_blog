@@ -1,0 +1,16 @@
+---
+layout: post
+title: Bootstrapping Yii2 Module and developing locally
+date: '2018-05-11T11:34:00.000-07:00'
+author: Luke Briner
+tags:
+- composer
+- Yii
+- local
+- bootstrap
+- yii2
+- modules
+modified_time: '2018-05-11T11:34:06.647-07:00'
+---
+
+I want to build an OpenBadges module for Yii2 for a site I am building, but there were two things I struggled with. Firstly, how do you make a module and get some custom URLs setup and second, how do I build it Composer style for the future without having to publish a Dev version - that might not even work - to Packagist (or elsewhere).<br /><br /><h2>Using Composer to develop locally:</h2><ol><li>Create a folder somewhere for your package</li><li>Make sure you have a composer.json etc. as if a real project</li><li>git init to create a repo and put your files in there, commit etc.</li><li>Modify your composer.json in the project you want to bring it into (e.g. my Yii2 project) and add a repository:&nbsp;</li><pre>"repositories": [<br />{<br />    "type": "composer",<br />    "url": "https://asset-packagist.org"<br />},<br />{<br />    "type": "vcs",<br />    "url": "../packages/lukos/yii2-openbadge",<br />    "options": {<br />        "symlink": true<br />    }<br />}],<br /></pre><li>The url is a relative or absolute path to the directory that contains your composer.json (not its parent directory)</li><li>Run <pre>composer require "yourname/your-package @dev"</pre>in the folder of your main project. Don't get confused here, the yourname bit should match what is in your package composer.json and may or may not match the folder it is in!</li><li>Running require should update your local vendor folder with the contents of your package but on Windows, it does NOT create symlinks, it will simply copy the files, which is a shame. At this point, however, you can edit them in the vendor folder and once you are happy, copy them back to the package folder and commit the changes to git.</li><li>There is a "path" type for a composer repository, which shouldn't need git but I couldn't get that to work so I've used vcs instead.</li></ol><div><h2>How to bootstrap a Yii2 module</h2><div>I wanted a URL rule that was neater than /openbadge/openbadge/badge or whatever but this requires a URL rule, which must be added in Bootstrap, which is not enabled by default in modules.</div><div><ol><li>make sure your Module class implements&nbsp;yii\base\BootstrapInterface, which defines a single method:&nbsp;public function bootstrap($app)</li><li>Inside this method, add something like:</li><pre>$app-&gt;getUrlManager()-&gt;addRules([<br />    new GroupUrlRule([<br />        'prefix' =&gt; $this-&gt;pattern,<br />        'rules' =&gt; [<br />            '<action>' =&gt; 'openbadge/<action>'<br />        ],<br />    ])<br />], false);</action></action></pre><li>$this-&gt;pattern (in my case) is simply 'openbadge' but allows it to be overridden in config if required. False in the method makes sure it is the first rule! so my rule will route all requests to /openbadge/action to my (only) controller, called OpenbadgeController</li><li>You then need to ensure you have a bootstrap entry in your project config so that it will run the bootstrap for the module:&nbsp;$config['bootstrap'][] = 'openbadge';</li></ol></div><br /></div>

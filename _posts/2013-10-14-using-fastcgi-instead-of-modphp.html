@@ -1,0 +1,21 @@
+---
+layout: post
+title: Using FastCGI instead of ModPHP
+date: '2013-10-14T06:30:00.000-07:00'
+author: Luke Briner
+tags:
+- mod-php
+- mod-php5
+- php5-fpm
+- apache2
+- fast-cgi
+- web server
+- fastcgi
+- apache
+- php5
+- fast process manager
+- fpm
+modified_time: '2014-05-16T08:21:25.711-07:00'
+---
+
+<h3>(Updated for Apache 2.4)</h3>On a test server, I wouldn't normally care in too much detail about things like php modules and the like. Apache works out of the box with mod-php, so why bother?<br /><br />One thing that can be annoying is that by default, the user www-data owns the web root so if I need to write any files to it, I have to use sudo, at which point they become owned by root and not accessible by the web server. Every file write is followed by sudo chown.... to change ownership to www-data.<br /><br />A way round this is to use fast-cgi which allows the files to be run as their owner and which means I can write files into the web root without using sudo and without running chown after I make every addition. It also makes it much easier to use FTP/WinSCP to copy files to the server when connected as a user other than www-data (i.e. every time).<br /><br />So how do we change Apache to run fast-cgi instead of mod-php?<br /><h3>Install fastcgi </h3><pre>sudo apt-get install libapache2-mod-fastcgi</pre><br />Note that if this is not found, you might have to un-comment the multiverse repository in /etc/apt/sources.list and run apt-get update. Once installed, create a file named <b>php-fastcgi.conf</b> inside /etc/apache2/conf.d (&lt;= Apache 2.2) or in /etc/apache2/conf-available (&gt;= Apache 2.4) and put the following contents into it:<br /><br /><pre>&lt;ifmodule mod_fastcgi.c&gt;<br />DirectoryIndex index.php index.html<br />AddHandler php5-fcgi .php<br />Action php5-fcgi /php5-fcgi<br />Alias /php5-fcgi /usr/lib/cgi-bin/php5-fcgi<br />FastCgiExternalServer /usr/lib/cgi-bin/php5-fcgi -socket /var/run/php5-fpm.sock  -idle-timeout 900 -pass-header Authorization<br /><br />&lt;directory /usr/lib/cgi-bin&gt;<br />Options ExecCGI FollowSymLinks<br />SetHandler fastcgi-script<br />Order allow,deny<br />allow from all<br />&lt;/directory&gt;<br />&lt;/ifmodule&gt;<br /></pre><br /><b>Apache 2.4 only</b>: In the above config, replace the older config lines "Order allow,deny" and "allow from all" with the newer config "Require all granted". Once this has been done, you should enable the use of this new config file by typing: <span style="font-family: Courier New, Courier, monospace;">sudo a2enconf php-fastcgi.conf</span><br /><br />Then ensure that the actions module is enabled: <br /><pre>sudo a2enmod actions</pre>and finally restart apache <br /><pre>sudo service apache2 restart</pre><h3>&nbsp;Disable mod-php</h3>The installation will automatically enable fastcgi but you need to disable mod-php:<br /><br /><pre>sudo a2dismod php5</pre><h3>Install FPM</h3>The fast cgi process manager is a "nice to have" when coupled with fast-cgi. I am including it here because it is part of the instructions I have!<br /><br /><pre>sudo apt-get install php5-fpm </pre><br /><br />Now edit the file /etc/php5/fpm/pool.d/www.conf and add the following lines:<br /><br /><pre>[www]<br />user = &lt;your username&gt;<br />group = &lt;your username&gt;<br />listen = /var/run/php5-fpm.sock<br />listen.owner = &lt;your username&gt;<br />listen.group = www-data<br />listen.mode = 0660<br />pm = dynamic<br />pm.max_children = 10<br />pm.start_servers = 2<br />pm.min_spare_servers = 1<br />pm.max_spare_servers = 3<br />chdir = /<br />php_admin_value[error_log] = /var/log/fpm-php.www.log<br />php_admin_flag[log_errors] = on<br /></pre><br /><br />Now restart php5-fpm and apache2:<br /><br /><pre>sudo service php5-fpm restart &amp;&amp; sudo service apache2 restart</pre><br /><h3>Change Directory Permissions</h3>Once this has all been done, you need to set the correct permissions on the files in the web root.<br /><br /><pre>sudo chown yourusername:yourusername -R /path/to/webroot</pre><pre>sudo chown yourusername:www-data /path/to/webroot</pre><pre>sudo chmod 710 /path/to/webroot</pre>

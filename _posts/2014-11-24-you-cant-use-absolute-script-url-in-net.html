@@ -1,0 +1,22 @@
+---
+layout: post
+title: You can't use an absolute script url in a .Net script tag when runat=server
+date: '2014-11-24T06:38:00.000-08:00'
+author: Luke Briner
+tags:
+- runat
+- relative
+- server
+- script
+- tag
+- visual studio
+- ".net"
+- source
+- url
+- Error
+- src
+- absolute
+modified_time: '2014-11-24T06:38:31.462-08:00'
+---
+
+I found something annoying but probably unsurprising about using a CDN, they are not configured to serve content in GZip format automatically, as most web servers are (or should be) configured to do.<br /><br />Using a CDN meant I got rid of some YSlow warnings while then getting some new ones "Some components are not being compressed".<br /><br />It sounded like the best workaround was to upload normal and GZipped versions of the resources to the CDN and then on server, dynamically alter the src attributes for the various scripts to use either the normal one or the gzipped one depending on whether the client supports gzip (Although browsers pretty much all do, some other types of clients, including some anti-virus software do not).<br /><br />This sounded easy enough but simply adding a runat=server to the script tag and referencing it in code compiles OK but at run time fails with an error: 'url' is not a valid virtual path. Of course it isn't, it's absolute because it is referencing a CDN but somewhere in the guts of System.Web.dll there is a check for a virtual path (like "~/Scripts/myscript.js") and it goes bang!<br /><br />It seems like an over-zealous error check but there was a workaround to this bug:<br /><br />1) Use an Asp:literal control (which will not render anything other than its text content) and set the default content between the opening and closing tag with the normal script tag pointing to the non-Gzip version (or you could default it the other way, doesn't make any difference)<br />2) In the Page_Load of the code behind of your page (or in my case, the Master page), check that the client supports gzip and if it does, replace the literal control text with the relevant version of the script like this:<br />aspnetScript.Text = "<script src="https://p78ciw4vl11rel.cloudfront.net/aspnet.js.gz" type="text/javascript"></script>";<br /><br />The literal doesn't do anything clever like escaping HTML characters so the correct effect is achieved in the page rendering.

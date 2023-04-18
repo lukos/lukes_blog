@@ -1,0 +1,13 @@
+---
+layout: post
+title: Wordpress, permissions and plugins
+date: '2012-10-01T06:53:00.000-07:00'
+author: Luke Briner
+tags:
+- wordpress
+- readyecommerce
+- plugins
+modified_time: '2012-10-01T06:53:01.861-07:00'
+---
+
+Wordpress is great for a quick site construction. I downloaded and installed it but as per most of the things I do, I make little changes as I go along to try and make it secure and this can cause problems down the road.<br />Specifically, I changed the ownership to me:www-data so that I owned it but Apache was in the group for all the files. I then set the files to rwx for me, r for group and nothing for others. I also change the directories so that they were not readable or executable to group so no-one could list directory contents. I realised early on that during the install, the web server would be accessing the root folder so I allowed group to also write here.<br />I then tried to install a plugin. To avoid the automatic install, which requires ftp access, I extracted a plugin into the wp-content/plugins directory but when going into plugins, it was not listed. The reason, as you might have guessed, was that www-data needs to be able to read the directory contents so it knows what plugins are available. I changed JUST plugins and its descendants to be group readable and then it all worked as expected!<br />So if plugins are not working in Wordpress, ensure:<br /><br /><ol><li>You are using the correct folder (wp-content/plugins)</li><li>That your directories are not too deep e.g. /plugins/myplugin/config.php and NOT /plugins/myplugin/myplugin/config.php (which might occur if you have unzipped the plugin into a new folder)</li><li>That your permissions on the folders allow the web server identity (www-data for apache2) to read and execute the directories (not execute the files!)</li></ol>

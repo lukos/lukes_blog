@@ -1,0 +1,18 @@
+---
+layout: post
+title: Publish-AzureServiceProject - There is an error in XML document (12, 90)
+date: '2016-01-07T05:22:00.000-08:00'
+author: Luke Briner
+tags:
+- parsing
+- Azure
+- Error
+- errors
+- sha1
+- xml
+- sha2
+- Publish
+modified_time: '2016-01-07T05:22:23.633-08:00'
+---
+
+It would be helpful if errors had something more useful in them. This is a generic error in an Xml parser and it doesn't even tell you which document has failed.<br /><br />It turns out that I had changed the thumbprintAlgorithm to SHA2 because I had a new SSL cert but it turns out that even SHA2 certs use SHA1 for the thumbprint and it should stay set as sha1 in the cscfg file.<br /><br />Anyway, I found out what the error was partly due to what I know I had changed and also by passing the -debug flag to Publish-AzureServiceProject which showed the specific error even though -verbose didn't!

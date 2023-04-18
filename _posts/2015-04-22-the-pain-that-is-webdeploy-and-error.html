@@ -1,0 +1,19 @@
+---
+layout: post
+title: The pain that is WebDeploy and error 401 when publishing
+date: '2015-04-22T06:58:00.001-07:00'
+author: Luke Briner
+tags:
+- permissions
+- IIS8
+- WebDeploy
+- errors
+- visual studio
+- '401'
+- iis
+- Server 2012
+- visual studio 2013
+modified_time: '2015-04-22T06:58:54.356-07:00'
+---
+
+I don't have the time to write down all the things that have done my head in when trying to set up web deploy for the first time. Traditionally I have been using source control to publish sites but on this test one, I thought web deploy would be quick and easy but it has taken me two days to make it work.<br /><br />The problem was actually the fact that my password wasn't copying correctly from KeePass but of course, because you can't see what is pasted into the box, it looks correct but doesn't work.<br /><br />The reason this is not great is because, as with many pieces of software, the architecture is not easy to understand and the error messages not descriptive enough to work out what is actually happening. WebDeploy, for instance, consists of two Windows services (although maybe only one?), running that as a user that has permissions to access the web folder and then setting up IIS Manager Permissions and Permissions Delegation in IIS - you can use Windows credentials or theoretically, you can use IIS user permissions, but that only seemed to work when I gave all users full control to access the web directory!<br /><br />Fortunately, I did (eventually) find a half-decent guide from Microsoft:&nbsp;http://www.iis.net/learn/publish/using-web-deploy/configure-the-web-deployment-handler<br /><br />And this is what finally pointed me to the fact that the password pasted from KeePass wasn't working.<br /><br />One of the things that annoys me is that I have probably made a load of changes I didn't need while making this work and there's no way I can remember everything I did to revert these things.

@@ -1,0 +1,16 @@
+---
+layout: post
+title: Breaking SSL changes in Chrome 79 update AGAIN
+date: '2019-12-13T02:36:00.001-08:00'
+author: Luke Briner
+tags:
+- Chrome
+- ssl
+- breaking
+- Redirect
+- '302'
+- tls
+modified_time: '2019-12-13T02:36:16.189-08:00'
+---
+
+I appreciate that Google are trying to force the web to be more secure but the frequent updates continue to break things that have worked for ages.<br /><br />Of course, you could argue that we should have done things correctly to begin with but part of the reason we don't is that we don't have to! For example, if two machines are already on a virtual network isolated from the rest of the world, you <i>could</i> configure firewalls between them, but you don't have to.<br /><br />Likewise, when we run IIS express for our functional tests on localhost, the certificate that IIS installs is self-signed, which is all you can do when you connect to localhost. Up until version 79, Chrome didn't have a problem with the following scenario:<br /><br />https://localhost/invalidcert/ =&gt; 302 http://samesite/over/http<br /><br />It simply didn't check the certificate that came back because it was about to redirect. Now it does not do this. You instead get the "not trusted" page.<br /><br />Now sure, what they do now makes sense, otherwise a MITM could provide a false 302 with an invalid cert but I can't find this change announced anywhere, the first thing I know is that our fragile functional tests have all started failing for no obvious reason and spending hours of my time trying to work out what changed.<br /><br />I had to use a workaround by downgrading to Chrome 78 and disabling the updater since I cannot work out how they expect this scenario to work. The only way it would work, I guess, would be setting up domain names for local test sites. We could do all of that in IIS (and possibly Express) but it ends up requiring a lot of effort just because Google says so!<br /><br />So by trying to make things better, you have removed our ability to keep Chrome up to date, which will probably have other effects later on. <br /><br />(Goes away and sulks)

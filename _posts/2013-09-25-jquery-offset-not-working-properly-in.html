@@ -1,0 +1,18 @@
+---
+layout: post
+title: jQuery offset() not working properly in Internet Explorer
+date: '2013-09-25T07:09:00.000-07:00'
+author: Luke Briner
+tags:
+- internet explorer 10
+- ie
+- position absolute
+- internet explorer
+- offset
+- bug
+- jQuery
+- position relative
+modified_time: '2013-09-25T07:09:03.095-07:00'
+---
+
+Strictly speaking, maybe it works in Internet Explorer and not Chrome but the effect looks wrong in IE 10 so I'll assume that's the case.<br /><br />Scenario? I have some transparent windows that are used to frame images so that the user can click on the transparent window and see the image full-screen. In order to do this, I iterate the images, create a new frame for each one and set its position using offset() to match that of the parent image. position: absolute and everything is fine in Chrome.<br /><br />Same page in IE and the frames are not positioned above the images but are below them, causing the parent div to stretch and basically it's all rubbish. A quick check and in IE, these frames have position: relative which they don't in Chrome (since my CSS specifies absolute).<br /><br />A dig through the jQuery source and the offending (and slightly odd) line of code is:<br /><br />// set position first, in-case top/left are set even on static elem<br />&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; if ( position === "static" ) {<br />&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; elem.style.position = "relative";<br />&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }<br /><br />Which is presumably true in IE by default but not in Chrome (despite my CSS specifying absolute!). Anyway, I found a bug filed on jQuery <a href="http://bugs.jquery.com/ticket/6949" target="_blank">here</a> which describes it in more technical detail. The bug seems undecided even though it is clearly inconsistent behaviour but more importantly, Kelly Selden has proposed a workaround (which does work!) using css() instead of offset:<br /><br /><pre class="wiki" style="-webkit-text-stroke-width: 0px; background-color: white; background-position: initial initial; background-repeat: initial initial; border: 1px solid rgb(0, 0, 0); color: #333333; font-family: monaco, monospace; font-size: 11px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; margin: 1em 1.75em; orphans: auto; outline: 0px; overflow: auto; padding: 0.25em; text-align: left; text-indent: 0px; text-transform: none; vertical-align: baseline; widows: auto; width: auto; word-spacing: 0px;">targetElement.css('left', source.offset().left).css('top', source.offset().top);</pre><br />Thanks Kelly!

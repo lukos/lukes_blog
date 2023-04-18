@@ -1,0 +1,14 @@
+---
+layout: post
+title: Reporting Services, Margins, Page Layout etc
+date: '2008-07-14T02:22:00.001-07:00'
+author: Luke Briner
+tags:
+- Print Layout
+- Page Layout
+- Margins
+- Reporting Services
+modified_time: '2008-07-14T02:34:03.990-07:00'
+---
+
+If you use Reporting Services, I bet you have spent a while trying to get the reports to print out as expected! I'm not sure why something that wastes so much of everybodies time (printing things out properly) is not well-known and fixed in software now - it should be impossible to get it wrong. The print knows its paper size, the software knows the paper size yet it prints out most of your document on one sheet and then a little strip on the next - obviously what you wanted!<br />Anyway, in reporting services there are some quirks that you need to know about in order to get your report correct.<br />1) Select Report - Report Properties and the Layout tab. There are paper sizes and margins in here. Note that the page sizes here need to match the physical paper size. I'm not sure what effect they have because it doesn't draws these on your report design!<br />2) You might think that is it BUT you then need to right-click on the grid area of the report in the layout view and choose properties (properties of the body of the report) and lo and behold there is another field here called "Size" which consists of width,height in measurement units (mm, inches etc) which defines the area of the report body. For some reason this is not restricted by the page size in report properties and you won't know if you make this too big! Anyway, this needs to equal the page size minus margins if you want it to fit on one sheet.<br /><br />Example A4 paper is 210mm by 297mm so you set the report layout (in Report -> Report Properties) to these figures and then suppose you set the margins to 10mm all the way round. The report body should be set to 210 - 20 (for width) and 297 - 20 (for height) when in portrait or 297 - 20 (width) x 210 - 20 (height) when in landscape mode. It sounds really simple but it still takes time to find these things out!

@@ -1,0 +1,13 @@
+---
+layout: post
+title: Problems opening .net project
+date: '2008-06-25T02:35:00.000-07:00'
+author: Luke Briner
+tags:
+- visual studio errors
+- ".net 3.5"
+- visual studio projects
+modified_time: '2008-06-25T02:41:52.214-07:00'
+---
+
+I grabbed a .net project off of code project the other day to find out about drag and drop. When I tried to open it in Visual Studio, I got an error that a project import could not be found: c:\microsoft.csharp.targets and therefore the project couldn't open. I had a look around the net and even on the page I downloaded it from but to no avail.<br />Firstly I found out that I had installed the .net framework 3.0 redistributable rather than the framework for building apps. This hadn't caused problems before but anyway, I found and installed .Net framework 3.5 and now found two copies of the file that was being looked for in c:\windows\microsoft.net\framework\v2.0.50727 and now in the v3.5 directory. Since the project I was looking at was based on v3 stuff I decided that the project should find the version 3 one.<br />I opened the project file into wordpad and found that the import looked like this: <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" /> and when I checked, there was no environment variable set up for MSBuildToolsPath, even for version 2 of the .net framework so I went into Control Panel - System - Advanced - Environment Variables and added a new key: MSBuildToolsPath = c:\windows\microsoft.net\framework\v3.5 and then OK'd out of the dialog.<br />I restarted Visual Studio to force it reload the environment variables and then opened the project and hey presto. Quality.

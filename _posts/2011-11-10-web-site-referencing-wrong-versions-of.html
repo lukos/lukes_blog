@@ -1,0 +1,14 @@
+---
+layout: post
+title: Web site referencing wrong versions of DLLs
+date: '2011-11-10T02:37:00.000-08:00'
+author: Luke Briner
+tags:
+- unity
+- visual studio errors
+- visual studio
+- visual studio projects
+modified_time: '2011-11-10T02:37:09.621-08:00'
+---
+
+Classic problem here. Visual Studio web site project that includes various projects and a number of MS and third party dlls that are referenced. A specific project was referencing Microsoft.Practices.Unity version 2.0 whereas when we built the project, we got the error "Thirdpartylibrary.dll references Microsoft.Practices.Unity version 2.0... which is higher than the referenced version 1.2".<br />Checking into it and the only version we reference is version 2.0 and I couldn't see where the version 1.2 was possibly copied from (into the website bin directory). Eventually I resorted to modifying a Powershell script which listed every dll in our project that was referencing Unity and looked for one which was version 1.2. It turned out to be EnterpriseLibrary.Logging, something we no longer used (and something which wouldn't obviously reference unity). Removed all references to that and it was fine.

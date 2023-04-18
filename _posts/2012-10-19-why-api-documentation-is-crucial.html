@@ -1,0 +1,15 @@
+---
+layout: post
+title: Why API documentation is crucial
+date: '2012-10-19T08:03:00.001-07:00'
+author: Luke Briner
+tags:
+- federation
+- oauth
+- DotNetOpenAuth
+- openid
+- documentation
+modified_time: '2012-10-19T08:03:55.877-07:00'
+---
+
+Documentation is one of the things that a lot of developers hate because it is not code. It does not do anything or move anything but documentation is really important, not just for remembering why you did something but also, especially in the world of published APIs, so that other people know how to use your software.<br />One of the cases in point is the DotNetOpenAuth library. A valiant open source library which allows, supposed easy, functionality for various federated security protocols. The problem? The documentation is appalling. The basic API docs, are about the minimum you could possibly publish and provide no help. Many 'helpful' comments on forums about the library talk about starting with the samples and working from there except, of course, the samples are not well documented and in some cases are quite extensive which means it is very hard to know what each part does and therefore how to translate it to your own problem area.<br />There are simple controls which no doubt for many OAuth/OpenID clients make things pretty easy but look at writing your own provider and you are basically stuffed.<br />The result? All of that hard work is basically in the bin for me. I had to implement OAuth2 from scratch in code using basic Http functionality and no doubt missing certain elements that the library might perform (although I'm pretty sure I meet the subset of the spec that I am interested in). It's a bit like scrapping a Ferrari because you can't work out how to start the engine.<br />In the case, in my opinion, the whole piece of work is largely worthless and the only bit I have made use of is a Microsoft extension library which makes things much simpler for those of us who are not federation experts.<br />So be warned! If you want people to use your libraries and APIs, you MUST provide good documentation. Instead of answering individual queries on forums, spend the time describing the answer in a way that can be posted onto a FAQ/API docs/Examples page.

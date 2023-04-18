@@ -1,0 +1,18 @@
+---
+---
+
+@import "minima";
+
+$font-color: #606060;
+
+.post-meta {
+    color: $font-color;
+}
+
+.footer-col-wrapper {
+    color: $font-color;
+}
+
+.svg-icon {
+    fill: darken($font-color, 20%);
+}

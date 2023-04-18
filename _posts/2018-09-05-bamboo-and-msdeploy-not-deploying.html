@@ -1,0 +1,19 @@
+---
+layout: post
+title: Bamboo and MSDeploy not deploying dotnet core to a folder on the network!
+date: '2018-09-05T08:04:00.000-07:00'
+author: Luke Briner
+tags:
+- publish to folder
+- Deploy
+- Error
+- Bamboo
+- dotnet core
+- MSDeploy
+- msbuild
+- Atlassian
+- network
+modified_time: '2018-09-05T08:04:03.571-07:00'
+---
+
+I was trying to deploy an artifact containing a Dotnet Core project to a folder on a network mapped machine and it wasn't working, just got error MSB3021: Unable to copy file  "E:\bamboo\xml-data\build-dir\44564481-44662786\Blah\obj\Debug\netcoreapp2.0\PubTmp\Out\runtimes\win\lib\netcoreapp2.0\Microsoft.Win32.SystemEvents.dll"  to  "\\networkmachine\c$\inetpub\wwwroot\blah\runtimes\win\lib\netcoreapp2.0\Microsoft.Win32.SystemEvents.dll".  Access to the path  '\\networkmachine\c$\inetpub\wwwroot\blah\runtimes\win\lib\netcoreapp2.0'  is denied.<br /><br />The command I was using was this (in a Bamboo msbuild task):<br /><br />msbuild.exe Blah.sln /p:Configuration=debug /p:DeployOnBuild=True /p:WebPublishMethod=FileSystem /p:PublishProvider=FileSystem /p:publishUrl="\\networkmachine\c$\inetpub\wwwroot\blah" /p:Password=mypassword /p:UserName="NetworkMachine\Bamboo"<br /><br />I tried various combinations but nothing. Then just to give it a shot, instead of using the c$ admin share on the network machine, I instead added a share directly to the IIS folder with read/write for the Bamboo user on the network machine and it worked perfectly!<br /><br />All I had to do was modify the publishUrl to point to the share instead of the c$ mapping and everything else was the same. Amazing.

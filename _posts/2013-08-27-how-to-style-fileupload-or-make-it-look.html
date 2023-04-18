@@ -1,0 +1,19 @@
+---
+layout: post
+title: How to style the FileUpload or make it look like you have!
+date: '2013-08-27T08:46:00.000-07:00'
+author: Luke Briner
+tags:
+- ".net"
+- styling fileupload control
+- FileUpload
+- fire fileupload from javascript
+- javascript
+- style
+- input
+- file
+- jQuery
+modified_time: '2013-08-27T08:46:16.829-07:00'
+---
+
+There are many guides, workarounds and problems with trying to do something very common in HTML. It is the FileUpload control, a.k.a. the input type="file" element. The problem is that not only does each browser style the thing differently, you can't really change the look of it.<br /><br />There are, of course, many applications where this isn't acceptable either functionally or from a design point-of-view so many people have asked whether they can style the control or just do something to make it look different. This is not an easy question to find an answer to because the answers vary from, "no you can't" to "yes you can but it's hard and not to be relied on". I believe this is largely a historical issue and that using jQuery, you can change the way the file upload behaves. In my instance, I am uploading an image but I want a button to select the file which looks like the other buttons on the page (and uses Bootstrap styles for this).<br /><br />The (relevant) aspx markup looks like this:<br /><br /><pre style="background-color: #eeeeee; border: 1px dashed #999999; color: black; font-family: Andale Mono, Lucida Console, Monaco, fixed, monospace; font-size: 12px; line-height: 14px; overflow: auto; padding: 5px; width: 100%;"><code>&lt;asp:FileUpload runat="server" ID="fileUpload" AllowMultiple="false" onchange="$.myFuncs2.submit()" /&gt;<br />&lt;button id="btnChooseYourOwn" class="btn btn-success btn-large btn-block"&gt;&lt;i class="icon-user icon-white"&gt;&lt;/i&gt; Choose your own&lt;/button&gt;<br /></code></pre><br />Which is the fileupload control running as a server control (so that I can access it from the code behind) and then a normal html button which works correctly with the bootstrap styles. The jQuery is also pretty straight-forward:<br /><br /><pre style="background-color: #eeeeee; border: 1px dashed #999999; color: black; font-family: Andale Mono, Lucida Console, Monaco, fixed, monospace; font-size: 12px; line-height: 14px; overflow: auto; padding: 5px; width: 100%;"><code>&lt;script type="text/javascript"&gt;<br />(function ($)<br />{<br />      $('#MainContent_fileUpload').hide();<br />      $('#btnChooseYourOwn').click(function (event)<br />      {<br />         $('#MainContent_fileUpload').click();<br />         event.preventDefault();<br />      });<br />})(jQuery);<br />&lt;/script&gt;<br /></code></pre><br />The things to note are firstly, the file upload control is hidden by jQuery. If you set visible=false in the control, it will not be rendered on the page and cannot be interacted with by Javascript. Calling hide is the same as style="display: none;" The second thing to note is the use of event.preventDefault(). This is REALLY important, because if you don't prevent the default, the button will postback the page before you've even selected a file which, in my case, meant the page refreshed and reset back to the beginning again.<br /><br />The function I call in onchange (myFuncs2.submit()) is just a function that displays a busy form and then calls $('form').submit() to cause the postback. At this point, the code behind can access the file upload control in the same way as normal.<br /><br />You can probably do this in lots of other ways with other controls but hopefully this simple example shows that it is possible.

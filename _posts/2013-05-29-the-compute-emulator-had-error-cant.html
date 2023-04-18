@@ -1,0 +1,15 @@
+---
+layout: post
+title: 'The compute emulator had a error: Can''t locate service model..'
+date: '2013-05-29T08:17:00.002-07:00'
+author: Luke Briner
+tags:
+- Azure
+- PHP Azure
+- errors
+- Start-AzureEmulator
+- php
+modified_time: '2013-05-29T08:17:55.624-07:00'
+---
+
+Another annoying message from Start-AzureEmulator but this time very much my fault. In my case I was trying to get something working locally and was mucking around with the various config files to try and make it work. In the end, the problem for me was that I had removed an SSL endpoint and added a non-SSL (port 80) one instead but hadn't updated the endpoint reference under the site/bindings element in ServiceDefinition.csdef.<br /><br />That wasn't the end of the problem with PHP Azure but that is another story....

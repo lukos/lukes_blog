@@ -1,0 +1,18 @@
+---
+layout: post
+title: Setting a default value for object property in ASP.Net MVC4 Razor
+date: '2013-06-11T14:27:00.000-07:00'
+author: Luke Briner
+tags:
+- asp.net
+- MVC
+- MVC4
+- Default
+- Hidden
+- HiddenFor
+- "@Html"
+- Razor
+modified_time: '2013-06-11T14:27:17.959-07:00'
+---
+
+Well, my scenario is this: I have a hierarchy of items that I am editing in MVC, when an item is created, therefore, it already has a parent id and I pass this into the Create action on the controller. The problem is that an object is not created at this point, just a view returned so where should this parent id be stored so that it is picked up when saving the new object away to database? There are many horrible hacks that could provide what you need but I found a neat way, which even looks like it might be the right way!<br /><br />Firstly, add your default parameters into your action so they can be passed in when you are creating the child items. Inside the action, pass this to ViewData - but importantly, ensure the key name is the same as the property name you want to set:<br /><br /><pre>public ActionResult Create(int parentId)<br />{<br />    ViewData["Parent"] = parentId;<br />    return View();<br />}</pre><br />Then in the view, all you have to do is use @Html.Hidden (note, NOT HiddenFor):<br /><br /><pre>@Html.Hidden("Parent",null)<br /></pre><br />Presumably, you could also use the one that doesn't take a second parameter, I haven't actually tried! A couple of things happen here which make it all work. Firstly, the hidden will automatically take the value from ViewData (and as it happens, various other places and failing that, the value you pass in), obviously using the key name as a match. The second part, however, is that by using the name of the object property (Parent in my case), the framework will automatically pass this value into the object when serializing it for saving in the same way it does with the <i>Whatever</i>For(model =&gt; model.Property) set of methods.<br /><br />It feels so slick, it might just be right! 

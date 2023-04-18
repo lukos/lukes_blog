@@ -1,0 +1,17 @@
+---
+layout: post
+title: The mysterious Chrome padlock warning symbol
+date: '2015-01-06T03:52:00.000-08:00'
+author: Luke Briner
+tags:
+- Chrome
+- ssl
+- warning
+- icon
+- padlock
+- certificate
+- tls
+modified_time: '2015-01-06T03:52:07.857-08:00'
+---
+
+So you visit a site with SSL and Chrome shows you a yellow warning triangle on the SSL padlock. You click on the icon and sometimes it might tell you that you have http links on the https page (a big no no) but sometimes it doesn't say anything, it just shows the warning.<br /><br />Don't worry, you might not have done anything wrong but this is part of Google's attempt to force web site owners to keep up with security.<br /><br />If your SSL certificate (or the one on the site you are visiting) is more than 6 months or 1 year old, it is likely to be signed with a hash signature called SHA1 and the problem is that it is old and theoretically possible to fake. This means that somebody could theoretically fake a certificate with a matching signature, insert a man-in-the-middle machine between the site and its users and the people visiting the site would not know because the certificate chain would still match up.<br /><br />You can now issue ssl certs using SHA256 (also called SHA2, the family it is from) and if you do this, Chrome thinks you are being good and removes the warning. The warning only appears if the certificate has a long time left to run - I guess they are assuming ones that run out soon will be replaced soon with SHA256. SHA256 is much stronger and will buy us another good few years hopefully.<br /><br />Anyway, re-issuing your SSL cert to change it from SHA1 to SHA256 is usually free, although naturally some work will be required to update these on your servers, especially if you have lots of sites.<br /><br />Another reminder that security doesn't stand still!

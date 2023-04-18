@@ -1,0 +1,15 @@
+---
+layout: post
+title: Page_Load called twice and another hole in the HTML specification
+date: '2015-01-26T02:42:00.000-08:00'
+author: Luke Briner
+tags:
+- HTML 5
+- image
+- HTML
+- Page_Load
+- twice
+modified_time: '2015-01-26T02:42:08.588-08:00'
+---
+
+I was debugging a new site I have created in ASP.Net and noticed that Page_Load was called twice. I was a bit worried because with all the new bells and whistles, I didn't know how easy it would be to debug why this was happening.<br /><br />Fortunately, a quick Google search revealed the problem. An image tag with a # symbol for the href.<br /><br />I actually wanted to do that because my image is loaded asynchronously in Javascript and the HTML 5 spec does not allow an empty src attribute, which seems pretty dumb. What is worse is that HTML 4 did allow an empty src but browsers treated it differently!<br /><br />Anyway, what happens in HTML 5 is that you are still not allowed to use blank but if you use a # symbol or a slash at the start, then the browser treats it has a relative image source. That's pretty dumb, I mean if I was pointing an image source at the same location as the page itself, I would be doing something wrong probably. I'm guessing that the problem is related to shared URL resolution code i.e. not treating the image src url any differently but since the need for empty images at start up is present and the need to load from the current page is probably not, it would be nice if the spec allowed some special way of saying, "don't load the image".<br /><br />I could of course create the image element when the image is loaded but I think that is more messy compared to having the image sized correctly waiting for the image to load. Everything else would be a workaround.<br /><br />I realised I had to use a small blank image (1x1) just to give the tag a valid image source but get this: the 1x1 white png in 8 bit colour is a whopping 963 bytes! I tried GIF and BMP and both were similar so either the formats are very bulky or Paint.Net is saving a load of information I don't need with the image.

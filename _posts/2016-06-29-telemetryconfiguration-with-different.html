@@ -1,0 +1,16 @@
+---
+layout: post
+title: TelemetryConfiguration with different Instrumentation Keys
+date: '2016-06-29T09:10:00.001-07:00'
+author: Luke Briner
+tags:
+- App Insights
+- Azure
+- Application Insights
+- AppInsights
+- TelemetryClient
+- TelemetryConfiguration
+modified_time: '2016-06-29T09:10:41.528-07:00'
+---
+
+The last few days have involved learning lots of things, breaking lots of things, fixing them and then breaking some other things. I have lived the Facebook "Fail fast" motto!<br /><br />Anyway, the latest fun and games is using Application Insights, a pretty swish Azure service that collects not only loads of server and performance data from your web apps but also allows you to collect custom metrics. I have a shared library to track these metrics but realised I needed to be able to track events from multiple apps into the same App Insights bucket, while keeping separate buckets for server data - in other words, have more than one instrumentation key.<br /><br />Initially, I simply passed the instrumentation key I wanted to my library like this:<br /><br /><span style="font-family: Courier New, Courier, monospace; font-size: x-small;">client = new TelemetryClient(new TelemetryConfiguration(){InstrumentationKey=myParam});</span><br /><br />But when called, this produced the rather obtuse error "Telemetry channel should be configured for telemetry configuration before tracking telemetry"<br /><br />This is another MS classic that makes sense after you've worked out what went wrong rather than showing you what you did.<br /><br />The Telemetry channel is set up in config so why wasn't it working? Duh, because I had just passed <span style="font-family: Courier New, Courier, monospace; font-size: x-small;">new TelemetryConfiguration()</span> rather than getting <span style="font-family: Courier New, Courier, monospace; font-size: x-small;">TelemetryConfiguration.Active</span>&nbsp;which is what the default constructor uses. I didn't want to use <span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Active</span> however because changing that could affect the config being used by the app and I wanted it just to be used locally. Fortunately, <span style="font-family: Courier New, Courier, monospace; font-size: x-small;">TelemetryConfiguration</span> provides two helper methods: <span style="font-family: Courier New, Courier, monospace; font-size: x-small;">CreateDefault()</span>, which creates a <u>copy</u>&nbsp;of the active configuration and allows you to change what you need to (which I used) and also <span style="font-family: Courier New, Courier, monospace; font-size: x-small;">CreateFromConfiguration()</span>, which does the same thing from a configuration source if you prefer to do something more complex.<br /><br />Once I created the default one and simply changed the key, hey presto, it all worked.<br /><br />Easy when you know how!

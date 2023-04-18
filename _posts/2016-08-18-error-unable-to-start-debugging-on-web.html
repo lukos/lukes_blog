@@ -1,0 +1,16 @@
+---
+layout: post
+title: 'Error: Unable to Start Debugging on the Web Server'
+date: '2016-08-18T08:26:00.001-07:00'
+author: Luke Briner
+tags:
+- asp.net
+- visual studio 2015
+- Error
+- web server
+- debugging
+- visual studio
+modified_time: '2016-08-18T08:26:30.097-07:00'
+---
+
+Got this on an app that has previously worked and I definately knew everything was installed on my local PC.<br /><br />The problem was that the Web tab of Properties had a url set in project Url that was pointing to a live site (which I usually have redirected in the hosts file to 127.0.0.1). Pressing debug, the project was trying to connect to that live site, which obviously doesn't have remote debugger installed and was failing.<br /><br />Simples! Just added the entry back into the hosts file so VS can connect to the debugger on the local machine and we're all good again.

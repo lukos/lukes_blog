@@ -1,0 +1,14 @@
+---
+layout: post
+title: Unable to start debugging the web server 500.19
+date: '2010-03-22T05:01:00.000-07:00'
+author: Luke Briner
+tags:
+- visual studio errors
+- debugging
+- IIS7
+- VS2008
+modified_time: '2010-03-22T05:06:35.891-07:00'
+---
+
+My debugging in Visual Studio (VS2008) stopped working this morning, I think it was as a result of Windows Update on Windows 7 adding some "security updates". I run out-of-the-box VS2008 (SP1) and IIS7 built-in to Windows 7 and I didn't even get the browser, just some non-resizable window with what looked like the html source for a browser error and 500.19. After being annoyed, I decided to try it in a browser with no debugger and got some more useful information but still didn't understand what had changed (Invalid config data because I can't read it type error).<br />Anyway, eventually I added the IIS_IUSRS group to my code directories with read access (only) and it all started working again.<br />Not sure whether this permission was not required before or implied or whether one of the updates removed its permissions from everywhere but it was a bit of a pain and not obvious which 'user' the system was trying to access the data with. I assumed the debugger was running as me and I had full permission but obviously somewhere it gets changed from me to IIS_USRS!

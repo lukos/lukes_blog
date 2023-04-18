@@ -1,0 +1,20 @@
+---
+layout: post
+title: 'RESOLVED: Button postback not firing from GridView or DataGrid'
+date: '2014-03-12T07:42:00.001-07:00'
+author: Luke Briner
+tags:
+- onrowediting
+- gridview
+- not working
+- datagrid
+- oneditcommand
+- Error
+- command button
+- onrowdeleting
+- postback
+- ondeletecommand
+modified_time: '2014-03-12T09:12:40.758-07:00'
+---
+
+I am porting an older site to a newer site, replacing old code with new code, bootstrap 2 to bootstrap 3 etc and have moved a DataGrid into a new location but it needs to do the same thing. I had an edit and a delete button in a TemplateColumn and although it looked all fine and dandy, it just wouldn't post back. The generated .Net Javascript looked correct but nothing. I could get a Javascript confirmation but nothing on the server side.<br /><br />I then noticed an answer in one of the hundreds of forum posts I tend to search when it doesn't work.<br /><br />CausesValidation=False<br /><br />This has caught me before. By default, postbacks will (correctly) call the validation functions on all validators on the page. This would normally be obvious since those validators would then complain about whatever you got wrong. In my case, I had a hidden form with loads of validators so, of course, nothing <i>appeared</i> to happen to me.<br /><br />Setting CausesValidation=False to the link button in question means it passes a boolean false into the post back javascript function and this allows it to postback without validation! Amazing.<br /><br />(Other potential problems)<br />1. If you have built your site from scratch, you might have forgotten to include the MS webforms Javascript files which include the relevant Javascript for the postback functionality.<br />2. Linkbuttons possibly won't always work since they no longer have a "name" attribute. You could add this manually during Page_Init if you wanted to. 

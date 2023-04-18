@@ -1,0 +1,15 @@
+---
+layout: post
+title: Public/Private keys, OpenSSL, RSA, PEM and DER
+date: '2013-11-25T08:16:00.002-08:00'
+author: Luke Briner
+tags:
+- RSA
+- openssl
+- Public Key Encryption
+- der
+- pem
+modified_time: '2013-11-25T08:16:43.989-08:00'
+---
+
+It's no wonder that many people stay away from security in their web apps. Trying to do something that sounds simple like "create a public/private key pair" ends up being 30 minutes of Googling. This is because there are variations and differences but also similarities between the various types of keys and certificates and then not all systems support all types. Add in things like Putty which works great but which has its own key format and it is pain on a stick.  Anyway, I had openssl downloaded so to create the "Key Pair", simply run <br /><br /><pre>openssl genrsa -out mycert.pem 2048</pre><br />Now, the first confusion is that although you will find lots of people saying that this generates a public/private key <i>pair</i> you will notice that it only outputs one file and this is because a public and a private key are not really two distinct entities but rather the public key contains a subset of the information that is contained in the private key - enough to encrypt data but not enough to decrypt it or to work out the private key. For this reason, you sort of have a key pair but really it is just a single private key in a single file.  Soooo. We probably want our public key to exist separately as well to give to people who want to encrypt data for us so we need to use another command to tell openssl to export the public key <i>and</i> to convert it, if required, into the raw digital format that some systems prefer to the base-64 encoded DER format of PEM.<br /><br /><pre>openssl rsa -in mycert.pem -outform der -out mycert.pub.der -pubout</pre><pre>openssl rsa -in mycert.pem -outform pem -out mycert.pub -pubout</pre><br />This produces another file (or two) which, in the first case above, is DER rather than PEM encoded but which only includes the public key part of the private key. The second example does the same thing but keeps the exported key in PEM format. This is enough for you to start your public-key encryption process but note that when you search for help on the topic on Google, be aware that as well as public/private keys, you might also be looking at certificate requests (like you send when you want an ssl certificate), a certificate, a certificate chain, or some combination of the above. For this reason, there are various switches to openssl so keep your eyes peeled before trying something out. On the other hand, things tend to fail quite quickly if you have done something wrong like trying to export a public key in one format to a public key in another - you apparently have to do this from the original private key instead!

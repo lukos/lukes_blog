@@ -1,0 +1,13 @@
+---
+layout: post
+title: Creating QT Widget in 4.5
+date: '2009-08-05T01:31:00.000-07:00'
+author: Luke Briner
+tags:
+- Widget Plugin
+- QT
+- QTCreator
+modified_time: '2009-08-05T01:42:06.871-07:00'
+---
+
+I have started writing an app in QT for controlling my keyboards via MIDI. QT is the obvious choice because it works really well on Linux, can be ported across platform (although I am using a Linux MIDI library) and the tools and help that come with it are superb. Anyway had a little fun creating a widget.<br />I wanted a widget for a double list box with the two buttons to move items from the left into the right list and vice-versa. Assuming that I might well use it again, I wanted to make it visible to the designer so I found an article on the Trolltech website which pretty much describes the process: <a href="http://cep.xor.aps.anl.gov/software/qt4-x11-4.2.2/designer-customwidgetplugin.html">Here</a> but I had a few fun experiences along the way since I am not massively familiar with QT and the QTCreator IDE. So I created a new project using "New" and chose a widget as the project type. This doesn't set things up exactly as required (it inherits from some styleplugin thing and the output path is a style path) but it does some of the work like setting the "debug_and_release" compiler switch and "library" as the output type.<br />You need (assuming one custom widget in the plugin) a class for your actual widget which is literally as you would write any other widget - inherits from QWidget and houses whatever contents it needs. The other is the plugin class which you pretty much copy from the example and rename for whatever you want.<br />The first problem was seeing the target.path and CONFIG variables mentioned. I couldn't find these and it wouldn't build then I found out that the .pro file is actually text and can be opened into the IDE where some of these variables are. It is confusing because there are some project properties under the projects button but hey-ho.<br />The next problem I had was related to accessing the designer directory which would allow my plugin to be available to all other projects in the QTDesigner. This is what was set in target.path but by default the permissions are for root access only so this is what I did:<br />Navigate to the directory above designer (in my case /usr/var/qt4) and then run "sudo chmod 777 designer" which allows full access into the designer directory for everyone. I tried read/write only but then when it tried to "stat" a file it failed so had to give it the works.<br />It now all builds fine, just make sure you follow the tutorial.

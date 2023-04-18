@@ -1,0 +1,13 @@
+---
+layout: post
+title: Poor quality images in generated PDF
+date: '2008-09-16T06:56:00.000-07:00'
+author: Luke Briner
+tags:
+- Image Formats
+- Adobe Acrobat
+- PDF
+modified_time: '2008-09-16T07:06:45.069-07:00'
+---
+
+PDF has become the de-facto standard interchange format for documents. It seems to handle lots of types of data and seems surprisingly to be one of the few media that are consistent across computer platforms.<br />I was using it at work the other day after realising that one of our corporate brochures had a very poor quality copy of our logo on it. I checked the original Word doc and the image looked fine.<br />I ran it through CutePDF just to make sure this was the correct original and sure enough the image came out bad - looking like 20 dots per inch!! The original image was a few thousand pixels in width and height and was scaled down to about 50mm x 15mm so resolution wasn't an issue.<br />I then installed Adobe Acrobat (which fortunately we already had so I didn't have to shell out £300 for the standard version!!). I tried converting the file from Acrobat and then after realising there was a bug, fixed it so that I got the buttons inside Word and converted it from there, both with the menu item and also using the Adobe PDF printer driver. None of this worked, the image still looked bad. Interestingly I tried several formats and they came out different but equally terrible. I then switched off compression and downsampling and got a massive PDF (2 pages 45Mb) but still a rubbish logo.<br />Almost at wits end, I put in copies of all the logo formats I had and generated the PDF again. The ONLY one that looked OK was the Windows Meta File (WMF) type which is probably because it is vector unlike the other bitmapped images.<br />So I found a workaround but no help on the net (other than lots of people saying how rubbish the Acrobat application is). I am very disappointed. Even MS Word is cheaper than Acrobat and has much more functionality. In fact you can probably get Office basic for the same price!! Acrobat gave me nothing useful and obviously couldn't handle what were very basic images. It managed to convert other jpegs so if my images weren't in the correct format, something should have complained.<br />Bloatware Bah!

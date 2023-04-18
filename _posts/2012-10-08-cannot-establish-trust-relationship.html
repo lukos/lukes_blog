@@ -1,0 +1,10 @@
+---
+layout: post
+title: Cannot Establish Trust relationship with site....
+date: '2012-10-08T06:40:00.002-07:00'
+author: Luke Briner
+tags:
+modified_time: '2012-10-08T06:40:33.972-07:00'
+---
+
+I saw this earlier and unlike most times I get an error, the answer was fairly obvious to me. I was calling a web service from a web application and they both lived on the same server and require SSL from a certificate. The problem was that my endpoint was set to use https://localhost/.... and the SSL certificate is actually for my domain name. I had to change the endpoint to include the full public domain name https://www.example.com/ which still resolves to the localhost but which then matches the SSL certificate name.

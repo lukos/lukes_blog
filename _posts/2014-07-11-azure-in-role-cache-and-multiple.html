@@ -1,0 +1,18 @@
+---
+layout: post
+title: Azure In-role cache and multiple instances
+date: '2014-07-11T02:54:00.000-07:00'
+author: Luke Briner
+tags:
+- in-role
+- Azure
+- Error
+- Worker Role
+- cache
+- reboot
+- shutdown
+- cache role
+modified_time: '2014-07-11T02:54:50.660-07:00'
+---
+
+<h2>Problem</h2>Some random reboots on our cache role took &gt; 15 minutes and being a single point of failure, it made our site go down with a server error!<br /><h2>Cause&nbsp;</h2>My assumption that a cache role could only have one instance since it was, by nature, shared memory for (in my case) session information.<br /><h2>Solution</h2>Increase the number of instances: MS recommend 4 but I went with 3. In the cache settings for the cache role, tick the "high availability" check box and this will tell the Azure fabric to duplicate cache data between the multiple instances so that if one of them falls over, the fabric will automatically switch over to another one. This would still leave 2 instances but I think MS are thinking that it would be feasible for all of them to be updated and rebooted before the first one has come back to life again. This is low risk for our application, I think.<br /><h2>Alternative</h2>Azure now provide a cache service as part of the top level cloud products. The problem is that it seems expensive for what it is. I can have 3 instances, each with 1.7GB of RAM for a total of about £30 per month, whereas this would only buy me 256MB of Azure cache and it is not high availability and doesn't support notifications. For those features, you need to go up a level to their middle and top tier versions which have a larger minimum size and are much more expensive (the top one starts at £260/month for 5 GB).
