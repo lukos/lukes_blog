@@ -1,6 +1,6 @@
 ---
 layout: post
-title: What Recruiters don't understand about experience
+title: I've Been Stung by apt-get purge TWICE
 date: '2023-02-03T16:26:00.000+00:00'
 author: Luke Briner
 tags: 
