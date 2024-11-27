@@ -14,7 +14,6 @@ description: >- # this means to ignore newlines until "baseurl:"
   microservices. Conference speaker and general nice-guy!
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://blog.lukebriner.net" # the base hostname & protocol for your site, e.g. http://example.com
-twitter_username: lukiebriner
 github_username:  lukos
 
 # Build settings
